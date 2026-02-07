@@ -30,10 +30,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. Transport/server instances are isolated per session (no cross-client leakage)
   5. Server logs all operations with structured JSON output (pino)
   6. Health check MCP resource returns connection status and graph availability
-**Plans**: TBD (during planning)
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: (TBD during planning)
+- [ ] 01-01-PLAN.md — Create foundation modules (logger, errors, schemas, cypher-sanitizer)
+- [ ] 01-02-PLAN.md — Integrate into server, add health check, enhance shutdown
 
 ### Phase 2: Resilience
 **Goal**: Server handles failures gracefully without cascading or hanging
@@ -77,7 +78,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Security | 0/TBD | Not started | - |
+| 1. Foundation & Security | 0/2 | Ready | - |
 | 2. Resilience | 0/TBD | Not started | - |
 | 3. Performance | 0/TBD | Not started | - |
 | 4. Protection | 0/TBD | Not started | - |
