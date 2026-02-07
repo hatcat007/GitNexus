@@ -68,23 +68,23 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RELI-01 | — | Pending |
-| RELI-02 | — | Pending |
-| RELI-03 | — | Pending |
-| RELI-04 | — | Pending |
-| RELI-05 | — | Pending |
-| SECU-01 | — | Pending |
-| SECU-02 | — | Pending |
-| SECU-03 | — | Pending |
-| SECU-04 | — | Pending |
-| PERF-01 | — | Pending |
-| OBSV-01 | — | Pending |
-| OBSV-02 | — | Pending |
+| RELI-01 | 1 | Pending |
+| RELI-02 | 2 | Pending |
+| RELI-03 | 1 | Pending |
+| RELI-04 | 2 | Pending |
+| RELI-05 | 2 | Pending |
+| SECU-01 | 1 | Pending |
+| SECU-02 | 1 | Pending |
+| SECU-03 | 1 | Pending |
+| SECU-04 | 4 | Pending |
+| PERF-01 | 3 | Pending |
+| OBSV-01 | 1 | Pending |
+| OBSV-02 | 1 | Pending |
 
 **Coverage:**
 - v1 requirements: 12 total
-- Mapped to phases: 0
-- Unmapped: 12 ⚠️
+- Mapped to phases: 12
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-02-07*
