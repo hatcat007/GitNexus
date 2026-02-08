@@ -287,16 +287,44 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
-  // Handle graceful shutdown
-  process.on('SIGINT', async () => {
+  // Graceful shutdown handling
+  let isShuttingDown = false;
+
+  async function gracefulShutdown(signal: string) {
+    if (isShuttingDown) return;
+    isShuttingDown = true;
+    
+    logger.info({ signal }, 'Starting graceful shutdown');
+    
+    // 1. Stop accepting new requests
+    try {
+      await server.close();
+      logger.info('MCP server closed');
+    } catch (e) {
+      logger.error({ error: e }, 'Error closing MCP server');
+    }
+    
+    // 2. Wait briefly for pending requests (WebSocketBridge tracks these)
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // 3. Close WebSocket connections
     client.disconnect?.();
-    await server.close();
+    logger.info('WebSocket disconnected');
+    
+    logger.info('Graceful shutdown complete');
     process.exit(0);
+  }
+
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+
+  // Handle uncaught exceptions
+  process.on('uncaughtException', (error) => {
+    logger.error({ error }, 'Uncaught exception');
+    gracefulShutdown('uncaughtException');
   });
 
-  process.on('SIGTERM', async () => {
-    client.disconnect?.();
-    await server.close();
-    process.exit(0);
+  process.on('unhandledRejection', (reason, promise) => {
+    logger.error({ reason }, 'Unhandled rejection');
   });
 }
