@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
 import { AppStateProvider, useAppState } from './hooks/useAppState';
+import { v4 as uuidv4 } from 'uuid';
 import { DropZone } from './components/DropZone';
 import { LoadingOverlay } from './components/LoadingOverlay';
 import { Header } from './components/Header';
@@ -39,7 +40,19 @@ const AppContent = () => {
     llmSettings,
     updateLLMSettings,
     runClusterEnrichment,
+    // Session persistence
+    setSessionSource,
+    saveCurrentSession,
+    restoreSession,
+    listAllSessions,
+    isRestoringSession,
+    startNewSession,
   } = useAppState();
+
+  // Access setCurrentSessionId via a ref to avoid circular deps in handleFileSelect
+  const { currentSessionId } = useAppState();
+  const sessionIdRef = useRef<string | null>(currentSessionId);
+  useEffect(() => { sessionIdRef.current = currentSessionId; }, [currentSessionId]);
 
   const [showClusteringModal, setShowClusteringModal] = useState(false);
 
@@ -96,6 +109,10 @@ const AppContent = () => {
 
       setGraph(result.graph);
       setFileContents(result.fileContents);
+
+      // Create a new session for this upload
+      setSessionSource({ type: 'zip', fileName: file.name });
+
       setViewMode('exploring');
 
       // Initialize (or re-initialize) the agent AFTER a repo loads so it captures
@@ -130,7 +147,7 @@ const AppContent = () => {
         setProgress(null);
       }, 3000);
     }
-  }, [setViewMode, setGraph, setFileContents, setProgress, setProjectName, runPipeline, startEmbeddings, initializeAgent, llmSettings]);
+  }, [setViewMode, setGraph, setFileContents, setProgress, setProjectName, runPipeline, startEmbeddings, initializeAgent, llmSettings, setSessionSource]);
 
   const handleGitClone = useCallback(async (files: FileEntry[], enableSmartClustering?: boolean) => {
     // Extract project name from first file path (e.g., "owner-repo-123/src/..." -> "owner-repo")
@@ -152,6 +169,9 @@ const AppContent = () => {
 
       setGraph(result.graph);
       setFileContents(result.fileContents);
+
+      // Session source is set by DropZone before calling handleGitClone
+
       setViewMode('exploring');
 
       // Initialize (or re-initialize) the agent AFTER a repo loads so it captures
@@ -202,6 +222,10 @@ const AppContent = () => {
   // Render based on view mode
   if (viewMode === 'onboarding') {
     return <DropZone onFileSelect={handleFileSelect} onGitClone={handleGitClone} />;
+  }
+
+  if (isRestoringSession) {
+    return <LoadingOverlay progress={{ phase: 'extracting', percent: 50, message: 'Restoring session...', detail: 'Loading saved data' }} />;
   }
 
   if (viewMode === 'loading' && progress) {

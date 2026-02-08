@@ -73,7 +73,8 @@ export const parseGitHubUrl = (url: string): { owner: string; repo: string } | n
 export const cloneRepository = async (
   url: string,
   onProgress?: (phase: string, progress: number) => void,
-  token?: string
+  token?: string,
+  branch?: string
 ): Promise<FileEntry[]> => {
   const parsed = parseGitHubUrl(url);
   if (!parsed) {
@@ -97,6 +98,7 @@ export const cloneRepository = async (
       http: httpClient,
       dir,
       url: repoUrl,
+      ref: branch || undefined,
       depth: 1,
       // Auth callback for private repos (PAT stays client-side)
       onAuth: token ? () => ({ username: token, password: 'x-oauth-basic' }) : undefined,

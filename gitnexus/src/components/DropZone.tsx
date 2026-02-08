@@ -1,8 +1,10 @@
 import { useState, useCallback, DragEvent, useEffect } from 'react';
-import { Upload, FileArchive, Github, Loader2, ArrowRight, Key, Eye, EyeOff, Sparkles } from 'lucide-react';
+import { Upload, FileArchive, Github, Loader2, ArrowRight, Key, Eye, EyeOff, Sparkles, GitBranch, Clock, Trash2, FolderOpen } from 'lucide-react';
 import { cloneRepository, parseGitHubUrl } from '../services/git-clone';
 import { FileEntry } from '../services/zip';
 import { getActiveProviderConfig } from '../core/llm/settings-service';
+import { useAppState } from '../hooks/useAppState';
+import type { SessionMeta } from '../services/session-store';
 
 interface DropZoneProps {
   onFileSelect: (file: File, enableSmartClustering?: boolean) => void;
@@ -10,9 +12,12 @@ interface DropZoneProps {
 }
 
 export const DropZone = ({ onFileSelect, onGitClone }: DropZoneProps) => {
+  const { restoreSession, deleteSessionById, listAllSessions, setSessionSource } = useAppState();
+
   const [isDragging, setIsDragging] = useState(false);
   const [activeTab, setActiveTab] = useState<'zip' | 'github'>('zip');
   const [githubUrl, setGithubUrl] = useState('');
+  const [githubBranch, setGithubBranch] = useState('main');
   const [githubToken, setGithubToken] = useState('');
   const [showToken, setShowToken] = useState(false);
   const [isCloning, setIsCloning] = useState(false);
@@ -21,12 +26,42 @@ export const DropZone = ({ onFileSelect, onGitClone }: DropZoneProps) => {
   const [enableSmartClustering, setEnableSmartClustering] = useState(false);
   const [hasLLMProvider, setHasLLMProvider] = useState(false);
 
+  // Recent sessions
+  const [recentSessions, setRecentSessions] = useState<SessionMeta[]>([]);
+  const [loadingSessions, setLoadingSessions] = useState(true);
+
   // Check if LLM provider is configured
   useEffect(() => {
     const config = getActiveProviderConfig();
     setHasLLMProvider(!!config);
     // Keep smart clustering OFF by default, user must opt-in
   }, []);
+
+  // Load recent sessions
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const sessions = await listAllSessions();
+        if (!cancelled) {
+          setRecentSessions(sessions);
+          setLoadingSessions(false);
+        }
+      } catch {
+        if (!cancelled) setLoadingSessions(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [listAllSessions]);
+
+  const handleDeleteSession = useCallback(async (id: string) => {
+    await deleteSessionById(id);
+    setRecentSessions(prev => prev.filter(s => s.id !== id));
+  }, [deleteSessionById]);
+
+  const handleRestoreSession = useCallback(async (id: string) => {
+    await restoreSession(id);
+  }, [restoreSession]);
 
   const handleDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -89,11 +124,15 @@ export const DropZone = ({ onFileSelect, onGitClone }: DropZoneProps) => {
       const files = await cloneRepository(
         githubUrl,
         (phase, percent) => setCloneProgress({ phase, percent }),
-        githubToken || undefined // Pass token if provided
+        githubToken || undefined, // Pass token if provided
+        githubBranch || 'main'
       );
 
       // Clear token from memory after successful clone
       setGithubToken('');
+
+      // Set session source before calling onGitClone so it's available during session creation
+      setSessionSource({ type: 'github', url: githubUrl, branch: githubBranch || 'main' });
 
       if (onGitClone) {
         onGitClone(files, enableSmartClustering);
@@ -302,6 +341,33 @@ export const DropZone = ({ onFileSelect, onGitClone }: DropZoneProps) => {
                 "
               />
 
+              {/* Branch input */}
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted">
+                  <GitBranch className="w-4 h-4" />
+                </div>
+                <input
+                  type="text"
+                  name="github-branch-input"
+                  value={githubBranch}
+                  onChange={(e) => setGithubBranch(e.target.value)}
+                  placeholder="Branch (default: main)"
+                  disabled={isCloning}
+                  autoComplete="off"
+                  data-lpignore="true"
+                  data-1p-ignore="true"
+                  data-form-type="other"
+                  className="
+                    w-full pl-10 pr-4 py-3 
+                    bg-elevated border border-border-default rounded-xl
+                    text-text-primary placeholder-text-muted
+                    focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent
+                    disabled:opacity-50 disabled:cursor-not-allowed
+                    transition-all duration-200
+                  "
+                />
+              </div>
+
               {/* Token input for private repos */}
               <div className="relative">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted">
@@ -394,6 +460,56 @@ export const DropZone = ({ onFileSelect, onGitClone }: DropZoneProps) => {
               <span className="px-3 py-1.5 bg-elevated border border-border-subtle rounded-md">
                 Shallow clone
               </span>
+            </div>
+          </div>
+        )}
+        {/* Recent Sessions */}
+        {!loadingSessions && recentSessions.length > 0 && (
+          <div className="mt-6">
+            <div className="flex items-center gap-2 mb-3">
+              <Clock className="w-4 h-4 text-text-muted" />
+              <h3 className="text-sm font-medium text-text-secondary">Recent Sessions</h3>
+            </div>
+            <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-thin">
+              {recentSessions.map((session) => (
+                <div
+                  key={session.id}
+                  className="flex items-center justify-between p-3 bg-surface border border-border-subtle rounded-xl hover:border-accent/40 transition-all group"
+                >
+                  <button
+                    onClick={() => handleRestoreSession(session.id)}
+                    className="flex-1 flex items-start gap-3 text-left min-w-0"
+                  >
+                    <FolderOpen className="w-4 h-4 text-accent mt-0.5 shrink-0" />
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium text-text-primary truncate">
+                        {session.name}
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-text-muted mt-0.5">
+                        <span className="px-1.5 py-0.5 bg-elevated rounded text-[10px] uppercase">
+                          {session.source.type === 'github' ? 'GitHub' : 'ZIP'}
+                        </span>
+                        {session.source.type === 'github' && session.source.branch && (
+                          <span className="flex items-center gap-0.5">
+                            <GitBranch className="w-3 h-3" />
+                            {session.source.branch}
+                          </span>
+                        )}
+                        <span>{session.nodeCount} nodes</span>
+                        <span>{session.fileCount} files</span>
+                        <span>{new Date(session.updatedAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleDeleteSession(session.id); }}
+                    className="p-1.5 text-text-muted hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all shrink-0"
+                    title="Delete session"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
         )}

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useRef, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, useEffect, useMemo, ReactNode } from 'react';
 import * as Comlink from 'comlink';
 import { KnowledgeGraph, GraphNode, NodeLabel } from '../core/graph/types';
 import { PipelineProgress, PipelineResult, deserializePipelineResult } from '../types/pipeline';
@@ -11,6 +11,18 @@ import type { LLMSettings, ProviderConfig, AgentStreamChunk, ChatMessage, ToolCa
 import { loadSettings, getActiveProviderConfig, saveSettings } from '../core/llm/settings-service';
 import type { AgentMessage } from '../core/llm/agent';
 import { DEFAULT_VISIBLE_EDGES, type EdgeType } from '../lib/constants';
+import {
+  saveSession as dbSaveSession,
+  getSession as dbGetSession,
+  getLastSessionId,
+  setLastSessionId,
+  listSessions,
+  deleteSession as dbDeleteSession,
+  type SavedSession,
+  type SessionSource,
+  type SessionMeta,
+} from '../services/session-store';
+import { v4 as uuidv4 } from 'uuid';
 
 export type ViewMode = 'onboarding' | 'loading' | 'exploring';
 export type RightPanelTab = 'code' | 'chat';
@@ -163,6 +175,17 @@ interface AppState {
   clearAICodeReferences: () => void;
   clearCodeReferences: () => void;
   codeReferenceFocus: CodeReferenceFocus | null;
+
+  // Session persistence
+  currentSessionId: string | null;
+  sessionSource: SessionSource | null;
+  setSessionSource: (source: SessionSource | null) => void;
+  saveCurrentSession: () => Promise<void>;
+  restoreSession: (id: string) => Promise<boolean>;
+  deleteSessionById: (id: string) => Promise<void>;
+  listAllSessions: () => Promise<SessionMeta[]>;
+  isRestoringSession: boolean;
+  startNewSession: () => void;
 }
 
 const AppStateContext = createContext<AppState | null>(null);
@@ -297,6 +320,172 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
   // Cluster enrichment state
   const [enrichmentProgress, setEnrichmentProgress] = useState<{ current: number; total: number } | null>(null);
   const enrichmentCancelledRef = useRef(false);
+
+  // Session persistence state
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [sessionSource, setSessionSource] = useState<SessionSource | null>(null);
+  const [isRestoringSession, setIsRestoringSession] = useState(false);
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // --- Session persistence methods ---
+
+  const saveCurrentSession = useCallback(async (): Promise<void> => {
+    if (!graph || !currentSessionId) return;
+
+    const session: SavedSession = {
+      id: currentSessionId,
+      name: projectName || 'Untitled',
+      createdAt: 0, // will be set below
+      updatedAt: Date.now(),
+      source: sessionSource ?? { type: 'zip', fileName: 'unknown' },
+      graph: {
+        nodes: graph.nodes,
+        relationships: graph.relationships,
+      },
+      fileContents: Object.fromEntries(fileContents),
+      chatMessages,
+      uiState: {
+        visibleLabels,
+        visibleEdgeTypes,
+        depthFilter,
+        isRightPanelOpen,
+        rightPanelTab,
+        isCodePanelOpen,
+      },
+    };
+
+    // Preserve original createdAt if updating
+    try {
+      const existing = await dbGetSession(currentSessionId);
+      session.createdAt = existing?.createdAt ?? Date.now();
+    } catch {
+      session.createdAt = Date.now();
+    }
+
+    await dbSaveSession(session);
+    await setLastSessionId(currentSessionId);
+  }, [graph, currentSessionId, projectName, sessionSource, fileContents, chatMessages, visibleLabels, visibleEdgeTypes, depthFilter, isRightPanelOpen, rightPanelTab, isCodePanelOpen]);
+
+  const restoreSession = useCallback(async (id: string): Promise<boolean> => {
+    setIsRestoringSession(true);
+    try {
+      const session = await dbGetSession(id);
+      if (!session) {
+        setIsRestoringSession(false);
+        return false;
+      }
+
+      // Rebuild graph from saved nodes/relationships
+      const restoredGraph = createKnowledgeGraph();
+      session.graph.nodes.forEach(n => restoredGraph.addNode(n));
+      session.graph.relationships.forEach(r => restoredGraph.addRelationship(r));
+
+      setGraph(restoredGraph);
+      setFileContents(new Map(Object.entries(session.fileContents)));
+      setChatMessages(session.chatMessages ?? []);
+      setProjectName(session.name);
+      setCurrentSessionId(session.id);
+      setSessionSource(session.source);
+
+      // Restore UI state
+      if (session.uiState) {
+        setVisibleLabels(session.uiState.visibleLabels ?? DEFAULT_VISIBLE_LABELS);
+        setVisibleEdgeTypes(session.uiState.visibleEdgeTypes ?? DEFAULT_VISIBLE_EDGES);
+        setDepthFilter(session.uiState.depthFilter ?? null);
+        setRightPanelOpen(session.uiState.isRightPanelOpen ?? false);
+        setRightPanelTab(session.uiState.rightPanelTab ?? 'code');
+        setCodePanelOpen(session.uiState.isCodePanelOpen ?? false);
+      }
+
+      await setLastSessionId(session.id);
+      setViewMode('exploring');
+      setIsRestoringSession(false);
+      return true;
+    } catch (err) {
+      console.error('[Session] Failed to restore session:', err);
+      setIsRestoringSession(false);
+      return false;
+    }
+  }, []);
+
+  const deleteSessionById = useCallback(async (id: string): Promise<void> => {
+    await dbDeleteSession(id);
+    // If we deleted the current session, clear the reference
+    if (id === currentSessionId) {
+      setCurrentSessionId(null);
+    }
+  }, [currentSessionId]);
+
+  const listAllSessions = useCallback(async (): Promise<SessionMeta[]> => {
+    return listSessions();
+  }, []);
+
+  const startNewSession = useCallback(() => {
+    setCurrentSessionId(null);
+    setSessionSource(null);
+    setGraph(null);
+    setFileContents(new Map());
+    setChatMessages([]);
+    setProjectName('');
+    setSelectedNode(null);
+    setCodeReferences([]);
+    setCodePanelOpen(false);
+    setRightPanelOpen(false);
+    setHighlightedNodeIds(new Set());
+    setAICitationHighlightedNodeIds(new Set());
+    setAIToolHighlightedNodeIds(new Set());
+    setBlastRadiusNodeIds(new Set());
+    setQueryResult(null);
+    setDepthFilter(null);
+    setVisibleLabels(DEFAULT_VISIBLE_LABELS);
+    setVisibleEdgeTypes(DEFAULT_VISIBLE_EDGES);
+    setViewMode('onboarding');
+  }, []);
+
+  // Create a new session ID when a fresh source is set (new pipeline just completed)
+  useEffect(() => {
+    if (sessionSource && !currentSessionId && graph) {
+      const newId = uuidv4();
+      setCurrentSessionId(newId);
+    }
+  }, [sessionSource, currentSessionId, graph]);
+
+  // Auto-restore last session on mount
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const lastId = await getLastSessionId();
+        if (lastId && !cancelled) {
+          await restoreSession(lastId);
+        }
+      } catch (err) {
+        console.warn('[Session] Auto-restore failed:', err);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Debounced auto-save when session-relevant state changes
+  useEffect(() => {
+    if (!currentSessionId || !graph || viewMode !== 'exploring') return;
+
+    if (autoSaveTimerRef.current) {
+      clearTimeout(autoSaveTimerRef.current);
+    }
+
+    autoSaveTimerRef.current = setTimeout(() => {
+      saveCurrentSession().catch(err =>
+        console.warn('[Session] Auto-save failed:', err)
+      );
+    }, 2000);
+
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+    };
+  }, [currentSessionId, graph, chatMessages, visibleLabels, visibleEdgeTypes, depthFilter, isRightPanelOpen, rightPanelTab, isCodePanelOpen, viewMode, saveCurrentSession]);
 
   const normalizePath = useCallback((p: string) => {
     return p.replace(/\\/g, '/').replace(/^\.?\//, '');
@@ -1237,6 +1426,16 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     clearAICodeReferences,
     clearCodeReferences,
     codeReferenceFocus,
+    // Session persistence
+    currentSessionId,
+    sessionSource,
+    setSessionSource,
+    saveCurrentSession,
+    restoreSession,
+    deleteSessionById,
+    listAllSessions,
+    isRestoringSession,
+    startNewSession,
   };
 
   return (

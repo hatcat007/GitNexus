@@ -1,4 +1,4 @@
-import { Search, Settings, HelpCircle, Sparkles, Github, Star } from 'lucide-react';
+import { Search, Settings, HelpCircle, Sparkles, Github, Star, RefreshCw, Plus } from 'lucide-react';
 import { useAppState } from '../hooks/useAppState';
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { GraphNode } from '../core/graph/types';
@@ -36,6 +36,9 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
     setHighlightedNodeIds,
     fileContents,
     triggerNodeAnimation,
+    // Session
+    sessionSource,
+    startNewSession,
   } = useAppState();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -390,6 +393,15 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
             };
           }}
         />
+
+        {/* Session actions */}
+        <button
+          onClick={startNewSession}
+          className="w-9 h-9 flex items-center justify-center rounded-md text-text-secondary hover:bg-hover hover:text-text-primary transition-colors"
+          title="New session"
+        >
+          <Plus className="w-[18px] h-[18px]" />
+        </button>
 
         {/* Icon buttons */}
         <button
