@@ -313,7 +313,9 @@ export const executeQuery = async (cypher: string): Promise<any[]> => {
     
     return rows;
   } catch (error) {
-    if (import.meta.env.DEV) console.error('Query execution failed:', error);
+    // Don't log expected failures (DROP operations on non-existent targets)
+    const isExpectedFailure = /\bDROP\b/i.test(cypher);
+    if (import.meta.env.DEV && !isExpectedFailure) console.error('Query execution failed:', error);
     throw error;
   }
 };

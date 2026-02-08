@@ -317,7 +317,8 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
                 MATCH (c:Community)
                 WHERE c.id = '${esc}' OR c.label CONTAINS '${esc}'
                 OPTIONAL MATCH (c)<-[:CodeRelation {type: 'MEMBER_OF'}]-(m)
-                RETURN c.id AS id, c.label AS label, c.description AS description, collect(m.name)[0..10] AS members
+                WITH c, collect(m.name) AS allMembers
+                RETURN c.id AS id, c.label AS label, c.description AS description, allMembers[0:10] AS members
                 LIMIT 1
               `;
               return await runQuery(query);
@@ -326,7 +327,8 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
                 MATCH (p:Process)
                 WHERE p.id = '${esc}' OR p.label CONTAINS '${esc}'
                 OPTIONAL MATCH (s)-[r:CodeRelation {type: 'STEP_IN_PROCESS'}]->(p)
-                RETURN p.id AS id, p.label AS label, p.stepCount AS steps, collect({name: s.name, step: r.step})[0..20] AS trace
+                WITH p, collect({name: s.name, step: r.step}) AS allSteps
+                RETURN p.id AS id, p.label AS label, p.stepCount AS steps, allSteps[0:20] AS trace
                 LIMIT 1
               `;
               return await runQuery(query);

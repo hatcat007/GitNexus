@@ -105,12 +105,9 @@ const batchInsertEmbeddings = async (
 const createVectorIndex = async (
   executeQuery: (cypher: string) => Promise<any[]>
 ): Promise<void> => {
-  // Drop existing index first (idempotent — ignores if not found)
-  try {
-    await executeQuery(`CALL DROP_VECTOR_INDEX('CodeEmbedding', 'code_embedding_idx')`);
-  } catch {
-    // Index doesn't exist yet — that's fine
-  }
+  // Drop existing index first — silently ignore if it doesn't exist
+  // Use executeQuery wrapped in catch; the console.error in executeQuery is expected here
+  await executeQuery(`CALL DROP_VECTOR_INDEX('CodeEmbedding', 'code_embedding_idx')`).catch(() => {});
 
   const cypher = `
     CALL CREATE_VECTOR_INDEX('CodeEmbedding', 'code_embedding_idx', 'embedding', metric := 'cosine')

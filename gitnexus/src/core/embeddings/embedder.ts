@@ -135,20 +135,27 @@ export const initEmbedder = async (
             console.log('🔧 Initializing WebGPU backend...');
           }
           
+          // Suppress ORT WebGPU warnings about shape ops assigned to CPU.
+          // This is by design — ORT intentionally runs shape-related ops
+          // (Shape, Gather, Unsqueeze) on CPU for better performance.
+          // The heavy compute (MatMul, attention) runs on WebGPU.
+          env.backends.onnx.logLevel = 'error';
+          
           // Type assertion needed due to complex union types in transformers.js
+          // Use fp16 for WebGPU: half the memory, faster inference, same quality
           embedderInstance = await (pipeline as any)(
             'feature-extraction',
             finalConfig.modelId,
             {
               device: 'webgpu',
-              dtype: 'fp32',
+              dtype: 'fp16',
               progress_callback: progressCallback,
             }
           );
           currentDevice = 'webgpu';
           
           if (import.meta.env.DEV) {
-            console.log('✅ Using WebGPU backend');
+            console.log('✅ Using WebGPU backend (fp16)');
           }
         } catch (err) {
           if (import.meta.env.DEV) {
