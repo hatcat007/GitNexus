@@ -20,7 +20,8 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { GITNEXUS_TOOLS } from './tools.js';
 import { logger, createRequestLogger } from './logger.js';
-import { formatError, ErrorCodes } from './errors.js';
+import { formatError, ErrorCodes, timeoutError, circuitOpenError } from './errors.js';
+import { withToolTimeout, createCircuitBreaker } from './resilience.js';
 import { validateToolInput } from './schemas.js';
 import { sanitizeCypher } from './cypher-sanitizer.js';
 import type { CodebaseContext } from '../bridge/websocket-server.js';
