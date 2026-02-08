@@ -15,6 +15,11 @@ export const ErrorCodes = {
     QUERY_TIMEOUT: 'QUERY_TIMEOUT',
     CYPHER_FORBIDDEN: 'CYPHER_FORBIDDEN',
     INTERNAL_ERROR: 'INTERNAL_ERROR',
+    // Resilience error codes (Phase 2)
+    TIMEOUT: 'TIMEOUT',
+    CIRCUIT_OPEN: 'CIRCUIT_OPEN',
+    CONNECTION_LOST: 'CONNECTION_LOST',
+    RETRY_EXHAUSTED: 'RETRY_EXHAUSTED',
 } as const;
 
 export type ErrorCode = typeof ErrorCodes[keyof typeof ErrorCodes];
