@@ -14,6 +14,7 @@ import { FileEntry } from './services/zip';
 import { getActiveProviderConfig } from './core/llm/settings-service';
 import { ProviderConfig } from './core/llm/types';
 import { IntelligentClusteringModal } from './components/IntelligentClusteringModal';
+import { SessionRestoreOverlay } from './components/SessionRestoreOverlay';
 
 const AppContent = () => {
   const {
@@ -46,6 +47,8 @@ const AppContent = () => {
     restoreSession,
     listAllSessions,
     isRestoringSession,
+    restoreProgress,
+    dismissRestoreOverlay,
     startNewSession,
   } = useAppState();
 
@@ -257,13 +260,23 @@ const AppContent = () => {
     initializeAgent();
   }, [refreshLLMSettings, initializeAgent]);
 
-  // Render based on view mode
-  if (viewMode === 'onboarding') {
-    return <DropZone onFileSelect={handleFileSelect} onGitClone={handleGitClone} />;
+  // Session restore overlay takes priority over everything
+  if (restoreProgress) {
+    return (
+      <SessionRestoreOverlay
+        progress={restoreProgress}
+        onContinue={dismissRestoreOverlay}
+      />
+    );
   }
 
   if (isRestoringSession) {
     return <LoadingOverlay progress={{ phase: 'extracting', percent: 50, message: 'Restoring session...', detail: 'Loading saved data' }} />;
+  }
+
+  // Render based on view mode
+  if (viewMode === 'onboarding') {
+    return <DropZone onFileSelect={handleFileSelect} onGitClone={handleGitClone} />;
   }
 
   if (viewMode === 'loading' && progress) {

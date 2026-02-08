@@ -23,6 +23,7 @@ import {
   type SessionMeta,
 } from '../services/session-store';
 import { v4 as uuidv4 } from 'uuid';
+import type { RestoreProgress } from '../components/SessionRestoreOverlay';
 
 // Module-level guards: survive React StrictMode unmount/remount cycles
 let _autoRestoreStarted = false;
@@ -189,6 +190,8 @@ interface AppState {
   deleteSessionById: (id: string) => Promise<void>;
   listAllSessions: () => Promise<SessionMeta[]>;
   isRestoringSession: boolean;
+  restoreProgress: RestoreProgress | null;
+  dismissRestoreOverlay: () => void;
   startNewSession: () => void;
   /** True if the last session restore included saved embeddings (skip re-embedding) */
   sessionEmbeddingsRestored: boolean;
@@ -333,6 +336,7 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [sessionSource, setSessionSource] = useState<SessionSource | null>(null);
   const [isRestoringSession, setIsRestoringSession] = useState(false);
+  const [restoreProgress, setRestoreProgress] = useState<RestoreProgress | null>(null);
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sessionRestoreEmbeddingsRef = useRef(false);
 
@@ -436,16 +440,22 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     _restoreInProgress = true;
 
     setIsRestoringSession(true);
+    setRestoreProgress({ phase: 'opening-vault', percent: 5 });
+
     try {
+      // Phase 1: Read from IndexedDB
       const session = await dbGetSession(id);
       if (!session) {
         setIsRestoringSession(false);
+        setRestoreProgress(null);
         _restoreInProgress = false;
         return false;
       }
       console.log(`[Session] Loaded session "${session.name}" — ${session.embeddings?.length ?? 0} saved embeddings`);
+      setRestoreProgress({ phase: 'opening-vault', percent: 20, sessionName: session.name });
 
-      // Rebuild graph from saved nodes/relationships
+      // Phase 2: Rebuild graph
+      setRestoreProgress({ phase: 'rebuilding-map', percent: 30, sessionName: session.name });
       const restoredGraph = createKnowledgeGraph();
       session.graph.nodes.forEach(n => restoredGraph.addNode(n));
       session.graph.relationships.forEach(r => restoredGraph.addRelationship(r));
@@ -466,8 +476,10 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         setRightPanelTab(session.uiState.rightPanelTab ?? 'code');
         setCodePanelOpen(session.uiState.isCodePanelOpen ?? false);
       }
+      setRestoreProgress({ phase: 'rebuilding-map', percent: 45, sessionName: session.name });
 
-      // Re-hydrate the Web Worker with session data (KuzuDB, BM25, file contents, embeddings)
+      // Phase 3: Re-hydrate worker (KuzuDB, BM25, file contents)
+      setRestoreProgress({ phase: 'waking-crew', percent: 50, sessionName: session.name });
       let embeddingsRestored = false;
       const api = apiRef.current;
       if (api) {
@@ -484,6 +496,10 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
           console.warn('[Session] Worker re-hydration failed (non-fatal):', err);
         }
       }
+      setRestoreProgress({ phase: 'waking-crew', percent: 75, sessionName: session.name });
+
+      // Phase 4: Check embeddings
+      setRestoreProgress({ phase: 'checking-treasure', percent: 85, sessionName: session.name });
 
       // Store whether embeddings were restored so App.tsx can skip re-embedding
       sessionRestoreEmbeddingsRef.current = embeddingsRestored;
@@ -493,7 +509,29 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         setEmbeddingStatus('ready');
       }
 
+      // Phase 5: Finalize
+      setRestoreProgress({ phase: 'finalizing', percent: 95, sessionName: session.name });
       await setLastSessionId(session.id);
+
+      // Build stats for the completion screen
+      const stats = {
+        nodeCount: session.graph.nodes.length,
+        relationshipCount: session.graph.relationships.length,
+        fileCount: Object.keys(session.fileContents).length,
+        embeddingsRestored,
+        embeddingCount: session.embeddings?.length ?? 0,
+        chatMessageCount: session.chatMessages?.length ?? 0,
+      };
+
+      // Show completion screen
+      setRestoreProgress({
+        phase: embeddingsRestored ? 'complete-cached' : 'complete-no-changes',
+        percent: 100,
+        sessionName: session.name,
+        stats,
+      });
+
+      // Set exploring mode (the overlay renders on top until dismissed)
       setViewMode('exploring');
       setIsRestoringSession(false);
       _restoreInProgress = false;
@@ -501,6 +539,7 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     } catch (err) {
       console.error('[Session] Failed to restore session:', err);
       setIsRestoringSession(false);
+      setRestoreProgress(null);
       _restoreInProgress = false;
       return false;
     }
@@ -516,6 +555,10 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
 
   const listAllSessions = useCallback(async (): Promise<SessionMeta[]> => {
     return listSessions();
+  }, []);
+
+  const dismissRestoreOverlay = useCallback(() => {
+    setRestoreProgress(null);
   }, []);
 
   /**
@@ -1589,6 +1632,8 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     deleteSessionById,
     listAllSessions,
     isRestoringSession,
+    restoreProgress,
+    dismissRestoreOverlay,
     startNewSession,
     sessionEmbeddingsRestored: sessionRestoreEmbeddingsRef.current,
     preserveDataForReindex,
