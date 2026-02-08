@@ -211,6 +211,14 @@ export class WebSocketBridge {
         this.browserClient = null;
         this._context = null;
         this.notifyContextListeners();
+
+        // Schedule reconnection with exponential backoff
+        // Note: Server is passive - we log expected timing, browser initiates actual reconnect
+        this.scheduleReconnect(this.reconnectAttempt, () => {
+            // The browser needs to reconnect - we just wait
+            // When it does, onContextChange will reset the counter
+            console.error('Waiting for browser to reconnect...');
+        });
     } else {
         const peerId = (ws as any).peerId;
         if (peerId) {
