@@ -5,19 +5,12 @@
  * Each tool has a rich description with examples to help agents use them correctly.
  */
 
+import { toolSchemas } from './schemas.js';
+
 export interface ToolDefinition {
   name: string;
   description: string;
-  inputSchema: {
-    type: 'object';
-    properties: Record<string, {
-      type: string;
-      description?: string;
-      default?: any;
-      items?: { type: string };
-    }>;
-    required: string[];
-  };
+  inputSchema: Record<string, unknown>;
 }
 
 export const GITNEXUS_TOOLS: ToolDefinition[] = [
@@ -32,11 +25,7 @@ Returns:
 - Tool usage guidance
 
 ALWAYS call this first to understand the codebase before searching or querying.`,
-    inputSchema: {
-      type: 'object',
-      properties: {},
-      required: [],
-    },
+    inputSchema: toolSchemas.gitnexus_context,
   },
   {
     name: 'search',
@@ -49,15 +38,7 @@ WHEN TO USE:
 - Locating patterns ("find all API endpoints")
 
 RETURNS: Array of {name, type, filePath, code, connections[], cluster, processes[]}`,
-    inputSchema: {
-      type: 'object',
-      properties: {
-        query: { type: 'string', description: 'Natural language or keyword search query' },
-        limit: { type: 'number', description: 'Max results to return', default: 10 },
-        groupByProcess: { type: 'boolean', description: 'Group results by process', default: true },
-      },
-      required: ['query'],
-    },
+    inputSchema: toolSchemas.gitnexus_search,
   },
   {
     name: 'cypher',
@@ -81,13 +62,7 @@ TIPS:
 - All relationships use CodeRelation table with 'type' property
 - Community = functional cluster detected by Leiden algorithm
 - Process = execution flow trace from entry point to terminal`,
-    inputSchema: {
-      type: 'object',
-      properties: {
-        query: { type: 'string', description: 'Cypher query to execute' },
-      },
-      required: ['query'],
-    },
+    inputSchema: toolSchemas.gitnexus_cypher,
   },
   {
     name: 'grep',
@@ -101,15 +76,7 @@ WHEN TO USE:
 BETTER THAN search for: exact matches, regex patterns, case-sensitive
 
 RETURNS: Array of {filePath, line, lineNumber, match}`,
-    inputSchema: {
-      type: 'object',
-      properties: {
-        pattern: { type: 'string', description: 'Regex pattern to search for' },
-        caseSensitive: { type: 'boolean', description: 'Case-sensitive search', default: false },
-        maxResults: { type: 'number', description: 'Max results to return', default: 50 },
-      },
-      required: ['pattern'],
-    },
+    inputSchema: toolSchemas.gitnexus_grep,
   },
   {
     name: 'read',
@@ -123,15 +90,7 @@ WHEN TO USE:
 ALWAYS read before concluding - don't guess from names alone.
 
 RETURNS: {filePath, content, language, lines}`,
-    inputSchema: {
-      type: 'object',
-      properties: {
-        filePath: { type: 'string', description: 'Path to file to read' },
-        startLine: { type: 'number', description: 'Start line (optional)' },
-        endLine: { type: 'number', description: 'End line (optional)' },
-      },
-      required: ['filePath'],
-    },
+    inputSchema: toolSchemas.gitnexus_read,
   },
   {
     name: 'explore',
@@ -144,14 +103,7 @@ For CLUSTER: Shows members, cohesion score, processes touching it
 For PROCESS: Shows step-by-step trace, clusters traversed, entry/terminal points
 
 Use after search to understand context of a specific node.`,
-    inputSchema: {
-      type: 'object',
-      properties: {
-        name: { type: 'string', description: 'Name of symbol, cluster, or process to explore' },
-        type: { type: 'string', description: 'Type: symbol, cluster, or process' },
-      },
-      required: ['name', 'type'],
-    },
+    inputSchema: toolSchemas.gitnexus_explore,
   },
   {
     name: 'overview',
@@ -163,15 +115,7 @@ Returns:
 - High-level architectural view
 
 Use to understand overall codebase structure before diving deep.`,
-    inputSchema: {
-      type: 'object',
-      properties: {
-        showProcesses: { type: 'boolean', description: 'Include process list', default: true },
-        showClusters: { type: 'boolean', description: 'Include cluster list', default: true },
-        limit: { type: 'number', description: 'Max items per category', default: 20 },
-      },
-      required: [],
-    },
+    inputSchema: toolSchemas.gitnexus_overview,
   },
   {
     name: 'impact',
@@ -193,18 +137,7 @@ Depth groups:
 - d=1: WILL BREAK (direct callers/importers)
 - d=2: LIKELY AFFECTED (indirect)
 - d=3: MAY NEED TESTING (transitive)`,
-    inputSchema: {
-      type: 'object',
-      properties: {
-        target: { type: 'string', description: 'Name of function, class, or file to analyze' },
-        direction: { type: 'string', description: 'upstream (what depends on this) or downstream (what this depends on)' },
-        maxDepth: { type: 'number', description: 'Max relationship depth (default: 3)', default: 3 },
-        relationTypes: { type: 'array', items: { type: 'string' }, description: 'Filter: CALLS, IMPORTS, EXTENDS, IMPLEMENTS (default: usage-based)' },
-        includeTests: { type: 'boolean', description: 'Include test files (default: false)' },
-        minConfidence: { type: 'number', description: 'Minimum confidence 0-1 (default: 0.7)' },
-      },
-      required: ['target', 'direction'],
-    },
+    inputSchema: toolSchemas.gitnexus_impact,
   },
   {
     name: 'highlight',
@@ -213,13 +146,6 @@ Use after search/analysis to show the user what you found.
 
 The user will see the nodes glow in the graph view.
 Great for visual confirmation of your findings.`,
-    inputSchema: {
-      type: 'object',
-      properties: {
-        nodeIds: { type: 'array', items: { type: 'string' }, description: 'Array of node IDs to highlight' },
-        color: { type: 'string', description: 'Highlight color (optional, default: cyan)' },
-      },
-      required: ['nodeIds'],
-    },
+    inputSchema: toolSchemas.gitnexus_highlight,
   },
 ];
