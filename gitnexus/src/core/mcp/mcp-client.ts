@@ -176,6 +176,9 @@ export class MCPBrowserClient {
       const handler = this.handlers.get(msg.method);
       const startTime = Date.now();
       
+      // Capture routing metadata to echo back in response
+      const peerId = (msg as any).peerId;
+      
       // Get agent info from message or use connected agent
       const agentName = msg.agentName || this._connectedAgent?.name || 'Unknown';
       const agentColor = getAgentColor(agentName);
@@ -195,7 +198,7 @@ export class MCPBrowserClient {
       if (handler) {
         try {
           const result = await handler(msg.params || {});
-          this.send({ id: msg.id, result });
+          this.send({ id: msg.id, result, ...(peerId ? { peerId } : {}) } as any);
           
           // Update activity with success
           this.updateActivity(msg.id, {
@@ -205,7 +208,7 @@ export class MCPBrowserClient {
           });
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Unknown error';
-          this.send({ id: msg.id, error: { message } });
+          this.send({ id: msg.id, error: { message }, ...(peerId ? { peerId } : {}) } as any);
           
           // Update activity with error
           this.updateActivity(msg.id, {
@@ -217,8 +220,9 @@ export class MCPBrowserClient {
       } else {
         this.send({ 
           id: msg.id, 
-          error: { message: `Unknown tool: ${msg.method}` } 
-        });
+          error: { message: `Unknown tool: ${msg.method}` },
+          ...(peerId ? { peerId } : {}),
+        } as any);
         
         // Update activity with error
         this.updateActivity(msg.id, {

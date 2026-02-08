@@ -14,14 +14,18 @@ const ALLOWED_CLAUSES = [
     'COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'COLLECT', 'SIZE', 'HEAD', 'LAST',
     'TYPE', 'LABELS', 'ID', 'COALESCE', 'NULL', 'AND', 'OR', 'NOT', 'IN',
     'EXISTS', 'WITHIN', 'STARTS', 'ENDS', 'CONTAINS', 'TRUE', 'FALSE',
+    'UNWIND', // Read-only list expansion
 ];
+
+/** Maximum allowed query length in characters */
+const MAX_QUERY_LENGTH = 10_000;
 
 /**
  * Forbidden keywords that could modify the graph database
  */
 const FORBIDDEN_KEYWORDS = [
     'CREATE', 'MERGE', 'DELETE', 'DETACH', 'DROP', 'SET', 'REMOVE',
-    'CALL', 'LOAD', 'CSV', 'FOREACH', 'UNWIND', 'USING', 'INDEX',
+    'CALL', 'LOAD', 'CSV', 'FOREACH', 'USING', 'INDEX',
     'CONSTRAINT', 'DATABASE', 'USER', 'ROLE', 'GRANT', 'REVOKE',
     'DENY', 'SHOW', 'START', 'STOP', 'ALTER', 'RENAME',
 ];
@@ -69,6 +73,14 @@ export function sanitizeCypher(query: string): SanitizationResult {
         return {
             valid: false,
             error: 'Query is too short to be valid Cypher',
+        };
+    }
+
+    // Check for maximum length
+    if (trimmedQuery.length > MAX_QUERY_LENGTH) {
+        return {
+            valid: false,
+            error: `Query exceeds maximum length of ${MAX_QUERY_LENGTH} characters`,
         };
     }
 

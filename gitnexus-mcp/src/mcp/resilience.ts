@@ -10,8 +10,8 @@ import CircuitBreaker from 'opossum';
  */
 
 // Tool categorization constants
-export const QUICK_TOOLS = ['search', 'grep', 'read', 'context', 'overview', 'highlight'];
-export const HEAVY_TOOLS = ['cypher', 'impact', 'explore'];
+export const QUICK_TOOLS = ['search', 'grep', 'read', 'context', 'overview', 'highlight', 'diff', 'find_similar'];
+export const HEAVY_TOOLS = ['cypher', 'impact', 'explore', 'deep_dive', 'review_file', 'trace_flow', 'test_impact'];
 
 /**
  * Get timeout duration for a tool based on its category.

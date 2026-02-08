@@ -21,9 +21,10 @@ export async function serveCommand(options: ServeOptions) {
   const started = await client.start();
 
   if (!started) {
-    console.error(`Failed to start GitNexus browser bridge on port ${port}.`);
-    console.error('Another process is already using this port.');
-    process.exit(1);
+    // Bridge handles Hub→Peer fallback internally on EADDRINUSE.
+    // If we still get false, it means even Peer mode failed.
+    console.error(`Failed to start GitNexus bridge on port ${port} (Hub and Peer both failed).`);
+    console.error('Continuing in stdio-only mode — tool calls will fail until browser connects.');
   }
   
   // Start MCP server on stdio (AI tools connect here)

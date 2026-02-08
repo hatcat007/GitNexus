@@ -4,6 +4,13 @@ import { BridgeMessage, isRequest, isResponse } from './protocol.js';
 import { v4 as uuidv4 } from 'uuid';
 import { calculateBackoff } from '../mcp/resilience.js';
 
+/** Max message size in bytes (1 MB) */
+const MAX_MESSAGE_SIZE = 1 * 1024 * 1024;
+/** Max messages per second per client before rate-limiting */
+const RATE_LIMIT_PER_SEC = 50;
+/** Max pending requests before rejecting new ones */
+const MAX_PENDING_REQUESTS = 100;
+
 /**
  * Codebase context sent from the GitNexus browser app
  */
@@ -36,7 +43,7 @@ async function isPortAvailable(port: number): Promise<boolean> {
       server.close();
       resolve(true);
     });
-    server.listen(port);
+    server.listen(port, '127.0.0.1'); // Match Hub's bind address
   });
 }
 
@@ -94,13 +101,38 @@ export class WebSocketBridge {
     this.isHub = true;
     
     return new Promise((resolve) => {
-      this.wss = new WebSocketServer({ port: this.port });
+      this.wss = new WebSocketServer({
+        port: this.port,
+        host: '127.0.0.1',          // Bind to localhost only — no network exposure
+        maxPayload: MAX_MESSAGE_SIZE, // Reject oversized messages at the WS layer
+      });
       
       this.wss.on('connection', (ws, req) => {
-        // Security: Origin check could go here if req.headers.origin available
+        // Security: Only allow connections from localhost origins
+        const origin = req.headers.origin || '';
+        if (origin && !origin.match(/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/)) {
+          console.error(`Rejected connection from non-local origin: ${origin}`);
+          ws.close(4003, 'Forbidden: non-local origin');
+          return;
+        }
         
-        ws.on('message', (data) => this.handleHubMessage(ws, data));
-        ws.on('close', () => this.handleHubDisconnect(ws));
+        // Rate limiting state per client
+        (ws as any)._msgCount = 0;
+        (ws as any)._msgResetTimer = setInterval(() => { (ws as any)._msgCount = 0; }, 1000);
+        
+        ws.on('message', (data) => {
+          // Rate limit check
+          (ws as any)._msgCount++;
+          if ((ws as any)._msgCount > RATE_LIMIT_PER_SEC) {
+            console.error('Rate limit exceeded, dropping message');
+            return;
+          }
+          this.handleHubMessage(ws, data);
+        });
+        ws.on('close', () => {
+          clearInterval((ws as any)._msgResetTimer);
+          this.handleHubDisconnect(ws);
+        });
         ws.on('error', (err) => console.error('Hub client error:', err));
       });
       
@@ -109,9 +141,16 @@ export class WebSocketBridge {
         resolve(true);
       });
       
-      this.wss.on('error', (err) => {
-        console.error('Hub server error:', err);
-        resolve(false);
+      this.wss.on('error', (err: any) => {
+        console.error('Hub server error:', err.code || err);
+        this.isHub = false;
+        // Fall back to Peer mode on address-in-use
+        if (err.code === 'EADDRINUSE') {
+          console.error('Port in use, falling back to Peer mode');
+          this.startAsPeer().then(resolve);
+        } else {
+          resolve(false);
+        }
       });
     });
   }
@@ -368,6 +407,11 @@ export class WebSocketBridge {
     const id = `req_${++this.requestId}`;
     
     return new Promise((resolve, reject) => {
+      // Cap pending requests to prevent memory exhaustion
+      if (this.pendingRequests.size >= MAX_PENDING_REQUESTS) {
+        reject(new Error('Too many pending requests'));
+        return;
+      }
       this.pendingRequests.set(id, { resolve, reject });
       
       const msg: BridgeMessage = { 
