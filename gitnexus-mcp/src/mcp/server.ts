@@ -287,8 +287,30 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
         args.query = sanitized.query;
       }
       
-      // Step 3: Call the tool handler
-      const result = await client.callTool(name, args);
+      // Step 3: Call the tool handler with resilience (timeout + circuit breaker)
+      // First check if circuit is open
+      if (breaker.opened) {
+        log.warn('Circuit breaker is open');
+        return formatError(circuitOpenError(30));
+      }
+
+      // Wrap with timeout and execute through circuit breaker
+      let result;
+      try {
+        result = await withToolTimeout(name, async (signal) => {
+          // Execute through circuit breaker
+          return breaker.fire(name, args);
+        });
+      } catch (error) {
+        // Handle timeout specifically
+        if (error instanceof Error && error.message.includes('timed out')) {
+          const timeoutMs = parseInt(process.env.GITNEXUS_TIMEOUT_QUICK || '60000', 10);
+          log.warn({ timeoutMs }, 'Tool call timed out');
+          return formatError(timeoutError(name, timeoutMs));
+        }
+        // Re-throw for generic error handling below
+        throw error;
+      }
       
       const duration = Date.now() - startTime;
       log.info({ duration }, 'Tool call completed');
