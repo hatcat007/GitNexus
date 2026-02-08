@@ -264,7 +264,7 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
           onImpact={async (target: string, direction = 'downstream', maxDepth = 3) => {
             // Run impact analysis query
             const esc = cypherEsc(target);
-            const safeDepth = Math.min(Math.max(1, maxDepth), 10);
+            const safeDepth = Math.min(Math.max(1, maxDepth), 5);
             const pathClause = direction === 'upstream'
               ? `MATCH (connected)-[:CodeRelation*1..${safeDepth}]->(start)`
               : `MATCH (start)-[:CodeRelation*1..${safeDepth}]->(connected)`;
@@ -272,7 +272,10 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
               MATCH (start) WHERE start.id = '${esc}' OR start.name = '${esc}'
               WITH start
               ${pathClause}
-              RETURN DISTINCT connected.id AS id, connected.name AS name, labels(connected) AS labels
+              WITH DISTINCT connected
+              WHERE label(connected) IN ['File', 'Function', 'Class', 'Method', 'Interface']
+              RETURN connected.id AS id, connected.name AS name, label(connected) AS type, connected.filePath AS filePath
+              LIMIT 50
             `;
             const results = await runQuery(query);
             // Trigger ripple animation on impact results
@@ -287,7 +290,8 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
             const clustersQuery = `
               MATCH (c:Community)
               OPTIONAL MATCH (c)<-[:CodeRelation {type: 'MEMBER_OF'}]-(m)
-              RETURN c.id AS id, c.label AS label, c.cohesion AS cohesion, c.description AS description, count(m) AS memberCount
+              WITH c, count(m) AS memberCount
+              RETURN c.id AS id, c.label AS label, c.cohesion AS cohesion, c.description AS description, memberCount
               ORDER BY memberCount DESC
               LIMIT 50
             `;
@@ -339,8 +343,9 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
                 WHERE n.name = '${esc}' OR n.id ENDS WITH ':${esc}'
                 OPTIONAL MATCH (n)-[:CodeRelation {type: 'MEMBER_OF'}]->(c:Community)
                 OPTIONAL MATCH (n)-[r:CodeRelation {type: 'STEP_IN_PROCESS'}]->(p:Process)
+                WITH n, c, collect(DISTINCT p.label) AS processes
                 RETURN n.id AS id, n.name AS name, n.filePath AS filePath, label(n) AS nodeType,
-                       c.label AS cluster, collect({process: p.label, step: r.step}) AS processes
+                       c.label AS cluster, processes
                 LIMIT 1
               `;
               return await runQuery(query);
@@ -432,28 +437,46 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
           }}
           onDeepDive={async (name: string) => {
             // Composite: explore + impact + read in one call
+            // Uses 4 parallel queries to avoid cartesian product explosion
             const esc = cypherEsc(name);
-            const [symbolRows, impactRows] = await Promise.all([
+            const [symbolRows, callerRows, calleeRows, impactRows] = await Promise.all([
+              // 1. Symbol identity + cluster + processes (no cartesian — cluster is 1:1)
               runQuery(`
                 MATCH (n) WHERE n.name = '${esc}' OR n.id ENDS WITH ':${esc}'
                 OPTIONAL MATCH (n)-[:CodeRelation {type: 'MEMBER_OF'}]->(c:Community)
                 OPTIONAL MATCH (n)-[r:CodeRelation {type: 'STEP_IN_PROCESS'}]->(p:Process)
-                OPTIONAL MATCH (caller)-[:CodeRelation {type: 'CALLS'}]->(n)
-                OPTIONAL MATCH (n)-[:CodeRelation {type: 'CALLS'}]->(callee)
+                WITH n, c, collect(DISTINCT p.label) AS processes
                 RETURN n.id AS id, n.name AS name, n.filePath AS filePath, label(n) AS nodeType,
-                       c.label AS cluster, collect(DISTINCT {process: p.label, step: r.step}) AS processes,
-                       collect(DISTINCT caller.name) AS callers, collect(DISTINCT callee.name) AS callees
+                       c.label AS cluster, processes
                 LIMIT 1
               `),
+              // 2. Who calls this symbol
+              runQuery(`
+                MATCH (caller)-[:CodeRelation {type: 'CALLS'}]->(n)
+                WHERE n.name = '${esc}' OR n.id ENDS WITH ':${esc}'
+                RETURN DISTINCT caller.name AS name
+                LIMIT 30
+              `),
+              // 3. What this symbol calls
+              runQuery(`
+                MATCH (n)-[:CodeRelation {type: 'CALLS'}]->(callee)
+                WHERE n.name = '${esc}' OR n.id ENDS WITH ':${esc}'
+                RETURN DISTINCT callee.name AS name
+                LIMIT 30
+              `),
+              // 4. Downstream impact (3-hop)
               runQuery(`
                 MATCH (start) WHERE start.name = '${esc}' OR start.id ENDS WITH ':${esc}'
                 WITH start
-                MATCH (start)-[*1..3]->(affected)
-                RETURN DISTINCT affected.id AS id, affected.name AS name, labels(affected) AS labels
+                MATCH (start)-[:CodeRelation*1..3]->(affected)
+                WHERE label(affected) IN ['File', 'Function', 'Class', 'Method', 'Interface']
+                RETURN DISTINCT affected.id AS id, affected.name AS name, label(affected) AS type, affected.filePath AS filePath
                 LIMIT 20
               `),
             ]);
             const symbol = symbolRows[0] ?? null;
+            const callers = callerRows.map((r: any) => r.name).filter(Boolean);
+            const callees = calleeRows.map((r: any) => r.name).filter(Boolean);
             let source = null;
             if (symbol?.filePath) {
               const content = fileContents.get(symbol.filePath);
@@ -464,7 +487,7 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
             // Highlight in graph
             const affectedIds = impactRows.map((r: any) => r.id).filter(Boolean);
             if (affectedIds.length > 0) triggerNodeAnimation(affectedIds, 'pulse');
-            return { symbol, source, impact: { downstream: impactRows, count: affectedIds.length }, connections: { callers: symbol?.callers ?? [], callees: symbol?.callees ?? [] } };
+            return { symbol, source, impact: { downstream: impactRows, count: affectedIds.length }, connections: { callers, callees } };
           }}
           onReviewFile={async (filePath: string) => {
             // Composite: read + symbols + cluster + processes + deps
@@ -480,8 +503,9 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
                 MATCH (f:File)-[:CodeRelation {type: 'DEFINES'}]->(s)
                 WHERE f.filePath ENDS WITH '${esc}' OR f.id ENDS WITH '${esc}'
                 OPTIONAL MATCH (s)-[:CodeRelation {type: 'MEMBER_OF'}]->(c:Community)
-                OPTIONAL MATCH (s)-[r:CodeRelation {type: 'STEP_IN_PROCESS'}]->(p:Process)
-                RETURN s.name AS name, label(s) AS type, c.label AS cluster, collect(DISTINCT p.label) AS processes
+                OPTIONAL MATCH (s)-[:CodeRelation {type: 'STEP_IN_PROCESS'}]->(p:Process)
+                WITH s, c.label AS cluster, collect(DISTINCT p.label) AS processes
+                RETURN s.name AS name, label(s) AS type, cluster, processes
               `),
               runQuery(`
                 MATCH (f:File)-[:CodeRelation {type: 'IMPORTS'}]->(g:File)
@@ -580,7 +604,9 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
               runQuery(`
                 MATCH (start) WHERE start.id IN [${idList}]
                 MATCH (start)<-[:CodeRelation*1..${safeDepth}]-(affected)
-                RETURN DISTINCT affected.id AS id, affected.name AS name, affected.filePath AS filePath, labels(affected) AS labels
+                WHERE label(affected) IN ['File', 'Function', 'Class', 'Method', 'Interface']
+                RETURN DISTINCT affected.id AS id, affected.name AS name, affected.filePath AS filePath, label(affected) AS type
+                LIMIT 100
               `),
               runQuery(`
                 MATCH (start) WHERE start.id IN [${idList}]
