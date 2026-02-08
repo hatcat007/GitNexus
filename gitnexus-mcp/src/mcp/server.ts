@@ -19,6 +19,10 @@ import {
   ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { GITNEXUS_TOOLS } from './tools.js';
+import { logger, createRequestLogger } from './logger.js';
+import { formatError, ErrorCodes } from './errors.js';
+import { validateToolInput } from './schemas.js';
+import { sanitizeCypher } from './cypher-sanitizer.js';
 import type { CodebaseContext } from '../bridge/websocket-server.js';
 
 // Interface for anything that can call tools (DaemonClient or WebSocketBridge)
@@ -179,11 +183,54 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
 
   // Handle tool calls
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
-    const { name, arguments: args } = request.params;
+    const { name, arguments: args = {} } = request.params;
+    
+    // Generate request ID and create child logger
+    const requestId = `req_${Date.now()}`;
+    const log = createRequestLogger(requestId, name);
+    const startTime = Date.now();
+    
+    log.info({ args }, 'Tool call started');
 
     try {
-      // Forward the tool call to the browser via daemon
+      // Step 1: Validate input against Zod schema BEFORE dispatch
+      const prefixedName = `gitnexus_${name}` as Parameters<typeof validateToolInput>[0];
+      const validation = validateToolInput(prefixedName, args);
+      
+      if (!validation.success) {
+        log.warn({ errors: validation.error.issues }, 'Validation failed');
+        return formatError({
+          code: ErrorCodes.VALIDATION_ERROR,
+          message: 'Invalid input parameters',
+          details: { issues: validation.error.issues },
+          suggestion: 'Check parameter types and constraints against the tool schema',
+        });
+      }
+      
+      // Step 2: For cypher tool, sanitize query BEFORE execution
+      // Use validated data which has proper types
+      const validatedArgs = validation.data;
+      if (name === 'cypher' && validatedArgs && typeof validatedArgs === 'object' && 'query' in validatedArgs) {
+        const query = (validatedArgs as { query: string }).query;
+        const sanitized = sanitizeCypher(query);
+        if (!sanitized.valid) {
+          log.warn({ query, error: sanitized.error }, 'Cypher query rejected');
+          return formatError({
+            code: ErrorCodes.CYPHER_FORBIDDEN,
+            message: 'Forbidden Cypher operation',
+            details: { reason: sanitized.error, keyword: sanitized.forbiddenKeyword },
+            suggestion: 'Only read-only queries (MATCH, RETURN, WHERE, WITH, ORDER BY, LIMIT, SKIP) are allowed',
+          });
+        }
+        // Update args with sanitized query
+        args.query = sanitized.query;
+      }
+      
+      // Step 3: Call the tool handler
       const result = await client.callTool(name, args);
+      
+      const duration = Date.now() - startTime;
+      log.info({ duration }, 'Tool call completed');
 
       return {
         content: [
@@ -194,16 +241,17 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
         ],
       };
     } catch (error) {
+      const duration = Date.now() - startTime;
       const message = error instanceof Error ? error.message : 'Unknown error';
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Error: ${message}`,
-          },
-        ],
-        isError: true,
-      };
+      
+      log.error({ error: message, duration }, 'Tool call failed');
+      
+      return formatError({
+        code: ErrorCodes.INTERNAL_ERROR,
+        message: 'Internal server error',
+        details: { error: message },
+        suggestion: 'This is an unexpected error. Please try again or report the issue if it persists.',
+      });
     }
   });
 
