@@ -31,6 +31,8 @@ interface ToolCaller {
   disconnect?(): void;
   context?: CodebaseContext | null;
   onContextChange?: (listener: (context: CodebaseContext | null) => void) => () => void;
+  isConnected?: boolean;
+  mode?: 'hub' | 'peer';
 }
 
 /**
@@ -123,25 +125,51 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
   server.setRequestHandler(ListResourcesRequestSchema, async () => {
     const context = client.context;
     
-    if (!context) {
-      return { resources: [] };
+    const resources: any[] = [
+      {
+        uri: 'gitnexus://codebase/health',
+        name: 'GitNexus Health',
+        description: 'Connection status and graph availability',
+        mimeType: 'application/json',
+      },
+    ];
+    
+    if (context) {
+      resources.unshift({
+        uri: 'gitnexus://codebase/context',
+        name: `GitNexus: ${context.projectName}`,
+        description: `Codebase context for ${context.projectName} (${context.stats.fileCount} files, ${context.stats.functionCount} functions)`,
+        mimeType: 'text/markdown',
+      });
     }
     
-    return {
-      resources: [
-        {
-          uri: 'gitnexus://codebase/context',
-          name: `GitNexus: ${context.projectName}`,
-          description: `Codebase context for ${context.projectName} (${context.stats.fileCount} files, ${context.stats.functionCount} functions)`,
-          mimeType: 'text/markdown',
-        },
-      ],
-    };
+    return { resources };
   });
 
   // Handle read resource request
   server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
     const { uri } = request.params;
+    
+    // Health check resource
+    if (uri === 'gitnexus://codebase/health') {
+      const context = client.context;
+      const health = {
+        status: client.isConnected ? (context ? 'healthy' : 'no_context') : 'disconnected',
+        timestamp: new Date().toISOString(),
+        connection: {
+          browser: client.isConnected || false,
+          mode: client.mode || 'unknown',
+        },
+        context: context ? {
+          project: context.projectName,
+          files: context.stats.fileCount,
+          functions: context.stats.functionCount,
+        } : null,
+      };
+      return {
+        contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(health, null, 2) }],
+      };
+    }
     
     if (uri === 'gitnexus://codebase/context') {
       const context = client.context;

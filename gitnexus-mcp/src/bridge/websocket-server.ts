@@ -330,6 +330,10 @@ export class WebSocketBridge {
   get context(): any {
     return this._context;
   }
+  
+  get mode(): 'hub' | 'peer' {
+    return this.isHub ? 'hub' : 'peer';
+  }
 
   onContextChange(listener: (context: any) => void) {
     this.contextListeners.add(listener);
