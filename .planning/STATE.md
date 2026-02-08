@@ -12,30 +12,30 @@ See: .planning/PROJECT.md (updated 2025-02-07)
 Phase: 2 of 4 (Resilience) — IN PROGRESS
 Plan: 2 of 5 in current phase (02-resilience)
 Status: In progress
-Last activity: 2026-02-08 — Completed 02-02 (Resilience Error Codes)
+Last activity: 2026-02-08 — Completed 02-01 (Core Resilience Module)
 
-Progress: [████████░░] 50% (4/8 plans)
+Progress: [█████████░] 62% (5/8 plans)
 
 Config: commit_docs=true, model_profile=balanced
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 4.0 minutes
-- Total execution time: 0.27 hours
+- Total plans completed: 5
+- Average duration: 4.2 minutes
+- Total execution time: 0.35 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation & Security | 3 | 11 min | 3.7 min |
-| 2. Resilience | 1 | 6 min | 6.0 min |
+| 2. Resilience | 2 | 13 min | 6.5 min |
 | 3. Performance | 0 | TBD | - |
 | 4. Protection | 0 | TBD | - |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (6 min), 02-01 (5 min), 01-03 (4 min), 01-02 (2 min), 01-01 (5 min)
+- Last 5 plans: 02-01 (7 min), 02-02 (6 min), 01-03 (4 min), 01-02 (2 min), 01-01 (5 min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -49,6 +49,9 @@ Recent decisions affecting current work:
 
 | Date | Decision | Impact | ADR |
 |------|----------|--------|-----|
+| 2026-02-08 | Full Jitter over ±10-20% jitter for backoff | 50%+ better contention reduction per AWS research | - |
+| 2026-02-08 | AbortController over AbortSignal.timeout() | Better error handling control | - |
+| 2026-02-08 | Consecutive failure tracking for circuit breaker | Predictable behavior (5 failures = open) | - |
 | 2026-02-08 | `retryable` as required field on GitNexusError | All errors explicitly state if retry is possible | - |
 | 2026-02-08 | `retryAfter` optional for time-based backoff | Circuit breaker can specify wait time | - |
 | 2026-02-08 | Debug info behind GITNEXUS_DEBUG env var | Reduces production noise | - |
@@ -71,8 +74,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-08T10:44:33Z
-Stopped at: Completed 02-02-PLAN.md
+Last session: 2026-02-08T10:45:19Z
+Stopped at: Completed 02-01-PLAN.md (Core Resilience Module)
 Resume file: None
 
 Next up: 02-03-PLAN.md (Connection State Machine)
