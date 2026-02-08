@@ -148,8 +148,9 @@ export class WebSocketBridge {
           if (this.browserClient) this.browserClient.close();
           this.browserClient = ws;
           console.error('Browser connected to Hub');
+          this.resetReconnectState();  // Reset backoff on reconnection
         }
-        
+
         this._context = msg.params;
         this.notifyContextListeners();
         
@@ -439,6 +440,7 @@ export class WebSocketBridge {
   }
 
   close() {
+    this.cancelReconnect();
     this.wss?.close();
     this.client?.close();
   }
