@@ -5,37 +5,37 @@
 See: .planning/PROJECT.md (updated 2025-02-07)
 
 **Core value:** AI agents can reliably query GitNexus's graph-based code intelligence without failures, timeouts, or incomplete results—every tool call returns decision-ready context.
-**Current focus:** Phase 2: Resilience (Phase 1 complete)
+**Current focus:** Phase 2: Resilience (in progress)
 
 ## Current Position
 
-Phase: 1 of 4 (Foundation & Security) — COMPLETE
-Plan: 3 of 3 in current phase (01-foundation-security)
-Status: Phase complete
-Last activity: 2026-02-08 — Completed 01-03 (Health, Shutdown, Security)
+Phase: 2 of 4 (Resilience) — IN PROGRESS
+Plan: 2 of 5 in current phase (02-resilience)
+Status: In progress
+Last activity: 2026-02-08 — Completed 02-02 (Resilience Error Codes)
 
-Progress: [██████████] 25%
+Progress: [████████░░] 50% (4/8 plans)
 
 Config: commit_docs=true, model_profile=balanced
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 3.7 minutes
-- Total execution time: 0.18 hours
+- Total plans completed: 4
+- Average duration: 4.0 minutes
+- Total execution time: 0.27 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation & Security | 3 | 11 min | 3.7 min |
-| 2. Resilience | 0 | TBD | - |
+| 2. Resilience | 1 | 6 min | 6.0 min |
 | 3. Performance | 0 | TBD | - |
 | 4. Protection | 0 | TBD | - |
 
 **Recent Trend:**
-- Last 5 plans: 01-03 (4 min), 01-02 (2 min), 01-01 (5 min)
+- Last 5 plans: 02-02 (6 min), 02-01 (5 min), 01-03 (4 min), 01-02 (2 min), 01-01 (5 min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -49,6 +49,9 @@ Recent decisions affecting current work:
 
 | Date | Decision | Impact | ADR |
 |------|----------|--------|-----|
+| 2026-02-08 | `retryable` as required field on GitNexusError | All errors explicitly state if retry is possible | - |
+| 2026-02-08 | `retryAfter` optional for time-based backoff | Circuit breaker can specify wait time | - |
+| 2026-02-08 | Debug info behind GITNEXUS_DEBUG env var | Reduces production noise | - |
 | 2026-02-08 | `mode` getter over `isHub` boolean | Cleaner API for hub/peer detection | - |
 | 2026-02-08 | 2-second shutdown wait | Balance pending requests with responsiveness | - |
 | 2026-02-08 | Log-only unhandledRejection | Non-fatal rejections don't crash server | - |
@@ -68,8 +71,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-08T08:28:00Z
-Stopped at: Completed 01-03-PLAN.md (Phase 1 complete)
+Last session: 2026-02-08T10:44:33Z
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None
 
-Next up: Phase 2 planning (Resilience)
+Next up: 02-03-PLAN.md (Connection State Machine)
