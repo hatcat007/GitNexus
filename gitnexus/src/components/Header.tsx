@@ -41,6 +41,9 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
     startNewSession,
     saveCurrentSession,
     setViewMode,
+    // Background reindex
+    isReindexing,
+    reindexFromGitHub,
   } = useAppState();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -243,11 +246,15 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
             const results = await runQuery(query);
             return results;
           }}
-          onImpact={async (nodeId: string, hops = 2) => {
+          onImpact={async (target: string, direction = 'downstream', maxDepth = 3) => {
             // Run impact analysis query
+            const dirClause = direction === 'upstream'
+              ? `MATCH (connected)-[*1..${maxDepth}]->(start)`
+              : `MATCH (start)-[*1..${maxDepth}]->(connected)`;
             const query = `
-              MATCH (start)-[*1..${hops}]-(connected)
-              WHERE start.id = '${nodeId}' OR start.name = '${nodeId}'
+              MATCH (start) WHERE start.id = '${target}' OR start.name = '${target}'
+              WITH start
+              ${dirClause.replace('MATCH (start)', '')}
               RETURN DISTINCT connected.id AS id, connected.name AS name, labels(connected) AS labels
             `;
             const results = await runQuery(query);
@@ -278,6 +285,12 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
               runQuery(processesQuery),
             ]);
             return { clusters, processes };
+          }}
+          onHighlight={async (nodeIds: string[]) => {
+            // Highlight nodes in graph visualization
+            setHighlightedNodeIds(new Set(nodeIds));
+            triggerNodeAnimation(nodeIds, 'glow');
+            return { highlighted: nodeIds.length };
           }}
           onExplore={async (target: string, type?: 'symbol' | 'cluster' | 'process') => {
             // Explore a specific target
@@ -400,18 +413,26 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
         {sessionSource && (
           <button
             onClick={() => {
-              // Trigger re-index: save current session first, then go to onboarding
-              // with a flag so DropZone knows to pre-fill the source
-              saveCurrentSession().then(() => {
-                // Use the existing onGitClone/onFileSelect flows via onboarding
-                setViewMode('onboarding');
-              });
+              if (sessionSource.type === 'github') {
+                // Background reindex — stays in exploring view
+                reindexFromGitHub();
+              } else {
+                // ZIP sessions: go to onboarding to re-upload
+                saveCurrentSession().then(() => {
+                  setViewMode('onboarding');
+                });
+              }
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-text-secondary hover:bg-hover hover:text-text-primary transition-colors border border-border-subtle"
+            disabled={isReindexing}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors border border-border-subtle ${
+              isReindexing
+                ? 'text-accent bg-accent/10 border-accent/30 cursor-wait'
+                : 'text-text-secondary hover:bg-hover hover:text-text-primary'
+            }`}
             title={`Re-index from ${sessionSource.type === 'github' ? sessionSource.url : 'ZIP'}`}
           >
-            <RefreshCw className="w-4 h-4" />
-            <span className="hidden sm:inline">Re-index</span>
+            <RefreshCw className={`w-4 h-4 ${isReindexing ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">{isReindexing ? 'Re-indexing...' : 'Re-index'}</span>
           </button>
         )}
         <button

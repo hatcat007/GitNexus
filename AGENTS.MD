@@ -1,0 +1,1 @@
+Never use "find" tool, use "fd" tool instead.

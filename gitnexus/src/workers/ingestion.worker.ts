@@ -62,6 +62,21 @@ let isRestoringSession = false;
  */
 const workerApi = {
   /**
+   * Reset KuzuDB and embedding state for a clean reindex.
+   * Must be called before runPipelineFromFiles during background reindex
+   * to avoid duplicate primary key errors.
+   */
+  async resetForReindex(): Promise<void> {
+    const kuzu = await getKuzuAdapter();
+    await kuzu.resetKuzu();
+    isEmbeddingComplete = false;
+    embeddingProgress = null;
+    if (import.meta.env.DEV) {
+      console.log('[ReIndex] KuzuDB reset + embedding state cleared');
+    }
+  },
+
+  /**
    * Run the ingestion pipeline in the worker thread
    * @param file - The ZIP file to process
    * @param onProgress - Proxied callback for progress updates (runs on main thread)

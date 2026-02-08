@@ -24,6 +24,8 @@ import {
 } from '../services/session-store';
 import { v4 as uuidv4 } from 'uuid';
 import type { RestoreProgress } from '../components/SessionRestoreOverlay';
+import { cloneRepository } from '../services/git-clone';
+import { addToast, type ChangeLogEntry } from './useToast';
 
 // Module-level guards: survive React StrictMode unmount/remount cycles
 let _autoRestoreStarted = false;
@@ -197,6 +199,10 @@ interface AppState {
   sessionEmbeddingsRestored: boolean;
   /** After re-index pipeline completes, call this to preserve embeddings for unchanged files */
   preserveDataForReindex: (newFileContents: Map<string, string>) => Promise<number>;
+
+  // Background reindex
+  isReindexing: boolean;
+  reindexFromGitHub: () => Promise<void>;
 }
 
 const AppStateContext = createContext<AppState | null>(null);
@@ -339,6 +345,9 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
   const [restoreProgress, setRestoreProgress] = useState<RestoreProgress | null>(null);
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sessionRestoreEmbeddingsRef = useRef(false);
+
+  // Background reindex state
+  const [isReindexing, setIsReindexing] = useState(false);
 
   // --- Session persistence methods ---
 
@@ -1128,6 +1137,175 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [projectName]);
 
+  /**
+   * Background reindex for GitHub sessions.
+   * Re-clones the repo, diffs file hashes, runs pipeline only if changes found,
+   * preserves embeddings for unchanged files, and shows toast notifications.
+   */
+  const reindexFromGitHub = useCallback(async (): Promise<void> => {
+    if (isReindexing) return;
+    if (!sessionSource || sessionSource.type !== 'github' || !sessionSource.url) {
+      addToast({ type: 'error', title: 'Reindex failed', message: 'No GitHub source configured for this session.' });
+      return;
+    }
+
+    setIsReindexing(true);
+    addToast({ type: 'info', title: 'Re-indexing...', message: 'Cloning latest from GitHub', duration: 0 });
+
+    try {
+      // Step 1: Save current session before reindex
+      await saveCurrentSession();
+
+      // Step 2: Re-clone the repository
+      const files = await cloneRepository(
+        sessionSource.url,
+        (phase, percent) => {
+          console.log(`[ReIndex] Clone: ${phase} ${percent}%`);
+        },
+        undefined,
+        sessionSource.branch || 'main'
+      );
+
+      // Step 3: Compute new file hashes
+      const newFileHashes: Record<string, string> = {};
+      for (const file of files) {
+        try {
+          const buf = new TextEncoder().encode(file.content);
+          const hashBuf = await crypto.subtle.digest('SHA-256', buf);
+          newFileHashes[file.path] = Array.from(new Uint8Array(hashBuf))
+            .map(b => b.toString(16).padStart(2, '0'))
+            .join('');
+        } catch { /* skip hash errors */ }
+      }
+
+      // Step 4: Load old session hashes and diff
+      const oldSession = currentSessionId ? await dbGetSession(currentSessionId) : null;
+      const oldFileHashes = oldSession?.fileHashes ?? {};
+
+      const allPaths = new Set([...Object.keys(oldFileHashes), ...Object.keys(newFileHashes)]);
+      const added: string[] = [];
+      const modified: string[] = [];
+      const deleted: string[] = [];
+      const unchanged: string[] = [];
+
+      for (const path of allPaths) {
+        const oldHash = oldFileHashes[path];
+        const newHash = newFileHashes[path];
+        if (!oldHash && newHash) added.push(path);
+        else if (oldHash && !newHash) deleted.push(path);
+        else if (oldHash !== newHash) modified.push(path);
+        else unchanged.push(path);
+      }
+
+      const totalChanges = added.length + modified.length + deleted.length;
+      console.log(`[ReIndex] Diff: +${added.length} ~${modified.length} -${deleted.length} =${unchanged.length}`);
+
+      // Step 5: If no changes, show toast and return
+      if (totalChanges === 0) {
+        addToast({
+          type: 'success',
+          title: 'Already up to date',
+          message: `No changes found on ${sessionSource.branch || 'main'}. ${unchanged.length} files unchanged.`,
+          duration: 4000,
+        });
+        setIsReindexing(false);
+        return;
+      }
+
+      // Step 6: Changes found — run the full pipeline on new files
+      addToast({
+        type: 'info',
+        title: 'Changes detected',
+        message: `Found ${totalChanges} change${totalChanges > 1 ? 's' : ''}. Rebuilding graph...`,
+        duration: 0,
+      });
+
+      // Reset KuzuDB + embedding state before re-running pipeline
+      // (prevents duplicate primary key errors and embedding skip)
+      const api = apiRef.current;
+      if (api) await api.resetForReindex();
+
+      const clusteringConfig = llmSettings.intelligentClustering
+        ? getActiveProviderConfig() ?? undefined
+        : undefined;
+
+      const result = await runPipelineFromFiles(files, (p) => {
+        console.log(`[ReIndex] Pipeline: ${p.phase} ${p.percent}%`);
+      }, clusteringConfig);
+
+      // Step 7: Preserve embeddings for unchanged files
+      const preservedCount = await (async () => {
+        if (!currentSessionId || !oldSession?.fileHashes || !oldSession?.embeddings) return 0;
+        const api = apiRef.current;
+        if (!api) return 0;
+
+        const oldEnrichments = (oldSession.graph.nodes ?? [])
+          .filter((n: any) => n.label === 'Community' && n.properties?.enrichedBy === 'llm')
+          .map((n: any) => ({
+            id: n.id,
+            name: n.properties?.name ?? '',
+            keywords: n.properties?.keywords ?? [],
+            description: n.properties?.description ?? '',
+          }));
+
+        try {
+          const r = await api.preserveUnchangedData(
+            oldSession.fileHashes,
+            newFileHashes,
+            oldSession.embeddings,
+            oldEnrichments
+          );
+          return r.preservedEmbeddings;
+        } catch { return 0; }
+      })();
+
+      // Step 8: Update graph and file contents in-place
+      setGraph(result.graph);
+      setFileContents(result.fileContents);
+
+      // Step 9: Start embeddings (will skip already-preserved nodes)
+      startEmbeddings().catch((err) => {
+        if (err?.name === 'WebGPUNotAvailableError' || err?.message?.includes('WebGPU')) {
+          startEmbeddings('wasm').catch(console.warn);
+        }
+      });
+
+      // Re-init agent with updated context
+      if (getActiveProviderConfig()) {
+        initializeAgent(projectName || undefined);
+      }
+
+      // Start background enrichment if enabled
+      startBackgroundEnrichment().catch(console.warn);
+
+      // Step 10: Build changelog and show results toast
+      const changes: ChangeLogEntry[] = [
+        ...added.map(p => ({ type: 'added' as const, path: p })),
+        ...modified.map(p => ({ type: 'modified' as const, path: p })),
+        ...deleted.map(p => ({ type: 'deleted' as const, path: p })),
+      ];
+
+      addToast({
+        type: 'changelog',
+        title: 'Reindex complete',
+        message: `${totalChanges} change${totalChanges > 1 ? 's' : ''} applied. ${preservedCount} embeddings preserved.`,
+        changes,
+        duration: 0,
+      });
+
+    } catch (err) {
+      console.error('[ReIndex] Failed:', err);
+      addToast({
+        type: 'error',
+        title: 'Reindex failed',
+        message: err instanceof Error ? err.message : 'Unknown error during re-indexing.',
+        duration: 8000,
+      });
+    } finally {
+      setIsReindexing(false);
+    }
+  }, [isReindexing, sessionSource, currentSessionId, saveCurrentSession, runPipelineFromFiles, startEmbeddings, initializeAgent, startBackgroundEnrichment, projectName, llmSettings.intelligentClustering]);
+
   const sendChatMessage = useCallback(async (message: string): Promise<void> => {
     const api = apiRef.current;
     if (!api) {
@@ -1637,6 +1815,9 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     startNewSession,
     sessionEmbeddingsRestored: sessionRestoreEmbeddingsRef.current,
     preserveDataForReindex,
+    // Background reindex
+    isReindexing,
+    reindexFromGitHub,
   };
 
   return (

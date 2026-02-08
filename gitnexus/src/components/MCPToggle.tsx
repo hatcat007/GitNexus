@@ -14,11 +14,12 @@ type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'error';
 interface MCPToggleProps {
     onSearch?: (query: string, limit?: number) => Promise<any>;
     onCypher?: (query: string) => Promise<any>;
-    onImpact?: (nodeId: string, hops?: number) => Promise<any>;
+    onImpact?: (target: string, direction?: string, maxDepth?: number) => Promise<any>;
     onGrep?: (pattern: string, caseSensitive?: boolean, maxResults?: number) => Promise<any>;
     onRead?: (filePath: string, startLine?: number, endLine?: number) => Promise<any>;
     onOverview?: () => Promise<any>;
-    onExplore?: (target: string, type?: 'symbol' | 'cluster' | 'process') => Promise<any>;
+    onExplore?: (name: string, type?: 'symbol' | 'cluster' | 'process') => Promise<any>;
+    onHighlight?: (nodeIds: string[], color?: string) => Promise<any>;
     showOnboardingTip?: boolean;
     getContext?: () => Promise<CodebaseContext | null>;
 }
@@ -43,6 +44,7 @@ export function MCPToggle({
     onRead,
     onOverview,
     onExplore,
+    onHighlight,
     showOnboardingTip = false,
     getContext,
 }: MCPToggleProps = {}) {
@@ -94,11 +96,12 @@ export function MCPToggle({
             // Register tool handlers
             if (onSearch) client.registerHandler('search', async (params) => onSearch(params.query, params.limit));
             if (onCypher) client.registerHandler('cypher', async (params) => onCypher(params.query));
-            if (onImpact) client.registerHandler('impact', async (params) => onImpact(params.nodeId, params.hops));
+            if (onImpact) client.registerHandler('impact', async (params) => onImpact(params.target, params.direction, params.maxDepth));
             if (onGrep) client.registerHandler('grep', async (params) => onGrep(params.pattern, params.caseSensitive, params.maxResults));
             if (onRead) client.registerHandler('read', async (params) => onRead(params.filePath, params.startLine, params.endLine));
             if (onOverview) client.registerHandler('overview', async () => onOverview());
-            if (onExplore) client.registerHandler('explore', async (params) => onExplore(params.target, params.type));
+            if (onExplore) client.registerHandler('explore', async (params) => onExplore(params.name, params.type));
+            if (onHighlight) client.registerHandler('highlight', async (params) => onHighlight(params.nodeIds, params.color));
             if (getContext) client.registerHandler('context', async () => getContext());
 
             setStatus('connected');
@@ -117,7 +120,7 @@ export function MCPToggle({
         } catch {
             setStatus('error');
         }
-    }, [onSearch, onCypher, onImpact, onGrep, onRead, onOverview, onExplore, getContext]);
+    }, [onSearch, onCypher, onImpact, onGrep, onRead, onOverview, onExplore, onHighlight, getContext]);
 
     const disconnect = useCallback(() => {
         const client = getMCPClient();

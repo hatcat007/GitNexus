@@ -15,6 +15,8 @@ import { getActiveProviderConfig } from './core/llm/settings-service';
 import { ProviderConfig } from './core/llm/types';
 import { IntelligentClusteringModal } from './components/IntelligentClusteringModal';
 import { SessionRestoreOverlay } from './components/SessionRestoreOverlay';
+import { ToastContainer } from './components/ToastContainer';
+import { useChangeDetector } from './hooks/useChangeDetector';
 
 const AppContent = () => {
   const {
@@ -50,6 +52,9 @@ const AppContent = () => {
     restoreProgress,
     dismissRestoreOverlay,
     startNewSession,
+    // Background reindex
+    sessionSource,
+    reindexFromGitHub,
   } = useAppState();
 
   // Access currentSessionId + graph + projectName for session restore side-effects
@@ -118,6 +123,14 @@ const AppContent = () => {
     updateLLMSettings({ hasSeenClusteringPrompt: true });
     setShowClusteringModal(false);
   }, [updateLLMSettings]);
+
+  // Auto-detect GitHub changes every 30s
+  useChangeDetector({
+    url: sessionSource?.type === 'github' ? sessionSource.url : undefined,
+    branch: sessionSource?.type === 'github' ? (sessionSource.branch || 'main') : 'main',
+    enabled: viewMode === 'exploring' && sessionSource?.type === 'github',
+    onReindex: reindexFromGitHub,
+  });
 
   const graphCanvasRef = useRef<GraphCanvasHandle>(null);
 
@@ -332,6 +345,7 @@ function App() {
   return (
     <AppStateProvider>
       <AppContent />
+      <ToastContainer />
     </AppStateProvider>
   );
 }
