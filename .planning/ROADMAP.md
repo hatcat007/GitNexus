@@ -45,10 +45,14 @@ Plans:
   1. Each tool call has configurable timeout (via AbortController), no hardcoded 30s
   2. Circuit breaker prevents cascade failures when browser/graph unavailable
   3. WebSocket reconnects use exponential backoff with jitter
-**Plans**: TBD (during planning)
+**Plans**: 5 plans
 
 Plans:
-- [ ] 02-01: (TBD during planning)
+- [ ] 02-01-PLAN.md — Create resilience module (timeout, circuit breaker, backoff)
+- [ ] 02-02-PLAN.md — Extend error codes for resilience failures
+- [ ] 02-03-PLAN.md — Integrate timeout + circuit breaker into server
+- [ ] 02-04-PLAN.md — Add exponential backoff to WebSocket reconnection
+- [ ] 02-05-PLAN.md — Verify resilience system end-to-end
 
 ### Phase 3: Performance
 **Goal**: Frequently-accessed data is cached to reduce latency and load
@@ -80,6 +84,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Security | 3/3 | Complete | 2026-02-08 |
-| 2. Resilience | 0/TBD | Not started | - |
+| 2. Resilience | 0/5 | Not started | - |
 | 3. Performance | 0/TBD | Not started | - |
 | 4. Protection | 0/TBD | Not started | - |
