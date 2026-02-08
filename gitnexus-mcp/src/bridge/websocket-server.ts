@@ -395,7 +395,41 @@ export class WebSocketBridge {
       }, 30000);
     });
   }
-  
+
+  /**
+   * Schedule a reconnection attempt with exponential backoff
+   */
+  private scheduleReconnect(attempt: number, connectFn: () => void): void {
+    const delay = calculateBackoff(attempt);
+    console.error(`Reconnecting in ${delay}ms (attempt ${attempt + 1})`);
+
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectAttempt = attempt + 1;
+      connectFn();
+    }, delay);
+  }
+
+  /**
+   * Reset reconnection state on successful connection
+   */
+  private resetReconnectState(): void {
+    this.reconnectAttempt = 0;
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+  }
+
+  /**
+   * Cancel any pending reconnection
+   */
+  private cancelReconnect(): void {
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+  }
+
   close() {
     this.wss?.close();
     this.client?.close();
