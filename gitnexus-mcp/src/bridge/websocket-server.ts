@@ -2,6 +2,7 @@ import { WebSocketServer, WebSocket } from 'ws';
 import { createServer as createNetServer } from 'net';
 import { BridgeMessage, isRequest, isResponse } from './protocol.js';
 import { v4 as uuidv4 } from 'uuid';
+import { calculateBackoff } from '../mcp/resilience.js';
 
 /**
  * Codebase context sent from the GitNexus browser app
@@ -56,7 +57,12 @@ export class WebSocketBridge {
   private agentName: string;
   private isHub = false;
   private port = 54319;
-  
+
+  // Reconnection state
+  private reconnectAttempt = 0;
+  private reconnectTimer: NodeJS.Timeout | null = null;
+  private readonly maxReconnectDelay = 60000;  // 60 second cap
+
   constructor(port: number = 54319, agentName?: string) {
     this.port = port;
     this.agentName = agentName || process.env.GITNEXUS_AGENT || this.detectAgent();
