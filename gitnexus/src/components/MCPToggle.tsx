@@ -20,6 +20,13 @@ interface MCPToggleProps {
     onOverview?: () => Promise<any>;
     onExplore?: (name: string, type?: 'symbol' | 'cluster' | 'process') => Promise<any>;
     onHighlight?: (nodeIds: string[], color?: string) => Promise<any>;
+    // New tools
+    onDiff?: (filter?: string, includeContent?: boolean) => Promise<any>;
+    onDeepDive?: (name: string) => Promise<any>;
+    onReviewFile?: (filePath: string) => Promise<any>;
+    onTraceFlow?: (from: string, to?: string, maxSteps?: number) => Promise<any>;
+    onFindSimilar?: (name: string, limit?: number) => Promise<any>;
+    onTestImpact?: (changedFiles: string[], maxDepth?: number, suggestTests?: boolean) => Promise<any>;
     showOnboardingTip?: boolean;
     getContext?: () => Promise<CodebaseContext | null>;
 }
@@ -45,6 +52,12 @@ export function MCPToggle({
     onOverview,
     onExplore,
     onHighlight,
+    onDiff,
+    onDeepDive,
+    onReviewFile,
+    onTraceFlow,
+    onFindSimilar,
+    onTestImpact,
     showOnboardingTip = false,
     getContext,
 }: MCPToggleProps = {}) {
@@ -102,6 +115,13 @@ export function MCPToggle({
             if (onOverview) client.registerHandler('overview', async () => onOverview());
             if (onExplore) client.registerHandler('explore', async (params) => onExplore(params.name, params.type));
             if (onHighlight) client.registerHandler('highlight', async (params) => onHighlight(params.nodeIds, params.color));
+            // New tools
+            if (onDiff) client.registerHandler('diff', async (params) => onDiff(params.filter, params.includeContent));
+            if (onDeepDive) client.registerHandler('deep_dive', async (params) => onDeepDive(params.name));
+            if (onReviewFile) client.registerHandler('review_file', async (params) => onReviewFile(params.filePath));
+            if (onTraceFlow) client.registerHandler('trace_flow', async (params) => onTraceFlow(params.from, params.to, params.maxSteps));
+            if (onFindSimilar) client.registerHandler('find_similar', async (params) => onFindSimilar(params.name, params.limit));
+            if (onTestImpact) client.registerHandler('test_impact', async (params) => onTestImpact(params.changedFiles, params.maxDepth, params.suggestTests));
             if (getContext) client.registerHandler('context', async () => getContext());
 
             setStatus('connected');
@@ -120,7 +140,7 @@ export function MCPToggle({
         } catch {
             setStatus('error');
         }
-    }, [onSearch, onCypher, onImpact, onGrep, onRead, onOverview, onExplore, onHighlight, getContext]);
+    }, [onSearch, onCypher, onImpact, onGrep, onRead, onOverview, onExplore, onHighlight, onDiff, onDeepDive, onReviewFile, onTraceFlow, onFindSimilar, onTestImpact, getContext]);
 
     const disconnect = useCallback(() => {
         const client = getMCPClient();

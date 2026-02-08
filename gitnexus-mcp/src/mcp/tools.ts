@@ -148,4 +148,98 @@ The user will see the nodes glow in the graph view.
 Great for visual confirmation of your findings.`,
     inputSchema: toolSchemas.gitnexus_highlight,
   },
+
+  // ── New Tools ──────────────────────────────────────────────
+
+  {
+    name: 'diff',
+    description: `Compare current codebase index with previous version.
+Shows added/modified/deleted files since the last reindex.
+
+WHEN TO USE:
+- After a reindex to understand what changed
+- To review recent code changes
+- Before deep analysis to scope investigation
+
+RETURNS: { added[], modified[], deleted[], unchanged: number, summary }
+Use 'filter' to narrow: 'added', 'modified', or 'deleted'.
+Set 'includeContent: true' for line-level diffs of modified files (slower).`,
+    inputSchema: toolSchemas.gitnexus_diff,
+  },
+  {
+    name: 'deep_dive',
+    description: `Complete analysis of a code symbol in ONE call.
+Combines explore + impact + read into a single response.
+
+Internally runs:
+1. Explore symbol → cluster membership, process participation, connections
+2. Impact analysis → downstream affected nodes, risk level
+3. Read source → actual code
+
+MUCH faster than calling explore, impact, read separately.
+
+RETURNS: { symbol, source, impact, connections }`,
+    inputSchema: toolSchemas.gitnexus_deep_dive,
+  },
+  {
+    name: 'review_file',
+    description: `Full review context for a file in ONE call.
+Everything you need to understand a file: content, symbols, dependencies, cluster, processes.
+
+Internally runs:
+1. Read file content
+2. Query all symbols defined in the file
+3. Find cluster membership and processes
+4. Find imports and reverse-imports
+
+RETURNS: { file, content, symbols[], cluster, processes[], dependencies, complexity }`,
+    inputSchema: toolSchemas.gitnexus_review_file,
+  },
+  {
+    name: 'trace_flow',
+    description: `Trace execution path between two symbols, or from an entry point.
+
+If 'to' is provided: finds shortest path from → to in the call graph.
+If only 'from': finds all processes containing that symbol, returns traces.
+
+Each step includes the code snippet for context.
+
+RETURNS: { paths: [{ steps: [{ name, type, filePath, code }] }] }`,
+    inputSchema: toolSchemas.gitnexus_trace_flow,
+  },
+  {
+    name: 'find_similar',
+    description: `Find structurally similar code to a given symbol.
+Uses cluster membership and connection patterns to find related symbols.
+
+WHEN TO USE:
+- Finding duplicate/redundant implementations
+- Understanding patterns in the codebase
+- Finding candidates for refactoring/extraction
+
+RETURNS: { target, similar: [{ name, type, filePath, sharedCluster, sharedConnections, similarity }] }`,
+    inputSchema: toolSchemas.gitnexus_find_similar,
+  },
+  {
+    name: 'test_impact',
+    description: `Risk assessment for a set of file changes (like a PR).
+Traces graph dependencies to find ALL affected code and compute a risk score.
+
+WHEN TO USE:
+- Before merging a PR
+- Planning refactoring scope
+- Understanding blast radius of changes
+
+RETURNS:
+- riskScore: 0-100
+- riskLevel: critical | high | medium | low
+- affectedProcesses: processes that touch changed files
+- affectedClusters: communities impacted
+- impactedFiles: files depending on changed files (by depth)
+- suggestedTests: test files related to impacted code
+- summary: human-readable risk assessment
+
+Also highlights all affected nodes in the graph visualization.`,
+    inputSchema: toolSchemas.gitnexus_test_impact,
+  },
 ];

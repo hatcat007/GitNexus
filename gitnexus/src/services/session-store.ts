@@ -55,6 +55,8 @@ export interface SavedSession {
   embeddings?: SavedEmbedding[];
   /** SHA-256 hashes per file path — used for incremental re-index diffing */
   fileHashes?: Record<string, string>;
+  /** File hashes from the previous index — used by the diff tool */
+  previousFileHashes?: Record<string, string>;
   /** Whether Smart Clustering (LLM enrichment) was enabled for this session */
   smartClusteringEnabled?: boolean;
 }

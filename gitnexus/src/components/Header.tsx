@@ -6,6 +6,20 @@ import { EmbeddingStatus } from './EmbeddingStatus';
 import { MCPToggle } from './MCPToggle';
 import { buildCodebaseContext } from '../core/llm/context-builder';
 
+/**
+ * Sanitize a string for safe interpolation into Cypher queries.
+ * Escapes backslashes, quotes, backticks, and null bytes.
+ */
+function cypherEsc(value: string): string {
+  return value
+    .replace(/\\/g, '\\\\')   // backslash first
+    .replace(/'/g, "\\'")
+    .replace(/"/g, '\\"')
+    .replace(/`/g, '\\`')
+    .replace(/\0/g, '')          // strip nulls
+    .slice(0, 500);              // length cap
+}
+
 // Color mapping for node types in search results
 const NODE_TYPE_COLORS: Record<string, string> = {
   Folder: '#6366f1',
@@ -44,6 +58,7 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
     // Background reindex
     isReindexing,
     reindexFromGitHub,
+    getIndexDiff,
   } = useAppState();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -248,11 +263,13 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
           }}
           onImpact={async (target: string, direction = 'downstream', maxDepth = 3) => {
             // Run impact analysis query
+            const esc = cypherEsc(target);
+            const safeDepth = Math.min(Math.max(1, maxDepth), 10);
             const dirClause = direction === 'upstream'
-              ? `MATCH (connected)-[*1..${maxDepth}]->(start)`
-              : `MATCH (start)-[*1..${maxDepth}]->(connected)`;
+              ? `MATCH (connected)-[*1..${safeDepth}]->(start)`
+              : `MATCH (start)-[*1..${safeDepth}]->(connected)`;
             const query = `
-              MATCH (start) WHERE start.id = '${target}' OR start.name = '${target}'
+              MATCH (start) WHERE start.id = '${esc}' OR start.name = '${esc}'
               WITH start
               ${dirClause.replace('MATCH (start)', '')}
               RETURN DISTINCT connected.id AS id, connected.name AS name, labels(connected) AS labels
@@ -294,10 +311,11 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
           }}
           onExplore={async (target: string, type?: 'symbol' | 'cluster' | 'process') => {
             // Explore a specific target
+            const esc = cypherEsc(target);
             if (type === 'cluster' || target.startsWith('comm_')) {
               const query = `
                 MATCH (c:Community)
-                WHERE c.id = '${target}' OR c.label CONTAINS '${target}'
+                WHERE c.id = '${esc}' OR c.label CONTAINS '${esc}'
                 OPTIONAL MATCH (c)<-[:CodeRelation {type: 'MEMBER_OF'}]-(m)
                 RETURN c.id AS id, c.label AS label, c.description AS description, collect(m.name)[0..10] AS members
                 LIMIT 1
@@ -306,7 +324,7 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
             } else if (type === 'process' || target.startsWith('proc_')) {
               const query = `
                 MATCH (p:Process)
-                WHERE p.id = '${target}' OR p.label CONTAINS '${target}'
+                WHERE p.id = '${esc}' OR p.label CONTAINS '${esc}'
                 OPTIONAL MATCH (s)-[r:CodeRelation {type: 'STEP_IN_PROCESS'}]->(p)
                 RETURN p.id AS id, p.label AS label, p.stepCount AS steps, collect({name: s.name, step: r.step})[0..20] AS trace
                 LIMIT 1
@@ -316,7 +334,7 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
               // Symbol exploration
               const query = `
                 MATCH (n)
-                WHERE n.name = '${target}' OR n.id ENDS WITH ':${target}'
+                WHERE n.name = '${esc}' OR n.id ENDS WITH ':${esc}'
                 OPTIONAL MATCH (n)-[:CodeRelation {type: 'MEMBER_OF'}]->(c:Community)
                 OPTIONAL MATCH (n)-[r:CodeRelation {type: 'STEP_IN_PROCESS'}]->(p:Process)
                 RETURN n.id AS id, n.name AS name, n.filePath AS filePath, label(n) AS nodeType,
@@ -405,6 +423,213 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
               content,
               language,
               lines: lines.length,
+            };
+          }}
+          onDiff={async (filter = 'all', includeContent = false) => {
+            return await getIndexDiff(filter as any, includeContent);
+          }}
+          onDeepDive={async (name: string) => {
+            // Composite: explore + impact + read in one call
+            const esc = cypherEsc(name);
+            const [symbolRows, impactRows] = await Promise.all([
+              runQuery(`
+                MATCH (n) WHERE n.name = '${esc}' OR n.id ENDS WITH ':${esc}'
+                OPTIONAL MATCH (n)-[:CodeRelation {type: 'MEMBER_OF'}]->(c:Community)
+                OPTIONAL MATCH (n)-[r:CodeRelation {type: 'STEP_IN_PROCESS'}]->(p:Process)
+                OPTIONAL MATCH (caller)-[:CodeRelation {type: 'CALLS'}]->(n)
+                OPTIONAL MATCH (n)-[:CodeRelation {type: 'CALLS'}]->(callee)
+                RETURN n.id AS id, n.name AS name, n.filePath AS filePath, label(n) AS nodeType,
+                       c.label AS cluster, collect(DISTINCT {process: p.label, step: r.step}) AS processes,
+                       collect(DISTINCT caller.name) AS callers, collect(DISTINCT callee.name) AS callees
+                LIMIT 1
+              `),
+              runQuery(`
+                MATCH (start) WHERE start.name = '${esc}' OR start.id ENDS WITH ':${esc}'
+                WITH start
+                MATCH (start)-[*1..3]->(affected)
+                RETURN DISTINCT affected.id AS id, affected.name AS name, labels(affected) AS labels
+                LIMIT 20
+              `),
+            ]);
+            const symbol = symbolRows[0] ?? null;
+            let source = null;
+            if (symbol?.filePath) {
+              const content = fileContents.get(symbol.filePath);
+              if (content) {
+                source = { filePath: symbol.filePath, content: content.slice(0, 5000), language: symbol.filePath.split('.').pop() || 'text' };
+              }
+            }
+            // Highlight in graph
+            const affectedIds = impactRows.map((r: any) => r.id).filter(Boolean);
+            if (affectedIds.length > 0) triggerNodeAnimation(affectedIds, 'pulse');
+            return { symbol, source, impact: { downstream: impactRows, count: affectedIds.length }, connections: { callers: symbol?.callers ?? [], callees: symbol?.callees ?? [] } };
+          }}
+          onReviewFile={async (filePath: string) => {
+            // Composite: read + symbols + cluster + processes + deps
+            const esc = cypherEsc(filePath);
+            let content = fileContents.get(filePath);
+            if (!content) {
+              for (const [p, c] of fileContents.entries()) {
+                if (p.endsWith(filePath) || filePath.endsWith(p)) { content = c; filePath = p; break; }
+              }
+            }
+            const [symbolRows, importRows, importedByRows] = await Promise.all([
+              runQuery(`
+                MATCH (f:File)-[:CodeRelation {type: 'DEFINES'}]->(s)
+                WHERE f.filePath ENDS WITH '${esc}' OR f.id ENDS WITH '${esc}'
+                OPTIONAL MATCH (s)-[:CodeRelation {type: 'MEMBER_OF'}]->(c:Community)
+                OPTIONAL MATCH (s)-[r:CodeRelation {type: 'STEP_IN_PROCESS'}]->(p:Process)
+                RETURN s.name AS name, label(s) AS type, c.label AS cluster, collect(DISTINCT p.label) AS processes
+              `),
+              runQuery(`
+                MATCH (f:File)-[:CodeRelation {type: 'IMPORTS'}]->(g:File)
+                WHERE f.filePath ENDS WITH '${esc}' OR f.id ENDS WITH '${esc}'
+                RETURN g.filePath AS filePath
+              `),
+              runQuery(`
+                MATCH (g:File)-[:CodeRelation {type: 'IMPORTS'}]->(f:File)
+                WHERE f.filePath ENDS WITH '${esc}' OR f.id ENDS WITH '${esc}'
+                RETURN g.filePath AS filePath
+              `),
+            ]);
+            const clusters = [...new Set(symbolRows.map((s: any) => s.cluster).filter(Boolean))];
+            const processes = [...new Set(symbolRows.flatMap((s: any) => s.processes ?? []).filter(Boolean))];
+            return {
+              file: { path: filePath, language: filePath.split('.').pop() || 'text', lines: content?.split('\n').length ?? 0 },
+              content: content?.slice(0, 8000) ?? null,
+              symbols: symbolRows.map((s: any) => ({ name: s.name, type: s.type })),
+              cluster: clusters[0] ?? null,
+              processes,
+              dependencies: { imports: importRows.map((r: any) => r.filePath), importedBy: importedByRows.map((r: any) => r.filePath) },
+              complexity: { symbolCount: symbolRows.length, importCount: importRows.length, processCount: processes.length },
+            };
+          }}
+          onTraceFlow={async (from: string, to?: string, maxSteps = 10) => {
+            const escFrom = cypherEsc(from);
+            const safeSteps = Math.min(Math.max(1, maxSteps), 10);
+            if (to) {
+              const escTo = cypherEsc(to);
+              // Find path between two symbols via CALLS edges
+              const rows = await runQuery(`
+                MATCH path = (a)-[:CodeRelation {type: 'CALLS'}*1..${safeSteps}]->(b)
+                WHERE (a.name = '${escFrom}' OR a.id ENDS WITH ':${escFrom}')
+                  AND (b.name = '${escTo}' OR b.id ENDS WITH ':${escTo}')
+                UNWIND nodes(path) AS step
+                RETURN DISTINCT step.id AS id, step.name AS name, label(step) AS type, step.filePath AS filePath
+                LIMIT ${safeSteps}
+              `);
+              return { from, to, paths: [{ steps: rows }] };
+            } else {
+              // Find all processes containing this symbol
+              const rows = await runQuery(`
+                MATCH (s)-[r:CodeRelation {type: 'STEP_IN_PROCESS'}]->(p:Process)
+                WHERE s.name = '${escFrom}' OR s.id ENDS WITH ':${escFrom}'
+                WITH p
+                MATCH (step)-[r2:CodeRelation {type: 'STEP_IN_PROCESS'}]->(p)
+                RETURN p.label AS process, step.name AS name, label(step) AS type, step.filePath AS filePath, r2.step AS stepNum
+                ORDER BY p.label, r2.step
+                LIMIT ${safeSteps * 3}
+              `);
+              // Group by process
+              const grouped: Record<string, any[]> = {};
+              for (const r of rows) {
+                const key = (r as any).process ?? 'unknown';
+                if (!grouped[key]) grouped[key] = [];
+                grouped[key].push(r);
+              }
+              return { from, paths: Object.entries(grouped).map(([process, steps]) => ({ process, steps })) };
+            }
+          }}
+          onFindSimilar={async (name: string, limit = 5) => {
+            const esc = cypherEsc(name);
+            // Find target's cluster, then find peers in same cluster with connection overlap
+            const rows = await runQuery(`
+              MATCH (target) WHERE target.name = '${esc}' OR target.id ENDS WITH ':${esc}'
+              MATCH (target)-[:CodeRelation {type: 'MEMBER_OF'}]->(c:Community)
+              MATCH (peer)-[:CodeRelation {type: 'MEMBER_OF'}]->(c)
+              WHERE peer.id <> target.id
+              OPTIONAL MATCH (peer)-[r:CodeRelation]-()
+              WITH peer, c.label AS cluster, count(r) AS connections, label(peer) AS type
+              RETURN peer.name AS name, type, peer.filePath AS filePath, cluster AS sharedCluster, connections
+              ORDER BY connections DESC
+              LIMIT ${limit}
+            `);
+            return { target: name, similar: rows };
+          }}
+          onTestImpact={async (changedFiles: string[], maxDepth = 2, suggestTests = true) => {
+            // Collect all symbols defined in changed files
+            const safeDepth = Math.min(Math.max(1, maxDepth), 5);
+            const fileConditions = changedFiles.map(f => `f.filePath ENDS WITH '${cypherEsc(f)}'`).join(' OR ');
+            const symbolRows = await runQuery(`
+              MATCH (f:File)-[:CodeRelation {type: 'DEFINES'}]->(s)
+              WHERE ${fileConditions}
+              RETURN s.id AS id, s.name AS name, label(s) AS type, f.filePath AS filePath
+            `);
+            const symbolIds = symbolRows.map((s: any) => s.id).filter(Boolean);
+            if (symbolIds.length === 0) return { riskScore: 0, riskLevel: 'low', summary: 'No symbols found in changed files', affectedProcesses: [], affectedClusters: [], impactedFiles: [], suggestedTests: [] };
+
+            // Downstream traversal
+            const idList = symbolIds.map((id: string) => `'${id}'`).join(',');
+            const [downstreamRows, processRows, clusterRows] = await Promise.all([
+              runQuery(`
+                MATCH (start) WHERE start.id IN [${idList}]
+                MATCH (start)<-[:CodeRelation*1..${safeDepth}]-(affected)
+                RETURN DISTINCT affected.id AS id, affected.name AS name, affected.filePath AS filePath, labels(affected) AS labels
+              `),
+              runQuery(`
+                MATCH (start) WHERE start.id IN [${idList}]
+                MATCH (start)-[:CodeRelation {type: 'STEP_IN_PROCESS'}]->(p:Process)
+                RETURN DISTINCT p.label AS process, p.id AS id
+              `),
+              runQuery(`
+                MATCH (start) WHERE start.id IN [${idList}]
+                MATCH (start)-[:CodeRelation {type: 'MEMBER_OF'}]->(c:Community)
+                RETURN DISTINCT c.label AS cluster, c.id AS id
+              `),
+            ]);
+
+            // Risk scoring
+            const totalNodes = graph?.nodes.length ?? 1;
+            const affectedCount = downstreamRows.length;
+            let score = Math.min(100, Math.round((affectedCount / totalNodes) * 200));
+            if (clusterRows.length > 1) score = Math.min(100, Math.round(score * 1.5));
+            if (processRows.length > 2) score = Math.min(100, Math.round(score * 1.3));
+            const riskLevel = score >= 75 ? 'critical' : score >= 50 ? 'high' : score >= 25 ? 'medium' : 'low';
+
+            // Suggested tests
+            let suggestedTestFiles: string[] = [];
+            if (suggestTests) {
+              const affectedPaths = new Set(downstreamRows.map((r: any) => r.filePath).filter(Boolean));
+              for (const [path] of fileContents.entries()) {
+                if (/(\btest\b|\bspec\b|__tests__)/.test(path)) {
+                  for (const ap of affectedPaths) {
+                    if (ap && path.includes(ap.replace(/\.[^.]+$/, ''))) {
+                      suggestedTestFiles.push(path);
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+
+            // Highlight affected
+            const allIds = [...symbolIds, ...downstreamRows.map((r: any) => r.id)].filter(Boolean);
+            if (allIds.length > 0) {
+              setHighlightedNodeIds(new Set(allIds));
+              triggerNodeAnimation(allIds, 'ripple');
+            }
+
+            return {
+              riskScore: score,
+              riskLevel,
+              changedFiles,
+              symbolsInChangedFiles: symbolRows.length,
+              affectedProcesses: processRows.map((r: any) => r.process),
+              affectedClusters: clusterRows.map((r: any) => r.cluster),
+              impactedFiles: [...new Set(downstreamRows.map((r: any) => r.filePath).filter(Boolean))],
+              impactedSymbols: affectedCount,
+              suggestedTests: suggestedTestFiles,
+              summary: `${changedFiles.length} file(s) changed → ${symbolRows.length} symbols → ${affectedCount} downstream nodes affected across ${clusterRows.length} cluster(s) and ${processRows.length} process(es). Risk: ${riskLevel} (${score}/100).`,
             };
           }}
         />

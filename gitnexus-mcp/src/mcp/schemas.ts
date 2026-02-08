@@ -101,6 +101,59 @@ export const HighlightSchema = z.object({
 });
 
 // ============================================
+// New Tools: diff, composites, test_impact
+// ============================================
+
+/**
+ * Diff tool - compare current index with previous
+ */
+export const DiffSchema = z.object({
+    baseline: z.string().default('last_index'),
+    includeContent: z.boolean().default(false),
+    filter: z.enum(['all', 'added', 'modified', 'deleted']).default('all'),
+});
+
+/**
+ * Deep Dive tool - complete analysis of a symbol in one call
+ */
+export const DeepDiveSchema = z.object({
+    name: z.string().min(1, 'Symbol name cannot be empty'),
+});
+
+/**
+ * Review File tool - full review context for a file
+ */
+export const ReviewFileSchema = z.object({
+    filePath: z.string().min(1, 'File path cannot be empty'),
+});
+
+/**
+ * Trace Flow tool - trace execution path between symbols
+ */
+export const TraceFlowSchema = z.object({
+    from: z.string().min(1, 'Source symbol cannot be empty'),
+    to: z.string().optional(),
+    maxSteps: z.number().int().min(1).max(20).default(10),
+});
+
+/**
+ * Find Similar tool - find structurally similar code
+ */
+export const FindSimilarSchema = z.object({
+    name: z.string().min(1, 'Symbol name cannot be empty'),
+    limit: z.number().int().min(1).max(20).default(5),
+});
+
+/**
+ * Test Impact tool - risk assessment for file changes
+ */
+export const TestImpactSchema = z.object({
+    changedFiles: z.array(z.string().min(1)).min(1, 'At least one changed file is required'),
+    maxDepth: z.number().int().min(1).max(5).default(2),
+    suggestTests: z.boolean().default(true),
+});
+
+// ============================================
 // Schema Registry and Validation
 // ============================================
 
@@ -117,6 +170,12 @@ export const toolSchemaMap = {
     gitnexus_overview: OverviewSchema,
     gitnexus_impact: ImpactSchema,
     gitnexus_highlight: HighlightSchema,
+    gitnexus_diff: DiffSchema,
+    gitnexus_deep_dive: DeepDiveSchema,
+    gitnexus_review_file: ReviewFileSchema,
+    gitnexus_trace_flow: TraceFlowSchema,
+    gitnexus_find_similar: FindSimilarSchema,
+    gitnexus_test_impact: TestImpactSchema,
 } as const;
 
 export type ToolName = keyof typeof toolSchemaMap;
@@ -171,3 +230,9 @@ export type ExploreInput = z.infer<typeof ExploreSchema>;
 export type OverviewInput = z.infer<typeof OverviewSchema>;
 export type ImpactInput = z.infer<typeof ImpactSchema>;
 export type HighlightInput = z.infer<typeof HighlightSchema>;
+export type DiffInput = z.infer<typeof DiffSchema>;
+export type DeepDiveInput = z.infer<typeof DeepDiveSchema>;
+export type ReviewFileInput = z.infer<typeof ReviewFileSchema>;
+export type TraceFlowInput = z.infer<typeof TraceFlowSchema>;
+export type FindSimilarInput = z.infer<typeof FindSimilarSchema>;
+export type TestImpactInput = z.infer<typeof TestImpactSchema>;

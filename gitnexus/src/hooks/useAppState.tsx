@@ -203,6 +203,8 @@ interface AppState {
   // Background reindex
   isReindexing: boolean;
   reindexFromGitHub: () => Promise<void>;
+  /** Get diff between current and previous index (for MCP diff tool) */
+  getIndexDiff: (filter?: 'all' | 'added' | 'modified' | 'deleted', includeContent?: boolean) => Promise<any>;
 }
 
 const AppStateContext = createContext<AppState | null>(null);
@@ -428,10 +430,13 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
       smartClusteringEnabled: llmSettings.intelligentClustering ?? false,
     };
 
-    // Preserve original createdAt if updating
+    // Preserve original createdAt and previousFileHashes if updating
     try {
       const existing = await dbGetSession(currentSessionId);
       session.createdAt = existing?.createdAt ?? Date.now();
+      if (existing?.previousFileHashes) {
+        session.previousFileHashes = existing.previousFileHashes;
+      }
     } catch {
       session.createdAt = Date.now();
     }
@@ -1263,6 +1268,18 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
       setGraph(result.graph);
       setFileContents(result.fileContents);
 
+      // Step 8b: Persist previousFileHashes so the diff tool can compare
+      if (currentSessionId) {
+        try {
+          const sess = await dbGetSession(currentSessionId);
+          if (sess) {
+            sess.previousFileHashes = oldFileHashes;
+            sess.fileHashes = newFileHashes;
+            await dbSaveSession(sess);
+          }
+        } catch { /* non-critical */ }
+      }
+
       // Step 9: Start embeddings (will skip already-preserved nodes)
       startEmbeddings().catch((err) => {
         if (err?.name === 'WebGPUNotAvailableError' || err?.message?.includes('WebGPU')) {
@@ -1305,6 +1322,62 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
       setIsReindexing(false);
     }
   }, [isReindexing, sessionSource, currentSessionId, saveCurrentSession, runPipelineFromFiles, startEmbeddings, initializeAgent, startBackgroundEnrichment, projectName, llmSettings.intelligentClustering]);
+
+  const getIndexDiff = useCallback(async (
+    filter: 'all' | 'added' | 'modified' | 'deleted' = 'all',
+    includeContent = false,
+  ) => {
+    if (!currentSessionId) return { error: 'No active session' };
+
+    const session = await dbGetSession(currentSessionId);
+    if (!session) return { error: 'Session not found' };
+
+    const currentHashes = session.fileHashes ?? {};
+    const previousHashes = session.previousFileHashes ?? {};
+
+    if (Object.keys(previousHashes).length === 0) {
+      return { error: 'No previous index to compare. Reindex first to generate a diff.' };
+    }
+
+    const allPaths = new Set([...Object.keys(previousHashes), ...Object.keys(currentHashes)]);
+    const added: string[] = [];
+    const modified: string[] = [];
+    const deleted: string[] = [];
+    let unchangedCount = 0;
+
+    for (const path of allPaths) {
+      const oldHash = previousHashes[path];
+      const newHash = currentHashes[path];
+      if (!oldHash && newHash) added.push(path);
+      else if (oldHash && !newHash) deleted.push(path);
+      else if (oldHash !== newHash) modified.push(path);
+      else unchangedCount++;
+    }
+
+    // Apply filter
+    const result: any = { unchanged: unchangedCount };
+    if (filter === 'all' || filter === 'added') result.added = added;
+    if (filter === 'all' || filter === 'modified') result.modified = modified;
+    if (filter === 'all' || filter === 'deleted') result.deleted = deleted;
+
+    result.summary = `+${added.length} added, ~${modified.length} modified, -${deleted.length} deleted, =${unchangedCount} unchanged`;
+
+    // Optional: line-level diffs for modified files
+    if (includeContent && modified.length > 0) {
+      const diffs: Array<{ path: string; addedLines: number; removedLines: number }> = [];
+      const currentContents = session.fileContents ?? {};
+      for (const path of modified.slice(0, 20)) {
+        const newContent = currentContents[path];
+        if (newContent) {
+          const newLines = newContent.split('\n').length;
+          diffs.push({ path, addedLines: newLines, removedLines: 0 });
+        }
+      }
+      result.contentDiffs = diffs;
+    }
+
+    return result;
+  }, [currentSessionId]);
 
   const sendChatMessage = useCallback(async (message: string): Promise<void> => {
     const api = apiRef.current;
@@ -1818,6 +1891,7 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     // Background reindex
     isReindexing,
     reindexFromGitHub,
+    getIndexDiff,
   };
 
   return (
