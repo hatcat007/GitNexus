@@ -107,6 +107,19 @@ function formatContextAsMarkdown(context: CodebaseContext): string {
   return lines.join('\n');
 }
 
+/**
+ * Start the MCP server on stdio transport.
+ * 
+ * SECURITY NOTE (CVE-2026-25536):
+ * This implementation is safe for stdio transport because each AI agent
+ * spawns a fresh MCP process. Server and transport instances are never
+ * reused across clients - each process invocation gets its own isolated
+ * Server and Transport instances.
+ * 
+ * If migrating to HTTP transport in the future, ensure fresh Server and
+ * Transport instances are created per session to prevent cross-client
+ * data leakage.
+ */
 export async function startMCPServer(client: ToolCaller): Promise<void> {
   const server = new Server(
     {
