@@ -135,6 +135,23 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
     }
   );
 
+  // Create circuit breaker wrapping the client's callTool
+  const breaker = createCircuitBreaker(
+    (method: string, params: any) => client.callTool(method, params),
+    { failureThreshold: 5, resetTimeoutMs: 30000 }
+  );
+  
+  // Log circuit breaker state changes
+  breaker.on('open', () => {
+    logger.warn('Circuit breaker opened - blocking requests');
+  });
+  breaker.on('halfOpen', () => {
+    logger.info('Circuit breaker half-open - testing with next request');
+  });
+  breaker.on('close', () => {
+    logger.info('Circuit breaker closed - requests flowing normally');
+  });
+
   // Handle list resources request
   server.setRequestHandler(ListResourcesRequestSchema, async () => {
     const context = client.context;
