@@ -1,3 +1,5 @@
+import CircuitBreaker from 'opossum';
+
 /**
  * Resilience utilities for GitNexus MCP Server
  * 
@@ -48,4 +50,59 @@ export async function withToolTimeout<T>(
   } finally {
     clearTimeout(timeoutId);
   }
+}
+
+/**
+ * Configuration for circuit breaker behavior.
+ */
+export interface CircuitBreakerConfig {
+  failureThreshold: number;  // Number of consecutive failures before opening
+  resetTimeoutMs: number;    // Time in ms before attempting to close
+}
+
+/**
+ * Create a circuit breaker with consecutive failure tracking.
+ * 
+ * The circuit breaker protects against cascading failures by:
+ * 1. Tracking consecutive failures (not just percentage)
+ * 2. Opening after reaching the failure threshold
+ * 3. Auto-closing on first successful call after reset timeout
+ * 
+ * @param callTool - Function to wrap with circuit breaker
+ * @param config - Circuit breaker configuration
+ * @returns CircuitBreaker instance with event-based failure tracking
+ */
+export function createCircuitBreaker(
+  callTool: (method: string, params: any) => Promise<any>,
+  config: CircuitBreakerConfig = { failureThreshold: 5, resetTimeoutMs: 30000 }
+): CircuitBreaker {
+  const breaker = new CircuitBreaker(callTool, {
+    timeout: false,  // We handle timeout separately with AbortController
+    errorThresholdPercentage: -1,  // Disable percentage-based
+    resetTimeout: config.resetTimeoutMs,
+    rollingCountBuckets: 1,
+    volumeThreshold: 0,
+  });
+
+  // Track consecutive failures for threshold (opossum doesn't do this natively)
+  let consecutiveFailures = 0;
+  
+  breaker.on('failure', () => {
+    consecutiveFailures++;
+    if (consecutiveFailures >= config.failureThreshold) {
+      if (!breaker.opened) {
+        breaker.open();
+      }
+    }
+  });
+  
+  // Reset on success (immediate close - per CONTEXT.md decision)
+  breaker.on('success', () => {
+    consecutiveFailures = 0;
+    if (breaker.halfOpen) {
+      breaker.close();  // Close immediately on successful test
+    }
+  });
+
+  return breaker;
 }

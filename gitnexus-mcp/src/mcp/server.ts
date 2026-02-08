@@ -245,6 +245,7 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
           message: 'Invalid input parameters',
           details: { issues: validation.error.issues },
           suggestion: 'Check parameter types and constraints against the tool schema',
+          retryable: false,
         });
       }
       
@@ -261,6 +262,7 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
             message: 'Forbidden Cypher operation',
             details: { reason: sanitized.error, keyword: sanitized.forbiddenKeyword },
             suggestion: 'Only read-only queries (MATCH, RETURN, WHERE, WITH, ORDER BY, LIMIT, SKIP) are allowed',
+            retryable: false,
           });
         }
         // Update args with sanitized query
@@ -292,6 +294,7 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
         message: 'Internal server error',
         details: { error: message },
         suggestion: 'This is an unexpected error. Please try again or report the issue if it persists.',
+        retryable: true,
       });
     }
   });
