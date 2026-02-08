@@ -265,13 +265,13 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
             // Run impact analysis query
             const esc = cypherEsc(target);
             const safeDepth = Math.min(Math.max(1, maxDepth), 10);
-            const dirClause = direction === 'upstream'
-              ? `MATCH (connected)-[*1..${safeDepth}]->(start)`
-              : `MATCH (start)-[*1..${safeDepth}]->(connected)`;
+            const pathClause = direction === 'upstream'
+              ? `MATCH (connected)-[:CodeRelation*1..${safeDepth}]->(start)`
+              : `MATCH (start)-[:CodeRelation*1..${safeDepth}]->(connected)`;
             const query = `
               MATCH (start) WHERE start.id = '${esc}' OR start.name = '${esc}'
               WITH start
-              ${dirClause.replace('MATCH (start)', '')}
+              ${pathClause}
               RETURN DISTINCT connected.id AS id, connected.name AS name, labels(connected) AS labels
             `;
             const results = await runQuery(query);
@@ -509,15 +509,19 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
             const safeSteps = Math.min(Math.max(1, maxSteps), 10);
             if (to) {
               const escTo = cypherEsc(to);
-              // Find path between two symbols via CALLS edges
-              const rows = await runQuery(`
-                MATCH path = (a)-[:CodeRelation {type: 'CALLS'}*1..${safeSteps}]->(b)
-                WHERE (a.name = '${escFrom}' OR a.id ENDS WITH ':${escFrom}')
-                  AND (b.name = '${escTo}' OR b.id ENDS WITH ':${escTo}')
-                UNWIND nodes(path) AS step
-                RETURN DISTINCT step.id AS id, step.name AS name, label(step) AS type, step.filePath AS filePath
-                LIMIT ${safeSteps}
-              `);
+              // BFS approach: try increasing depths to find shortest path
+              // KuzuDB can't handle deep variable-length paths across all edge types
+              let rows: any[] = [];
+              for (let depth = 1; depth <= Math.min(safeSteps, 5); depth++) {
+                rows = await runQuery(`
+                  MATCH (a)-[:CodeRelation*${depth}..${depth}]->(b)
+                  WHERE (a.name = '${escFrom}' OR a.id ENDS WITH ':${escFrom}')
+                    AND (b.name = '${escTo}' OR b.id ENDS WITH ':${escTo}')
+                  RETURN a.id AS startId, a.name AS startName, b.id AS endId, b.name AS endName
+                  LIMIT 1
+                `);
+                if (rows.length > 0) break;
+              }
               return { from, to, paths: [{ steps: rows }] };
             } else {
               // Find all processes containing this symbol

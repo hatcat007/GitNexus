@@ -112,7 +112,6 @@ export const SessionRestoreOverlay = ({ progress, onContinue }: SessionRestoreOv
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(countdownRef.current!);
-          onContinue();
           return 0;
         }
         return prev - 1;
@@ -121,7 +120,14 @@ export const SessionRestoreOverlay = ({ progress, onContinue }: SessionRestoreOv
     return () => {
       if (countdownRef.current) clearInterval(countdownRef.current);
     };
-  }, [isComplete, onContinue]);
+  }, [isComplete]);
+
+  // Trigger onContinue when countdown reaches 0 (outside render phase)
+  useEffect(() => {
+    if (countdown === 0 && isComplete) {
+      onContinue();
+    }
+  }, [countdown, isComplete, onContinue]);
 
   // Find current phase index for timeline
   const currentPhaseIdx = PHASE_ORDER.indexOf(progress.phase);

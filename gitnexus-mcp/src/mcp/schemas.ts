@@ -184,11 +184,15 @@ export type ToolName = keyof typeof toolSchemaMap;
  * Convert Zod schemas to JSON Schema format for MCP protocol
  */
 export const toolSchemas = Object.fromEntries(
-    Object.entries(toolSchemaMap).map(([name, schema]) => [
-        name,
-        zodToJsonSchema(schema, { name }),
-    ])
-) as Record<string, ReturnType<typeof zodToJsonSchema>>;
+    Object.entries(toolSchemaMap).map(([name, schema]) => {
+        // Omit name param — passing { name } wraps output in $ref + definitions
+        // which MCP clients/routers can't parse. Flat JSON Schema is required.
+        const jsonSchema = zodToJsonSchema(schema);
+        // Remove $schema key — MCP protocol doesn't need it
+        const { $schema, ...rest } = jsonSchema as Record<string, unknown>;
+        return [name, rest];
+    })
+) as Record<string, Record<string, unknown>>;
 
 /**
  * Validates tool input against its schema

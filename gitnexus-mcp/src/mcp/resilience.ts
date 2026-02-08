@@ -78,10 +78,10 @@ export function createCircuitBreaker(
 ): CircuitBreaker {
   const breaker = new CircuitBreaker(callTool, {
     timeout: false,  // We handle timeout separately with AbortController
-    errorThresholdPercentage: -1,  // Disable percentage-based
+    errorThresholdPercentage: 100, // Disable opossum's built-in percentage tripping
     resetTimeout: config.resetTimeoutMs,
     rollingCountBuckets: 1,
-    volumeThreshold: 0,
+    volumeThreshold: config.failureThreshold + 1,  // Prevent opossum from tripping on its own
   });
 
   // Track consecutive failures for threshold (opossum doesn't do this natively)
