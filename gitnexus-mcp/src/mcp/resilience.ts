@@ -106,3 +106,42 @@ export function createCircuitBreaker(
 
   return breaker;
 }
+
+/**
+ * Configuration for exponential backoff behavior.
+ */
+export interface BackoffConfig {
+  baseDelayMs: number;    // Initial delay before first retry
+  maxDelayMs: number;     // Maximum delay cap
+}
+
+/**
+ * Calculate exponential backoff delay with Full Jitter.
+ * 
+ * Based on AWS research: https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
+ * Full Jitter formula: sleep = random(0, min(cap, base * 2^attempt))
+ * 
+ * Note: CONTEXT.md mentions "±10-20% jitter" but Full Jitter is chosen here because:
+ * - It provides better contention reduction (50%+ per AWS research)
+ * - Simpler implementation with no edge cases
+ * - Works well for single-client reconnection (no thundering herd concern)
+ * CONTEXT.md marks jitter as "Claude's Discretion" allowing this choice.
+ * 
+ * @param attempt - The retry attempt number (0-indexed)
+ * @param config - Backoff configuration
+ * @returns Delay in milliseconds with Full Jitter applied
+ */
+export function calculateBackoff(
+  attempt: number,
+  config: BackoffConfig = { baseDelayMs: 500, maxDelayMs: 60000 }
+): number {
+  // Exponential: base * 2^attempt, capped at max
+  const exponential = Math.min(
+    config.maxDelayMs,
+    config.baseDelayMs * Math.pow(2, attempt)
+  );
+  
+  // Full jitter: random value from 0 to exponential
+  // AWS research shows Full Jitter reduces contention by 50%+
+  return Math.floor(Math.random() * exponential);
+}
