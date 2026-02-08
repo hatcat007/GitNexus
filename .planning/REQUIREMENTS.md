@@ -9,17 +9,17 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Reliability
 
-- [ ] **RELI-01**: Tool calls return structured error responses with `isError: true` and actionable context
+- [x] **RELI-01**: Tool calls return structured error responses with `isError: true` and actionable context
 - [ ] **RELI-02**: Each tool has configurable timeout (via AbortController), not hardcoded 30s
-- [ ] **RELI-03**: Server handles SIGINT/SIGTERM gracefully, cleaning up connections before exit
+- [x] **RELI-03**: Server handles SIGINT/SIGTERM gracefully, cleaning up connections before exit
 - [ ] **RELI-04**: Circuit breaker prevents cascade failures when browser/graph unavailable
 - [ ] **RELI-05**: WebSocket reconnects use exponential backoff with jitter
 
 ### Security
 
-- [ ] **SECU-01**: All tool inputs validated against Zod schemas before processing
-- [ ] **SECU-02**: Cypher tool sanitizes queries (whitelist allowed patterns, reject DROP/DELETE/CREATE)
-- [ ] **SECU-03**: Transport/server instances are isolated per session (CVE-2026-25536 fix)
+- [x] **SECU-01**: All tool inputs validated against Zod schemas before processing
+- [x] **SECU-02**: Cypher tool sanitizes queries (whitelist allowed patterns, reject DROP/DELETE/CREATE)
+- [x] **SECU-03**: Transport/server instances are isolated per session (CVE-2026-25536 fix)
 - [ ] **SECU-04**: Rate limiting per agent prevents resource monopolization
 
 ### Performance
@@ -28,8 +28,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Observability
 
-- [ ] **OBSV-01**: All operations logged with pino structured logging (JSON, child loggers for context)
-- [ ] **OBSV-02**: Health check MCP resource returns connection status and graph availability
+- [x] **OBSV-01**: All operations logged with pino structured logging (JSON, child loggers for context)
+- [x] **OBSV-02**: Health check MCP resource returns connection status and graph availability
 
 ## v2 Requirements
 
@@ -68,18 +68,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RELI-01 | 1 | Pending |
+| RELI-01 | 1 | Complete |
 | RELI-02 | 2 | Pending |
-| RELI-03 | 1 | Pending |
+| RELI-03 | 1 | Complete |
 | RELI-04 | 2 | Pending |
 | RELI-05 | 2 | Pending |
-| SECU-01 | 1 | Pending |
-| SECU-02 | 1 | Pending |
-| SECU-03 | 1 | Pending |
+| SECU-01 | 1 | Complete |
+| SECU-02 | 1 | Complete |
+| SECU-03 | 1 | Complete |
 | SECU-04 | 4 | Pending |
 | PERF-01 | 3 | Pending |
-| OBSV-01 | 1 | Pending |
-| OBSV-02 | 1 | Pending |
+| OBSV-01 | 1 | Complete |
+| OBSV-02 | 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 12 total
