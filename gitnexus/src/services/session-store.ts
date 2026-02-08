@@ -55,6 +55,8 @@ export interface SavedSession {
   embeddings?: SavedEmbedding[];
   /** SHA-256 hashes per file path — used for incremental re-index diffing */
   fileHashes?: Record<string, string>;
+  /** Whether Smart Clustering (LLM enrichment) was enabled for this session */
+  smartClusteringEnabled?: boolean;
 }
 
 /** Lightweight metadata returned by listSessions (no heavy payload). */
@@ -66,6 +68,8 @@ export interface SessionMeta {
   source: SessionSource;
   nodeCount: number;
   fileCount: number;
+  smartClusteringEnabled?: boolean;
+  hasEmbeddings?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -114,6 +118,8 @@ export async function listSessions(): Promise<SessionMeta[]> {
       source: s.source,
       nodeCount: s.graph?.nodes?.length ?? 0,
       fileCount: Object.keys(s.fileContents ?? {}).length,
+      smartClusteringEnabled: s.smartClusteringEnabled ?? false,
+      hasEmbeddings: (s.embeddings?.length ?? 0) > 0,
     }))
     .sort((a, b) => b.updatedAt - a.updatedAt);
 }

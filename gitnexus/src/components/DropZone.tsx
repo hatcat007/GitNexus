@@ -402,6 +402,42 @@ export const DropZone = ({ onFileSelect, onGitClone }: DropZoneProps) => {
                 </button>
               </div>
 
+              {/* Smart Clustering Toggle */}
+              <div className="p-3 bg-surface/50 border border-border-subtle rounded-xl">
+                <label className="flex items-center justify-between cursor-pointer group">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <Sparkles className="w-3.5 h-3.5 text-accent" />
+                      <span className="text-sm font-medium text-text-primary">Enable Smart Clustering</span>
+                    </div>
+                    <p className="text-xs text-text-muted leading-relaxed">
+                      Uses LLM to label processes and clusters for better detection.
+                    </p>
+                    {!hasLLMProvider && (
+                      <p className="text-xs text-amber-400 mt-1">
+                        ⚠️ Setup LLM provider to enable
+                      </p>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => hasLLMProvider && setEnableSmartClustering(!enableSmartClustering)}
+                    disabled={!hasLLMProvider}
+                    className={`
+                    relative inline-flex h-6 w-11 items-center rounded-full transition-colors ml-4
+                    ${enableSmartClustering && hasLLMProvider ? 'bg-accent' : 'bg-gray-700'}
+                    ${!hasLLMProvider ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                  `}>
+                    <span
+                      className={`
+                      inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                      ${enableSmartClustering && hasLLMProvider ? 'translate-x-6' : 'translate-x-1'}
+                    `}
+                    />
+                  </button>
+                </label>
+              </div>
+
               <button
                 onClick={handleGitClone}
                 disabled={isCloning || !githubUrl.trim()}
@@ -485,7 +521,7 @@ export const DropZone = ({ onFileSelect, onGitClone }: DropZoneProps) => {
                       <div className="text-sm font-medium text-text-primary truncate">
                         {session.name}
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-text-muted mt-0.5">
+                      <div className="flex items-center gap-2 text-xs text-text-muted mt-0.5 flex-wrap">
                         <span className="px-1.5 py-0.5 bg-elevated rounded text-[10px] uppercase">
                           {session.source.type === 'github' ? 'GitHub' : 'ZIP'}
                         </span>
@@ -497,6 +533,17 @@ export const DropZone = ({ onFileSelect, onGitClone }: DropZoneProps) => {
                         )}
                         <span>{session.nodeCount} nodes</span>
                         <span>{session.fileCount} files</span>
+                        {session.smartClusteringEnabled && (
+                          <span className="flex items-center gap-0.5 text-accent">
+                            <Sparkles className="w-3 h-3" />
+                            <span className="text-[10px]">Smart</span>
+                          </span>
+                        )}
+                        {session.hasEmbeddings && (
+                          <span className="px-1.5 py-0.5 bg-green-500/10 text-green-400 rounded text-[10px]">
+                            Cached
+                          </span>
+                        )}
                         <span>{new Date(session.updatedAt).toLocaleDateString()}</span>
                       </div>
                     </div>

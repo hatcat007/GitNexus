@@ -69,6 +69,21 @@ export const initKuzu = async () => {
 };
 
 /**
+ * Reset KuzuDB by destroying and reinitializing.
+ * Clears all data so a fresh load can be performed without duplicate key errors.
+ */
+export const resetKuzu = async () => {
+  try {
+    if (conn) { try { conn.close(); } catch {} }
+    if (db) { try { db.close(); } catch {} }
+  } catch {}
+  conn = null;
+  db = null;
+  // kuzu module stays loaded — no need to re-import WASM
+  await initKuzu();
+};
+
+/**
  * Load a KnowledgeGraph into KuzuDB using COPY FROM (bulk load)
  * Uses batched CSV writes and COPY statements for optimal performance
  */

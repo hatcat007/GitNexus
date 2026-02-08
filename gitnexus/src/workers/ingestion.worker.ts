@@ -51,6 +51,9 @@ let currentGraphResult: PipelineResult | null = null;
 let pendingEnrichmentConfig: ProviderConfig | null = null;
 let enrichmentCancelled = false;
 
+// Guard against concurrent restoreSessionData calls (React StrictMode)
+let isRestoringSession = false;
+
 /**
  * Worker API exposed via Comlink
  * 
@@ -237,6 +240,27 @@ const workerApi = {
     fileContentsRecord: Record<string, string>,
     savedEmbeddings?: Array<{ nodeId: string; embedding: number[] }>
   ): Promise<{ embeddingsRestored: boolean }> {
+    // Guard: prevent concurrent/duplicate calls (React StrictMode)
+    if (isRestoringSession) {
+      console.warn('[Session Restore] Already restoring — skipping duplicate call');
+      return { embeddingsRestored: false };
+    }
+    isRestoringSession = true;
+
+    try {
+      return await this._doRestoreSessionData(nodes, relationships, fileContentsRecord, savedEmbeddings);
+    } finally {
+      isRestoringSession = false;
+    }
+  },
+
+  /** @internal — actual restore logic, guarded by restoreSessionData */
+  async _doRestoreSessionData(
+    nodes: any[],
+    relationships: any[],
+    fileContentsRecord: Record<string, string>,
+    savedEmbeddings?: Array<{ nodeId: string; embedding: number[] }>
+  ): Promise<{ embeddingsRestored: boolean }> {
     // 1. Rebuild file contents map
     storedFileContents = new Map(Object.entries(fileContentsRecord));
 
@@ -255,10 +279,11 @@ const workerApi = {
       console.log(`[Session Restore] BM25 index built: ${bm25DocCount} documents`);
     }
 
-    // 5. Load into KuzuDB
+    // 5. Reset KuzuDB (clean state to avoid duplicate key errors) and load
     let embeddingsRestored = false;
     try {
       const kuzu = await getKuzuAdapter();
+      await kuzu.resetKuzu();
       await kuzu.loadGraphToKuzu(graph, storedFileContents);
 
       // 6. Restore embeddings if saved
@@ -445,6 +470,13 @@ const workerApi = {
     const kuzu = await getKuzuAdapter();
     if (!kuzu.isKuzuReady()) {
       throw new Error('Database not ready. Please load a repository first.');
+    }
+
+    // Skip entirely if embeddings were already restored from session
+    if (isEmbeddingComplete) {
+      console.log('[Embedding] Already complete (restored from session) — skipping pipeline');
+      onProgress({ phase: 'ready', nodesProcessed: 0, totalNodes: 0, percent: 100 });
+      return;
     }
 
     // Reset state

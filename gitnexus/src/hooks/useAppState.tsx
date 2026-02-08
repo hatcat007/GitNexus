@@ -24,6 +24,10 @@ import {
 } from '../services/session-store';
 import { v4 as uuidv4 } from 'uuid';
 
+// Module-level guards: survive React StrictMode unmount/remount cycles
+let _autoRestoreStarted = false;
+let _restoreInProgress = false;
+
 export type ViewMode = 'onboarding' | 'loading' | 'exploring';
 export type RightPanelTab = 'code' | 'chat';
 export type EmbeddingStatus = 'idle' | 'loading' | 'embedding' | 'indexing' | 'ready' | 'error';
@@ -347,6 +351,20 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         const exported = await api.exportEmbeddings();
         if (exported && exported.length > 0) {
           embeddings = exported;
+          console.log(`[Session] Saving ${exported.length} embeddings`);
+        } else {
+          // Preserve previously saved embeddings — don't overwrite with nothing
+          try {
+            const existing = await dbGetSession(currentSessionId);
+            if (existing?.embeddings && existing.embeddings.length > 0) {
+              embeddings = existing.embeddings;
+              console.log(`[Session] Preserving ${existing.embeddings.length} existing embeddings`);
+            } else {
+              console.log('[Session] No embeddings to save yet');
+            }
+          } catch {
+            console.log('[Session] No embeddings to save yet');
+          }
         }
       } catch {
         // Embeddings not available yet — save without them
@@ -394,6 +412,7 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
       },
       embeddings,
       fileHashes,
+      smartClusteringEnabled: llmSettings.intelligentClustering ?? false,
     };
 
     // Preserve original createdAt if updating
@@ -409,13 +428,22 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
   }, [graph, currentSessionId, projectName, sessionSource, fileContents, chatMessages, visibleLabels, visibleEdgeTypes, depthFilter, isRightPanelOpen, rightPanelTab, isCodePanelOpen]);
 
   const restoreSession = useCallback(async (id: string): Promise<boolean> => {
+    // Module-level guard: prevent concurrent restores (StrictMode / double-call)
+    if (_restoreInProgress) {
+      console.warn('[Session] restoreSession already in progress — skipping');
+      return false;
+    }
+    _restoreInProgress = true;
+
     setIsRestoringSession(true);
     try {
       const session = await dbGetSession(id);
       if (!session) {
         setIsRestoringSession(false);
+        _restoreInProgress = false;
         return false;
       }
+      console.log(`[Session] Loaded session "${session.name}" — ${session.embeddings?.length ?? 0} saved embeddings`);
 
       // Rebuild graph from saved nodes/relationships
       const restoredGraph = createKnowledgeGraph();
@@ -460,13 +488,20 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
       // Store whether embeddings were restored so App.tsx can skip re-embedding
       sessionRestoreEmbeddingsRef.current = embeddingsRestored;
 
+      // If embeddings were restored, mark status as 'ready' so UI shows "Semantic Ready"
+      if (embeddingsRestored) {
+        setEmbeddingStatus('ready');
+      }
+
       await setLastSessionId(session.id);
       setViewMode('exploring');
       setIsRestoringSession(false);
+      _restoreInProgress = false;
       return true;
     } catch (err) {
       console.error('[Session] Failed to restore session:', err);
       setIsRestoringSession(false);
+      _restoreInProgress = false;
       return false;
     }
   }, []);
@@ -569,20 +604,20 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [sessionSource, currentSessionId, graph]);
 
-  // Auto-restore last session on mount
+  // Auto-restore last session on mount (module-level guard survives StrictMode remount)
   useEffect(() => {
-    let cancelled = false;
+    if (_autoRestoreStarted) return;
+    _autoRestoreStarted = true;
     (async () => {
       try {
         const lastId = await getLastSessionId();
-        if (lastId && !cancelled) {
+        if (lastId) {
           await restoreSession(lastId);
         }
       } catch (err) {
         console.warn('[Session] Auto-restore failed:', err);
       }
     })();
-    return () => { cancelled = true; };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Debounced auto-save when session-relevant state changes
@@ -604,7 +639,7 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         clearTimeout(autoSaveTimerRef.current);
       }
     };
-  }, [currentSessionId, graph, chatMessages, visibleLabels, visibleEdgeTypes, depthFilter, isRightPanelOpen, rightPanelTab, isCodePanelOpen, viewMode, saveCurrentSession]);
+  }, [currentSessionId, graph, chatMessages, visibleLabels, visibleEdgeTypes, depthFilter, isRightPanelOpen, rightPanelTab, isCodePanelOpen, viewMode, embeddingStatus, saveCurrentSession]);
 
   const normalizePath = useCallback((p: string) => {
     return p.replace(/\\/g, '/').replace(/^\.?\//, '');

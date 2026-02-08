@@ -105,6 +105,13 @@ const batchInsertEmbeddings = async (
 const createVectorIndex = async (
   executeQuery: (cypher: string) => Promise<any[]>
 ): Promise<void> => {
+  // Drop existing index first (idempotent — ignores if not found)
+  try {
+    await executeQuery(`CALL DROP_VECTOR_INDEX('CodeEmbedding', 'code_embedding_idx')`);
+  } catch {
+    // Index doesn't exist yet — that's fine
+  }
+
   const cypher = `
     CALL CREATE_VECTOR_INDEX('CodeEmbedding', 'code_embedding_idx', 'embedding', metric := 'cosine')
   `;
@@ -112,7 +119,7 @@ const createVectorIndex = async (
   try {
     await executeQuery(cypher);
   } catch (error) {
-    // Index might already exist
+    // Index might already exist (race condition)
     if (import.meta.env.DEV) {
       console.warn('Vector index creation warning:', error);
     }
