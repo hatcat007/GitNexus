@@ -223,6 +223,211 @@ const workerApi = {
     return serializePipelineResult(result);
   },
 
+  /**
+   * Restore session data into the worker (KuzuDB, BM25, file contents, embeddings)
+   * Called when loading a saved session from IndexedDB.
+   * @param nodes - Serialized graph nodes
+   * @param relationships - Serialized graph relationships
+   * @param fileContentsRecord - File contents as a plain object
+   * @param savedEmbeddings - Optional saved embedding vectors {nodeId, embedding}[]
+   */
+  async restoreSessionData(
+    nodes: any[],
+    relationships: any[],
+    fileContentsRecord: Record<string, string>,
+    savedEmbeddings?: Array<{ nodeId: string; embedding: number[] }>
+  ): Promise<{ embeddingsRestored: boolean }> {
+    // 1. Rebuild file contents map
+    storedFileContents = new Map(Object.entries(fileContentsRecord));
+
+    // 2. Rebuild the KnowledgeGraph (needed by loadGraphToKuzu)
+    const { createKnowledgeGraph } = await import('../core/graph/graph');
+    const graph = createKnowledgeGraph();
+    for (const n of nodes) graph.addNode(n);
+    for (const r of relationships) graph.addRelationship(r);
+
+    // 3. Store as currentGraphResult for agent tools
+    currentGraphResult = { graph, fileContents: storedFileContents };
+
+    // 4. Build BM25 index
+    const bm25DocCount = buildBM25Index(storedFileContents);
+    if (import.meta.env.DEV) {
+      console.log(`[Session Restore] BM25 index built: ${bm25DocCount} documents`);
+    }
+
+    // 5. Load into KuzuDB
+    let embeddingsRestored = false;
+    try {
+      const kuzu = await getKuzuAdapter();
+      await kuzu.loadGraphToKuzu(graph, storedFileContents);
+
+      // 6. Restore embeddings if saved
+      if (savedEmbeddings && savedEmbeddings.length > 0) {
+        try {
+          const cypher = `CREATE (e:CodeEmbedding {nodeId: $nodeId, embedding: $embedding})`;
+          const paramsList = savedEmbeddings.map(e => ({
+            nodeId: e.nodeId,
+            embedding: e.embedding,
+          }));
+          await kuzu.executeWithReusedStatement(cypher, paramsList);
+
+          // Recreate the vector index
+          try {
+            await kuzu.executeQuery(
+              `CALL CREATE_VECTOR_INDEX('CodeEmbedding', 'code_embedding_idx', 'embedding', metric := 'cosine')`
+            );
+          } catch {
+            // Index creation may fail if it already exists
+          }
+
+          isEmbeddingComplete = true;
+          embeddingsRestored = true;
+
+          if (import.meta.env.DEV) {
+            console.log(`[Session Restore] Restored ${savedEmbeddings.length} embeddings + vector index`);
+          }
+        } catch (err) {
+          console.warn('[Session Restore] Embedding restore failed (will re-embed):', err);
+        }
+      }
+
+      if (import.meta.env.DEV) {
+        const stats = await kuzu.getKuzuStats();
+        console.log('[Session Restore] KuzuDB loaded:', stats);
+      }
+    } catch (err) {
+      console.warn('[Session Restore] KuzuDB load failed (non-fatal):', err);
+    }
+
+    return { embeddingsRestored };
+  },
+
+  /**
+   * Export all embedding vectors from KuzuDB for session persistence.
+   * Returns {nodeId, embedding}[] — only the vectors, not the full nodes.
+   */
+  async exportEmbeddings(): Promise<Array<{ nodeId: string; embedding: number[] }>> {
+    try {
+      const kuzu = await getKuzuAdapter();
+      if (!kuzu.isKuzuReady() || !isEmbeddingComplete) return [];
+
+      const rows = await kuzu.executeQuery(
+        `MATCH (e:CodeEmbedding) RETURN e.nodeId AS nodeId, e.embedding AS embedding`
+      );
+      return rows.map((r: any) => ({
+        nodeId: r.nodeId ?? r[0],
+        embedding: Array.isArray(r.embedding ?? r[1])
+          ? (r.embedding ?? r[1])
+          : Array.from(r.embedding ?? r[1]),
+      }));
+    } catch (err) {
+      console.warn('[Session] Failed to export embeddings:', err);
+      return [];
+    }
+  },
+
+  /**
+   * After a re-index pipeline completes, restore embeddings for unchanged nodes
+   * and only embed truly new/changed nodes. Also transfer LLM enrichments.
+   * 
+   * Call this AFTER runPipeline/runPipelineFromFiles and BEFORE startEmbeddingPipeline.
+   * 
+   * @param oldFileHashes - SHA-256 hashes per file path from the previous session
+   * @param newFileHashes - SHA-256 hashes per file path from the new pipeline
+   * @param oldEmbeddings - Saved embedding vectors from the previous session
+   * @param oldCommunityEnrichments - LLM-enriched community labels from old graph
+   * @returns Stats about what was preserved vs needs re-processing
+   */
+  async preserveUnchangedData(
+    oldFileHashes: Record<string, string>,
+    newFileHashes: Record<string, string>,
+    oldEmbeddings: Array<{ nodeId: string; embedding: number[] }>,
+    oldCommunityEnrichments: Array<{ id: string; name: string; keywords: string[]; description: string }>
+  ): Promise<{ preservedEmbeddings: number; newNodes: number; transferredEnrichments: number }> {
+    const kuzu = await getKuzuAdapter();
+    if (!kuzu.isKuzuReady()) return { preservedEmbeddings: 0, newNodes: 0, transferredEnrichments: 0 };
+
+    // 1. Find unchanged files (same hash in old and new)
+    const unchangedFiles = new Set<string>();
+    for (const [path, newHash] of Object.entries(newFileHashes)) {
+      if (oldFileHashes[path] === newHash) {
+        unchangedFiles.add(path);
+      }
+    }
+
+    // 2. Build a set of node IDs whose source file is unchanged
+    //    Node IDs typically contain the file path, e.g. "File:repo/src/foo.ts"
+    const unchangedNodeIds = new Set<string>();
+    const oldEmbeddingMap = new Map(oldEmbeddings.map(e => [e.nodeId, e.embedding]));
+
+    for (const nodeId of oldEmbeddingMap.keys()) {
+      // Check if this node's file is unchanged
+      for (const unchangedPath of unchangedFiles) {
+        if (nodeId.includes(unchangedPath)) {
+          unchangedNodeIds.add(nodeId);
+          break;
+        }
+      }
+    }
+
+    // 3. Restore embeddings for unchanged nodes
+    let preservedCount = 0;
+    const preservedEmbeddings: Array<{ nodeId: string; embedding: number[] }> = [];
+    for (const nodeId of unchangedNodeIds) {
+      const emb = oldEmbeddingMap.get(nodeId);
+      if (emb) {
+        preservedEmbeddings.push({ nodeId, embedding: emb });
+        preservedCount++;
+      }
+    }
+
+    if (preservedEmbeddings.length > 0) {
+      try {
+        const cypher = `CREATE (e:CodeEmbedding {nodeId: $nodeId, embedding: $embedding})`;
+        await kuzu.executeWithReusedStatement(
+          cypher,
+          preservedEmbeddings.map(e => ({ nodeId: e.nodeId, embedding: e.embedding }))
+        );
+      } catch (err) {
+        console.warn('[ReIndex] Failed to restore preserved embeddings:', err);
+        preservedCount = 0;
+      }
+    }
+
+    // 4. Transfer LLM enrichments to new Community nodes
+    let transferredCount = 0;
+    if (oldCommunityEnrichments.length > 0) {
+      for (const old of oldCommunityEnrichments) {
+        try {
+          const nameEsc = old.name.replace(/"/g, '\\"');
+          const descEsc = old.description.replace(/"/g, '\\"');
+          const keywordsStr = `["${old.keywords.map(k => k.replace(/"/g, '\\"')).join('","')}"]`;
+          // Try to match by ID first, then by similar label
+          await kuzu.executeQuery(`
+            MATCH (c:Community)
+            WHERE c.id = "${old.id}"
+            SET c.name = "${nameEsc}",
+                c.keywords = ${keywordsStr},
+                c.description = "${descEsc}",
+                c.enrichedBy = "llm"
+          `);
+          transferredCount++;
+        } catch {
+          // Community might not exist in new graph — skip
+        }
+      }
+    }
+
+    const totalOldEmbeddings = oldEmbeddings.length;
+    const newNodes = totalOldEmbeddings - preservedCount;
+
+    if (import.meta.env.DEV) {
+      console.log(`[ReIndex] Preserved ${preservedCount}/${totalOldEmbeddings} embeddings, ${newNodes} nodes need re-embedding, ${transferredCount} enrichments transferred`);
+    }
+
+    return { preservedEmbeddings: preservedCount, newNodes, transferredEnrichments: transferredCount };
+  },
+
   // ============================================================
   // Embedding Pipeline Methods
   // ============================================================

@@ -49,10 +49,38 @@ const AppContent = () => {
     startNewSession,
   } = useAppState();
 
-  // Access setCurrentSessionId via a ref to avoid circular deps in handleFileSelect
-  const { currentSessionId } = useAppState();
+  // Access currentSessionId + graph + projectName for session restore side-effects
+  const { currentSessionId, graph, projectName: currentProjectName, sessionEmbeddingsRestored, preserveDataForReindex } = useAppState();
   const sessionIdRef = useRef<string | null>(currentSessionId);
   useEffect(() => { sessionIdRef.current = currentSessionId; }, [currentSessionId]);
+
+  // Track previous restoring state to detect completion
+  const wasRestoringRef = useRef(false);
+
+  // After session restore completes, start embeddings (only if not already restored) + agent
+  useEffect(() => {
+    if (wasRestoringRef.current && !isRestoringSession && viewMode === 'exploring' && graph) {
+      if (sessionEmbeddingsRestored) {
+        // Embeddings were restored from saved session — skip re-embedding entirely
+        console.log('[Session Restore] Embeddings restored from session — skipping model inference');
+      } else {
+        // No saved embeddings — run embedding pipeline from scratch
+        startEmbeddings().catch((err) => {
+          if (err?.name === 'WebGPUNotAvailableError' || err?.message?.includes('WebGPU')) {
+            startEmbeddings('wasm').catch(console.warn);
+          } else {
+            console.warn('[Session Restore] Embeddings auto-start failed:', err);
+          }
+        });
+      }
+
+      // Always init agent (lightweight, no cost)
+      if (getActiveProviderConfig()) {
+        initializeAgent(currentProjectName || undefined);
+      }
+    }
+    wasRestoringRef.current = isRestoringSession;
+  }, [isRestoringSession, viewMode, graph, startEmbeddings, initializeAgent, currentProjectName, sessionEmbeddingsRestored]);
 
   const [showClusteringModal, setShowClusteringModal] = useState(false);
 
@@ -110,6 +138,11 @@ const AppContent = () => {
       setGraph(result.graph);
       setFileContents(result.fileContents);
 
+      // If this is a re-index (existing session), preserve embeddings for unchanged files
+      if (sessionIdRef.current) {
+        await preserveDataForReindex(result.fileContents).catch(console.warn);
+      }
+
       // Create a new session for this upload
       setSessionSource({ type: 'zip', fileName: file.name });
 
@@ -122,7 +155,7 @@ const AppContent = () => {
       }
 
       // Auto-start embeddings pipeline in background
-      // Uses WebGPU if available, falls back to WASM
+      // Skips nodes that already have embeddings (from preserveDataForReindex)
       startEmbeddings().catch((err) => {
         // WebGPU not available - try WASM fallback silently
         if (err?.name === 'WebGPUNotAvailableError' || err?.message?.includes('WebGPU')) {
@@ -169,6 +202,11 @@ const AppContent = () => {
 
       setGraph(result.graph);
       setFileContents(result.fileContents);
+
+      // If this is a re-index (existing session), preserve embeddings for unchanged files
+      if (sessionIdRef.current) {
+        await preserveDataForReindex(result.fileContents).catch(console.warn);
+      }
 
       // Session source is set by DropZone before calling handleGitClone
 

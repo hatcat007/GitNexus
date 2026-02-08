@@ -397,6 +397,23 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
         />
 
         {/* Session actions */}
+        {sessionSource && (
+          <button
+            onClick={() => {
+              // Trigger re-index: save current session first, then go to onboarding
+              // with a flag so DropZone knows to pre-fill the source
+              saveCurrentSession().then(() => {
+                // Use the existing onGitClone/onFileSelect flows via onboarding
+                setViewMode('onboarding');
+              });
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-text-secondary hover:bg-hover hover:text-text-primary transition-colors border border-border-subtle"
+            title={`Re-index from ${sessionSource.type === 'github' ? sessionSource.url : 'ZIP'}`}
+          >
+            <RefreshCw className="w-4 h-4" />
+            <span className="hidden sm:inline">Re-index</span>
+          </button>
+        )}
         <button
           onClick={async () => {
             await saveCurrentSession();

@@ -186,6 +186,10 @@ interface AppState {
   listAllSessions: () => Promise<SessionMeta[]>;
   isRestoringSession: boolean;
   startNewSession: () => void;
+  /** True if the last session restore included saved embeddings (skip re-embedding) */
+  sessionEmbeddingsRestored: boolean;
+  /** After re-index pipeline completes, call this to preserve embeddings for unchanged files */
+  preserveDataForReindex: (newFileContents: Map<string, string>) => Promise<number>;
 }
 
 const AppStateContext = createContext<AppState | null>(null);
@@ -326,11 +330,47 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
   const [sessionSource, setSessionSource] = useState<SessionSource | null>(null);
   const [isRestoringSession, setIsRestoringSession] = useState(false);
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sessionRestoreEmbeddingsRef = useRef(false);
 
   // --- Session persistence methods ---
 
   const saveCurrentSession = useCallback(async (): Promise<void> => {
     if (!graph || !currentSessionId) return;
+
+    const fileContentsObj = Object.fromEntries(fileContents);
+
+    // Export embedding vectors from the worker (if available)
+    let embeddings: SavedSession['embeddings'] = undefined;
+    const api = apiRef.current;
+    if (api) {
+      try {
+        const exported = await api.exportEmbeddings();
+        if (exported && exported.length > 0) {
+          embeddings = exported;
+        }
+      } catch {
+        // Embeddings not available yet — save without them
+      }
+    }
+
+    // Compute file hashes for incremental re-index diffing
+    let fileHashes: Record<string, string> | undefined;
+    try {
+      const entries = Object.entries(fileContentsObj);
+      if (entries.length > 0 && typeof crypto?.subtle?.digest === 'function') {
+        const hashes: Record<string, string> = {};
+        for (const [path, content] of entries) {
+          const buf = new TextEncoder().encode(content);
+          const hashBuf = await crypto.subtle.digest('SHA-256', buf);
+          hashes[path] = Array.from(new Uint8Array(hashBuf))
+            .map(b => b.toString(16).padStart(2, '0'))
+            .join('');
+        }
+        fileHashes = hashes;
+      }
+    } catch {
+      // Hashing not available — save without hashes
+    }
 
     const session: SavedSession = {
       id: currentSessionId,
@@ -342,7 +382,7 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         nodes: graph.nodes,
         relationships: graph.relationships,
       },
-      fileContents: Object.fromEntries(fileContents),
+      fileContents: fileContentsObj,
       chatMessages,
       uiState: {
         visibleLabels,
@@ -352,6 +392,8 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         rightPanelTab,
         isCodePanelOpen,
       },
+      embeddings,
+      fileHashes,
     };
 
     // Preserve original createdAt if updating
@@ -397,6 +439,27 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         setCodePanelOpen(session.uiState.isCodePanelOpen ?? false);
       }
 
+      // Re-hydrate the Web Worker with session data (KuzuDB, BM25, file contents, embeddings)
+      let embeddingsRestored = false;
+      const api = apiRef.current;
+      if (api) {
+        try {
+          const result = await api.restoreSessionData(
+            session.graph.nodes,
+            session.graph.relationships,
+            session.fileContents,
+            session.embeddings ?? undefined
+          );
+          embeddingsRestored = result?.embeddingsRestored ?? false;
+          console.log('[Session] Worker re-hydrated. Embeddings restored:', embeddingsRestored);
+        } catch (err) {
+          console.warn('[Session] Worker re-hydration failed (non-fatal):', err);
+        }
+      }
+
+      // Store whether embeddings were restored so App.tsx can skip re-embedding
+      sessionRestoreEmbeddingsRef.current = embeddingsRestored;
+
       await setLastSessionId(session.id);
       setViewMode('exploring');
       setIsRestoringSession(false);
@@ -419,6 +482,62 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
   const listAllSessions = useCallback(async (): Promise<SessionMeta[]> => {
     return listSessions();
   }, []);
+
+  /**
+   * After a re-index pipeline completes, preserve embeddings for unchanged files
+   * and transfer LLM cluster enrichments from the old session.
+   * Call this AFTER the new pipeline finishes but BEFORE startEmbeddings.
+   * @param newFileContents - file contents from the new pipeline
+   * @returns number of preserved embeddings
+   */
+  const preserveDataForReindex = useCallback(async (newFileContents: Map<string, string>): Promise<number> => {
+    if (!currentSessionId) return 0;
+
+    const api = apiRef.current;
+    if (!api) return 0;
+
+    // Load old session from IndexedDB
+    const oldSession = await dbGetSession(currentSessionId);
+    if (!oldSession || !oldSession.fileHashes) return 0;
+
+    // Compute new file hashes
+    const newFileHashes: Record<string, string> = {};
+    try {
+      for (const [path, content] of newFileContents.entries()) {
+        const buf = new TextEncoder().encode(content);
+        const hashBuf = await crypto.subtle.digest('SHA-256', buf);
+        newFileHashes[path] = Array.from(new Uint8Array(hashBuf))
+          .map(b => b.toString(16).padStart(2, '0'))
+          .join('');
+      }
+    } catch {
+      return 0;
+    }
+
+    // Extract LLM enrichments from old graph's Community nodes
+    const oldEnrichments = (oldSession.graph.nodes ?? [])
+      .filter((n: any) => n.label === 'Community' && n.properties?.enrichedBy === 'llm')
+      .map((n: any) => ({
+        id: n.id,
+        name: n.properties?.name ?? '',
+        keywords: n.properties?.keywords ?? [],
+        description: n.properties?.description ?? '',
+      }));
+
+    try {
+      const result = await api.preserveUnchangedData(
+        oldSession.fileHashes,
+        newFileHashes,
+        oldSession.embeddings ?? [],
+        oldEnrichments
+      );
+      console.log(`[ReIndex] Preserved ${result.preservedEmbeddings} embeddings, ${result.transferredEnrichments} enrichments`);
+      return result.preservedEmbeddings;
+    } catch (err) {
+      console.warn('[ReIndex] preserveUnchangedData failed:', err);
+      return 0;
+    }
+  }, [currentSessionId]);
 
   const startNewSession = useCallback(() => {
     setCurrentSessionId(null);
@@ -1436,6 +1555,8 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     listAllSessions,
     isRestoringSession,
     startNewSession,
+    sessionEmbeddingsRestored: sessionRestoreEmbeddingsRef.current,
+    preserveDataForReindex,
   };
 
   return (

@@ -164,11 +164,27 @@ export const runEmbeddingPipeline = async (
     }
 
     // Phase 2: Query embeddable nodes
-    const nodes = await queryEmbeddableNodes(executeQuery);
+    const allNodes = await queryEmbeddableNodes(executeQuery);
+
+    // Filter out nodes that already have embeddings (from session restore or re-index preservation)
+    let alreadyEmbeddedIds = new Set<string>();
+    try {
+      const existingRows = await executeQuery(
+        `MATCH (e:CodeEmbedding) RETURN e.nodeId AS nodeId`
+      );
+      alreadyEmbeddedIds = new Set(existingRows.map((r: any) => r.nodeId ?? r[0]));
+    } catch {
+      // CodeEmbedding table might be empty — that's fine
+    }
+
+    const nodes = alreadyEmbeddedIds.size > 0
+      ? allNodes.filter(n => !alreadyEmbeddedIds.has(n.id))
+      : allNodes;
     const totalNodes = nodes.length;
+    const skippedCount = allNodes.length - totalNodes;
 
     if (import.meta.env.DEV) {
-      console.log(`📊 Found ${totalNodes} embeddable nodes`);
+      console.log(`📊 Found ${allNodes.length} embeddable nodes, ${skippedCount} already embedded, ${totalNodes} to embed`);
     }
 
     if (totalNodes === 0) {
@@ -178,6 +194,11 @@ export const runEmbeddingPipeline = async (
         nodesProcessed: 0,
         totalNodes: 0,
       });
+
+      // Still create vector index if we have preserved embeddings
+      if (skippedCount > 0) {
+        await createVectorIndex(executeQuery);
+      }
       return;
     }
 

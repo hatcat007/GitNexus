@@ -33,6 +33,11 @@ export interface SessionUIState {
   isCodePanelOpen: boolean;
 }
 
+export interface SavedEmbedding {
+  nodeId: string;
+  embedding: number[];
+}
+
 export interface SavedSession {
   id: string;
   name: string;
@@ -46,6 +51,10 @@ export interface SavedSession {
   fileContents: Record<string, string>;
   chatMessages: ChatMessage[];
   uiState: SessionUIState;
+  /** Persisted embedding vectors — avoids re-running the model on restore */
+  embeddings?: SavedEmbedding[];
+  /** SHA-256 hashes per file path — used for incremental re-index diffing */
+  fileHashes?: Record<string, string>;
 }
 
 /** Lightweight metadata returned by listSessions (no heavy payload). */
