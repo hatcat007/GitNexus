@@ -1,4 +1,4 @@
-import { Search, Settings, HelpCircle, Sparkles, Github, Star, RefreshCw, Plus } from 'lucide-react';
+import { Search, Settings, HelpCircle, Sparkles, Github, Star, RefreshCw, Plus, ArrowLeftRight } from 'lucide-react';
 import { useAppState } from '../hooks/useAppState';
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { GraphNode } from '../core/graph/types';
@@ -39,6 +39,8 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
     // Session
     sessionSource,
     startNewSession,
+    saveCurrentSession,
+    setViewMode,
   } = useAppState();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -396,11 +398,15 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
 
         {/* Session actions */}
         <button
-          onClick={startNewSession}
-          className="w-9 h-9 flex items-center justify-center rounded-md text-text-secondary hover:bg-hover hover:text-text-primary transition-colors"
-          title="New session"
+          onClick={async () => {
+            await saveCurrentSession();
+            setViewMode('onboarding');
+          }}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-text-secondary hover:bg-hover hover:text-text-primary transition-colors border border-border-subtle"
+          title="Switch session"
         >
-          <Plus className="w-[18px] h-[18px]" />
+          <ArrowLeftRight className="w-4 h-4" />
+          <span className="hidden sm:inline">Switch Session</span>
         </button>
 
         {/* Icon buttons */}
