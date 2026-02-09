@@ -262,6 +262,68 @@ const AppContent = () => {
     }
   }, [setViewMode, setGraph, setFileContents, setProgress, setProjectName, runPipelineFromFiles, startEmbeddings, initializeAgent, runClusterEnrichment]);
 
+  const handleFolderSelect = useCallback(async (files: FileEntry[], folderName: string, enableSmartClustering?: boolean) => {
+    // Use folder name as project name
+    const projectName = folderName || 'folder-project';
+
+    setProjectName(projectName);
+    // Set initial progress BEFORE entering loading mode to prevent black screen
+    setProgress({ phase: 'extracting', percent: 0, message: 'Starting...', detail: 'Preparing to process files' });
+    setViewMode('loading');
+
+    try {
+      // Prepare LLM config if clustering is enabled
+      const clusteringConfig = enableSmartClustering ? getActiveProviderConfig() ?? undefined : undefined;
+
+      const result = await runPipelineFromFiles(files, (progress) => {
+        setProgress(progress);
+      }, clusteringConfig || undefined);
+
+      setGraph(result.graph);
+      setFileContents(result.fileContents);
+
+      // If this is a re-index (existing session), preserve embeddings for unchanged files
+      if (sessionIdRef.current) {
+        await preserveDataForReindex(result.fileContents).catch(console.warn);
+      }
+
+      // Session source is set by DropZone before calling handleFolderSelect
+
+      setViewMode('exploring');
+
+      // Initialize (or re-initialize) the agent AFTER a repo loads so it captures
+      // the current codebase context (file contents + graph tools) in the worker.
+      if (getActiveProviderConfig()) {
+        initializeAgent(projectName);
+      }
+
+      // Auto-start embeddings pipeline in background
+      startEmbeddings().catch((err) => {
+        // WebGPU not available - try WASM fallback silently
+        if (err?.name === 'WebGPUNotAvailableError' || err?.message?.includes('WebGPU')) {
+          startEmbeddings('wasm').catch(console.warn);
+        } else {
+          console.warn('Embeddings auto-start failed:', err);
+        }
+      });
+
+      // Start background cluster enrichment (if toggle was enabled)
+      startBackgroundEnrichment().catch(console.warn);
+    } catch (error) {
+      console.error('Pipeline error:', error);
+      setProgress({
+        phase: 'error',
+        percent: 0,
+        message: 'Error processing folder',
+        detail: error instanceof Error ? error.message : 'Unknown error',
+      });
+      setTimeout(() => {
+        setViewMode('onboarding');
+        setProgress(null);
+      }, 3000);
+    }
+  }, [setViewMode, setGraph, setFileContents, setProgress, setProjectName, runPipelineFromFiles, startEmbeddings, initializeAgent, runClusterEnrichment]);
+
   const handleFocusNode = useCallback((nodeId: string) => {
     graphCanvasRef.current?.focusNode(nodeId);
   }, []);
@@ -289,7 +351,7 @@ const AppContent = () => {
 
   // Render based on view mode
   if (viewMode === 'onboarding') {
-    return <DropZone onFileSelect={handleFileSelect} onGitClone={handleGitClone} />;
+    return <DropZone onFileSelect={handleFileSelect} onGitClone={handleGitClone} onFolderSelect={handleFolderSelect} />;
   }
 
   if (viewMode === 'loading' && progress) {

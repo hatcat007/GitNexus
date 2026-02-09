@@ -18,10 +18,11 @@ import type { EdgeType } from '../lib/constants';
 // ---------------------------------------------------------------------------
 
 export interface SessionSource {
-  type: 'zip' | 'github';
+  type: 'zip' | 'github' | 'folder';
   fileName?: string;   // for zip
   url?: string;        // for github
   branch?: string;     // for github (default: 'main')
+  name?: string;       // for folder (folder name)
 }
 
 export interface SessionUIState {

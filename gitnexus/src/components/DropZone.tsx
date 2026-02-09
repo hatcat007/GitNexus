@@ -1,7 +1,8 @@
 import { useState, useCallback, DragEvent, useEffect } from 'react';
-import { Upload, FileArchive, Github, Loader2, ArrowRight, Key, Eye, EyeOff, Sparkles, GitBranch, Clock, Trash2, FolderOpen } from 'lucide-react';
+import { Upload, FileArchive, Github, Loader2, ArrowRight, Key, Eye, EyeOff, Sparkles, GitBranch, Clock, Trash2, FolderOpen, Folder } from 'lucide-react';
 import { cloneRepository, parseGitHubUrl } from '../services/git-clone';
 import { FileEntry } from '../services/zip';
+import { pickAndReadDirectory, isFileSystemAccessSupported, handleDroppedFolder, isDroppedItemFolder } from '../services/folder-upload';
 import { getActiveProviderConfig } from '../core/llm/settings-service';
 import { useAppState } from '../hooks/useAppState';
 import type { SessionMeta } from '../services/session-store';
@@ -9,22 +10,31 @@ import type { SessionMeta } from '../services/session-store';
 interface DropZoneProps {
   onFileSelect: (file: File, enableSmartClustering?: boolean) => void;
   onGitClone?: (files: FileEntry[], enableSmartClustering?: boolean) => void;
+  onFolderSelect?: (files: FileEntry[], folderName: string, enableSmartClustering?: boolean) => void;
 }
 
-export const DropZone = ({ onFileSelect, onGitClone }: DropZoneProps) => {
+export const DropZone = ({ onFileSelect, onGitClone, onFolderSelect }: DropZoneProps) => {
   const { restoreSession, deleteSessionById, listAllSessions, setSessionSource } = useAppState();
 
   const [isDragging, setIsDragging] = useState(false);
-  const [activeTab, setActiveTab] = useState<'zip' | 'github'>('zip');
+  const [activeTab, setActiveTab] = useState<'zip' | 'github' | 'folder'>('zip');
   const [githubUrl, setGithubUrl] = useState('');
   const [githubBranch, setGithubBranch] = useState('main');
   const [githubToken, setGithubToken] = useState('');
   const [showToken, setShowToken] = useState(false);
   const [isCloning, setIsCloning] = useState(false);
+  const [isReadingFolder, setIsReadingFolder] = useState(false);
   const [cloneProgress, setCloneProgress] = useState({ phase: '', percent: 0 });
+  const [folderProgress, setFolderProgress] = useState({ phase: '', percent: 0 });
   const [error, setError] = useState<string | null>(null);
   const [enableSmartClustering, setEnableSmartClustering] = useState(false);
   const [hasLLMProvider, setHasLLMProvider] = useState(false);
+  const [folderApiSupported, setFolderApiSupported] = useState(false);
+
+  // Check capabilities
+  useEffect(() => {
+    setFolderApiSupported(isFileSystemAccessSupported());
+  }, []);
 
   // Recent sessions
   const [recentSessions, setRecentSessions] = useState<SessionMeta[]>([]);
@@ -80,13 +90,24 @@ export const DropZone = ({ onFileSelect, onGitClone }: DropZoneProps) => {
     e.stopPropagation();
     setIsDragging(false);
 
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      const file = files[0];
-      if (file.name.endsWith('.zip')) {
-        onFileSelect(file, enableSmartClustering);
-      } else {
-        setError('Please drop a .zip file');
+    const items = e.dataTransfer.items;
+    if (items.length > 0) {
+      const item = items[0];
+      
+      // Check if dropped item is a folder
+      if (isDroppedItemFolder(item)) {
+        handleDroppedFolderUpload(item);
+        return;
+      }
+      
+      // Otherwise handle as file (ZIP)
+      const file = item.getAsFile();
+      if (file) {
+        if (file.name.endsWith('.zip')) {
+          onFileSelect(file, enableSmartClustering);
+        } else {
+          setError('Please drop a .zip file or a folder');
+        }
       }
     }
   }, [onFileSelect, enableSmartClustering]);
@@ -157,6 +178,64 @@ export const DropZone = ({ onFileSelect, onGitClone }: DropZoneProps) => {
     }
   };
 
+  const handleDroppedFolderUpload = async (item: DataTransferItem) => {
+    setError(null);
+    setIsReadingFolder(true);
+    setFolderProgress({ phase: 'starting', percent: 0 });
+
+    try {
+      const { name, files } = await handleDroppedFolder(
+        item,
+        (phase, percent) => setFolderProgress({ phase, percent })
+      );
+
+      // Set session source before calling handler
+      setSessionSource({ type: 'folder', name });
+
+      if (onFolderSelect) {
+        onFolderSelect(files, name, enableSmartClustering);
+      }
+    } catch (err) {
+      console.error('Folder upload failed:', err);
+      const message = err instanceof Error ? err.message : 'Failed to read folder';
+      setError(message);
+    } finally {
+      setIsReadingFolder(false);
+    }
+  };
+
+  const handleFolderSelect = async () => {
+    if (!folderApiSupported) {
+      setError('Folder upload requires Chrome or Edge browser');
+      return;
+    }
+
+    setError(null);
+    setIsReadingFolder(true);
+    setFolderProgress({ phase: 'selecting', percent: 0 });
+
+    try {
+      const { name, files } = await pickAndReadDirectory(
+        (phase, percent) => setFolderProgress({ phase, percent })
+      );
+
+      // Set session source before calling handler
+      setSessionSource({ type: 'folder', name });
+
+      if (onFolderSelect) {
+        onFolderSelect(files, name, enableSmartClustering);
+      }
+    } catch (err) {
+      console.error('Folder selection failed:', err);
+      const message = err instanceof Error ? err.message : 'Failed to select folder';
+      if (!message.includes('cancelled')) {
+        setError(message);
+      }
+    } finally {
+      setIsReadingFolder(false);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen p-8 bg-void">
       {/* Background gradient effects */}
@@ -180,7 +259,21 @@ export const DropZone = ({ onFileSelect, onGitClone }: DropZoneProps) => {
             `}
           >
             <FileArchive className="w-4 h-4" />
-            ZIP Upload
+            ZIP
+          </button>
+          <button
+            onClick={() => { setActiveTab('folder'); setError(null); }}
+            className={`
+              flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg
+              text-sm font-medium transition-all duration-200
+              ${activeTab === 'folder'
+                ? 'bg-accent text-white shadow-md'
+                : 'text-text-secondary hover:text-text-primary hover:bg-elevated'
+              }
+            `}
+          >
+            <Folder className="w-4 h-4" />
+            Folder
           </button>
           <button
             onClick={() => { setActiveTab('github'); setError(null); }}
@@ -194,7 +287,7 @@ export const DropZone = ({ onFileSelect, onGitClone }: DropZoneProps) => {
             `}
           >
             <Github className="w-4 h-4" />
-            GitHub URL
+            GitHub
           </button>
         </div>
 
@@ -252,13 +345,16 @@ export const DropZone = ({ onFileSelect, onGitClone }: DropZoneProps) => {
                 {isDragging ? 'Drop it here!' : 'Drop your codebase'}
               </h2>
               <p className="text-sm text-text-secondary text-center mb-6">
-                Drag & drop a .zip file to generate a knowledge graph
+                Drag & drop a .zip file or folder to generate a knowledge graph
               </p>
 
               {/* Hints */}
               <div className="flex items-center justify-center gap-3 text-xs text-text-muted">
                 <span className="px-3 py-1.5 bg-elevated border border-border-subtle rounded-md">
                   .zip
+                </span>
+                <span className="px-3 py-1.5 bg-elevated border border-border-subtle rounded-md">
+                  folder
                 </span>
               </div>
             </div>
@@ -299,6 +395,120 @@ export const DropZone = ({ onFileSelect, onGitClone }: DropZoneProps) => {
               </label>
             </div>
           </>
+        )}
+
+        {/* Folder Upload Tab */}
+        {activeTab === 'folder' && (
+          <div className="p-8 bg-surface border border-border-default rounded-3xl">
+            {/* Icon */}
+            <div className="mx-auto w-20 h-20 mb-6 flex items-center justify-center bg-gradient-to-br from-accent/80 to-node-interface/80 rounded-2xl shadow-lg">
+              <Folder className="w-10 h-10 text-white" />
+            </div>
+
+            {/* Text */}
+            <h2 className="text-xl font-semibold text-text-primary text-center mb-2">
+              Select a Folder
+            </h2>
+            <p className="text-sm text-text-secondary text-center mb-6">
+              Choose a local folder to analyze
+            </p>
+
+            {/* Browser compatibility warning */}
+            {!folderApiSupported && (
+              <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-400 text-sm text-center">
+                ⚠️ Folder upload requires Chrome or Edge browser
+              </div>
+            )}
+
+            {/* Smart Clustering Toggle */}
+            <div className="mb-4 p-3 bg-surface/50 border border-border-subtle rounded-xl">
+              <label className="flex items-center justify-between cursor-pointer group">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <Sparkles className="w-3.5 h-3.5 text-accent" />
+                    <span className="text-sm font-medium text-text-primary">Enable Smart Clustering</span>
+                  </div>
+                  <p className="text-xs text-text-muted leading-relaxed">
+                    Uses LLM to label processes and clusters for better detection.
+                  </p>
+                  {!hasLLMProvider && (
+                    <p className="text-xs text-amber-400 mt-1">
+                      ⚠️ Setup LLM provider to enable
+                    </p>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => hasLLMProvider && setEnableSmartClustering(!enableSmartClustering)}
+                  disabled={!hasLLMProvider}
+                  className={`
+                    relative inline-flex h-6 w-11 items-center rounded-full transition-colors ml-4
+                    ${enableSmartClustering && hasLLMProvider ? 'bg-accent' : 'bg-gray-700'}
+                    ${!hasLLMProvider ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                  `}>
+                  <span
+                    className={`
+                      inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                      ${enableSmartClustering && hasLLMProvider ? 'translate-x-6' : 'translate-x-1'}
+                    `}
+                  />
+                </button>
+              </label>
+            </div>
+
+            {/* Select Folder Button */}
+            <button
+              onClick={handleFolderSelect}
+              disabled={isReadingFolder || !folderApiSupported}
+              className="
+                w-full flex items-center justify-center gap-2 
+                px-4 py-3 
+                bg-accent hover:bg-accent/90 
+                text-white font-medium rounded-xl
+                disabled:opacity-50 disabled:cursor-not-allowed
+                transition-all duration-200
+              "
+            >
+              {isReadingFolder ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  {folderProgress.phase === 'reading'
+                    ? `Reading... ${folderProgress.percent}%`
+                    : folderProgress.phase === 'selecting'
+                      ? 'Select a folder...'
+                      : 'Starting...'
+                  }
+                </>
+              ) : (
+                <>
+                  <FolderOpen className="w-5 h-5" />
+                  Select Folder
+                </>
+              )}
+            </button>
+
+            {/* Progress bar */}
+            {isReadingFolder && (
+              <div className="mt-4">
+                <div className="h-2 bg-elevated rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-accent transition-all duration-300 ease-out"
+                    style={{ width: `${folderProgress.percent}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Hints */}
+            <div className="mt-4 flex items-center justify-center gap-3 text-xs text-text-muted">
+              <span className="px-3 py-1.5 bg-elevated border border-border-subtle rounded-md">
+                Chrome / Edge
+              </span>
+              <span className="px-3 py-1.5 bg-elevated border border-border-subtle rounded-md">
+                Drag & drop also works
+              </span>
+            </div>
+          </div>
         )}
 
         {/* GitHub URL Tab */}
@@ -523,7 +733,7 @@ export const DropZone = ({ onFileSelect, onGitClone }: DropZoneProps) => {
                       </div>
                       <div className="flex items-center gap-2 text-xs text-text-muted mt-0.5 flex-wrap">
                         <span className="px-1.5 py-0.5 bg-elevated rounded text-[10px] uppercase">
-                          {session.source.type === 'github' ? 'GitHub' : 'ZIP'}
+                          {session.source.type === 'github' ? 'GitHub' : session.source.type === 'folder' ? 'FOLDER' : 'ZIP'}
                         </span>
                         {session.source.type === 'github' && session.source.branch && (
                           <span className="flex items-center gap-0.5">
