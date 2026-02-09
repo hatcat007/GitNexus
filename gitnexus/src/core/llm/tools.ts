@@ -251,11 +251,16 @@ export const createGraphRAGTools = (
     },
     {
       name: 'search',
-      description: 'Search for code by keywords or concepts. Combines keyword matching and semantic understanding. Groups results by process with cluster context.',
+      description: `Search for code by concept, keyword, or natural language query. Use this as your PRIMARY discovery tool for understanding what exists in the codebase.
+- Combines BM25 keyword matching + semantic vector similarity (RRF fusion).
+- Returns results grouped by Process with cluster membership and 1-hop graph connections.
+- Use for: "find authentication logic", "how is data validated", "where are API routes defined".
+- Do NOT use for exact string matching (use grep instead) or structural queries like "what calls X" (use cypher or impact instead).
+- Returns: ranked list with ID, file path, line range, cluster, process grouping, and graph connections per result.`,
       schema: z.object({
-        query: z.string().describe('What you are looking for (e.g., "authentication middleware", "database connection")'),
-        groupByProcess: z.boolean().optional().nullable().describe('Group results by process (default: true)'),
-        limit: z.number().optional().nullable().describe('Max results to return (default: 10)'),
+        query: z.string().describe('Natural language or keyword query, e.g. "authentication middleware", "database connection pool", "error handling"'),
+        groupByProcess: z.boolean().optional().nullable().describe('Group results by execution process for architectural context (default: true)'),
+        limit: z.number().optional().nullable().describe('Max results 1-50 (default: 10). Use higher values for broad exploration.'),
       }),
     }
   );
@@ -343,26 +348,30 @@ export const createGraphRAGTools = (
     },
     {
       name: 'cypher',
-      description: `Execute a Cypher query against the code graph. Use for structural queries like finding callers, tracing imports, class inheritance, or custom traversals.
+      description: `Execute a Cypher query against the code knowledge graph. Use for structural queries: finding callers, tracing imports, class hierarchies, counting patterns, or custom graph traversals.
+- Use single quotes for string values in Cypher. Escape single quotes by doubling: ''
+- All relationships use a single edge table: CodeRelation with a 'type' property.
+- Do NOT use for conceptual/semantic search (use search instead) or exact text matching (use grep instead).
+- Use impact tool instead of writing manual multi-hop traversal queries.
+- Returns: markdown table with column headers from RETURN clause. Max 50 rows shown.
 
-Node tables: File, Folder, Function, Class, Interface, Method, CodeElement
-Relation: CodeRelation (single table with 'type' property: CONTAINS, DEFINES, IMPORTS, CALLS, EXTENDS, IMPLEMENTS)
+Node tables: File, Folder, Function, Class, Interface, Method, Community, Process
+Edge: CodeRelation with type: CONTAINS, DEFINES, IMPORTS, CALLS, EXTENDS, IMPLEMENTS, MEMBER_OF, STEP_IN_PROCESS
+Edge properties: type (string), confidence (float 0-1), reason (string, for fuzzy matches)
 
-Example queries:
-- Functions calling a function: MATCH (caller:Function)-[:CodeRelation {type: 'CALLS'}]->(fn:Function {name: 'validate'}) RETURN caller.name, caller.filePath
-- Class inheritance: MATCH (child:Class)-[:CodeRelation {type: 'EXTENDS'}]->(parent:Class) RETURN child.name, parent.name
-- Classes implementing interface: MATCH (c:Class)-[:CodeRelation {type: 'IMPLEMENTS'}]->(i:Interface) RETURN c.name, i.name
-- Files importing a file: MATCH (f:File)-[:CodeRelation {type: 'IMPORTS'}]->(target:File) WHERE target.name = 'utils.ts' RETURN f.name
-- All connections (with confidence): MATCH (n)-[r:CodeRelation]-(m) WHERE n.name = 'MyClass' AND r.confidence > 0.8 RETURN m.name, r.type, r.confidence
-- Find fuzzy matches: MATCH (n)-[r:CodeRelation]-(m) WHERE r.confidence < 0.8 RETURN n.name, r.reason
+Examples:
+- Callers: MATCH (caller)-[:CodeRelation {type: 'CALLS'}]->(fn:Function {name: 'validate'}) RETURN caller.name, caller.filePath
+- Imports: MATCH (f:File)-[:CodeRelation {type: 'IMPORTS'}]->(g:File) WHERE g.name = 'utils.ts' RETURN f.name
+- Inheritance: MATCH (child:Class)-[:CodeRelation {type: 'EXTENDS'}]->(parent:Class) RETURN child.name, parent.name
+- Cluster members: MATCH (m)-[:CodeRelation {type: 'MEMBER_OF'}]->(c:Community {label: 'Auth'}) RETURN m.name, label(m) AS type
+- Process steps: MATCH (s)-[r:CodeRelation {type: 'STEP_IN_PROCESS'}]->(p:Process) RETURN p.label, s.name, r.step ORDER BY r.step
 
-For semantic+graph queries, include {{QUERY_VECTOR}} placeholder and provide a 'query' parameter:
+For vector+graph hybrid queries, use {{QUERY_VECTOR}} placeholder with a 'query' param:
 CALL QUERY_VECTOR_INDEX('CodeEmbedding', 'code_embedding_idx', {{QUERY_VECTOR}}, 10) YIELD node AS emb, distance
-WITH emb, distance WHERE distance < 0.5
-MATCH (n:Function {id: emb.nodeId}) RETURN n`,
+MATCH (n {id: emb.nodeId}) RETURN n.name, n.filePath, distance`,
       schema: z.object({
-        cypher: z.string().describe('The Cypher query to execute'),
-        query: z.string().optional().nullable().describe('Natural language query to embed (required if cypher contains {{QUERY_VECTOR}})'),
+        cypher: z.string().describe('Cypher query to execute. Use single quotes for strings. Must include RETURN clause.'),
+        query: z.string().optional().nullable().describe('Natural language text to embed as vector. Required only if cypher contains {{QUERY_VECTOR}} placeholder.'),
       }),
     }
   );
@@ -424,12 +433,19 @@ MATCH (n:Function {id: emb.nodeId}) RETURN n`,
     },
     {
       name: 'grep',
-      description: 'Search for exact text patterns across all files using regex. Use for finding specific strings, error messages, TODOs, variable names, etc.',
+      description: `Search for exact text patterns across all source files using regex. Use when you know the EXACT string or pattern you are looking for.
+- Always escape regex special characters: . * + ? ^ $ { } ( ) | [ ] \\
+- Use for: finding TODOs, error messages, API keys, specific function calls, import statements, string literals.
+- Do NOT use for conceptual/semantic queries like "authentication logic" (use search instead).
+- Do NOT use for graph structure queries like "what calls X" (use cypher or impact instead).
+- Prefer grep over search when looking for a specific identifier, variable name, or literal string.
+- Returns: file:line: content format, one match per line. Max results capped.
+- Examples: "TODO", "console\\.log", "throw new Error", "import.*from.*react"`,
       schema: z.object({
-        pattern: z.string().describe('Regex pattern to search for (e.g., "TODO", "console\\.log", "API_KEY")'),
-        fileFilter: z.string().optional().nullable().describe('Only search files containing this string (e.g., ".ts", "src/api")'),
-        caseSensitive: z.boolean().optional().nullable().describe('Case-sensitive search (default: false)'),
-        maxResults: z.number().optional().nullable().describe('Max results (default: 100)'),
+        pattern: z.string().describe('Regex pattern. Escape special chars: ( ) [ ] { } . * + ? ^ $ | \\ — e.g. "console\\.log", "TODO|FIXME", "function\\("'),
+        fileFilter: z.string().optional().nullable().describe('Filter to files whose path contains this string, e.g. ".ts", "src/api", "components"'),
+        caseSensitive: z.boolean().optional().nullable().describe('Case-sensitive matching (default: false, case-insensitive)'),
+        maxResults: z.number().optional().nullable().describe('Max results to return (default: 100). Lower for focused searches.'),
       }),
     }
   );
@@ -508,9 +524,14 @@ MATCH (n:Function {id: emb.nodeId}) RETURN n`,
     },
     {
       name: 'read',
-      description: 'Read the full content of a file. Use to see source code after finding files via search or grep.',
+      description: `Read the full source code of a file. ALWAYS use this after search or grep to see actual code before making claims.
+- Supports partial paths: "utils.ts" or "src/hooks/useAppState.tsx" — smart matching finds the best fit.
+- Do NOT guess code content from file names alone. Read first, then cite.
+- If the file is not found, returns suggestions for similar file names.
+- Returns: full file content with line count and detected language. Large files (>50k chars) are truncated.
+- Use search or grep first to discover files, then read to see their content.`,
       schema: z.object({
-        filePath: z.string().describe('File path to read (can be partial like "src/utils.ts")'),
+        filePath: z.string().describe('File path to read. Can be partial, e.g. "utils.ts", "src/hooks/useAppState.tsx", "components/Header"'),
       }),
     }
   );
@@ -611,7 +632,12 @@ MATCH (n:Function {id: emb.nodeId}) RETURN n`,
     },
     {
       name: 'overview',
-      description: 'Codebase map showing all clusters and processes, plus cross-cluster dependencies.',
+      description: `Get the full codebase architecture map. Use this FIRST when you need to understand the overall structure before diving into specifics.
+- Returns: all clusters (functional groups) with member counts and cohesion scores, all processes (execution flows) with step counts, cross-cluster call dependencies, and critical paths.
+- Use for: "what does this codebase do?", "show me the architecture", "what are the main modules?".
+- Do NOT use for specific symbol lookup (use explore instead) or finding specific code (use search instead).
+- Output is formatted as markdown tables for clusters and processes, plus dependency and critical path lists.
+- Call this once per conversation to orient yourself, then use explore for deep-dives into specific clusters or processes.`,
       schema: z.object({}),
     }
   );
@@ -861,10 +887,17 @@ MATCH (n:Function {id: emb.nodeId}) RETURN n`,
     },
     {
       name: 'explore',
-      description: 'Deep dive on a symbol, cluster, or process. Shows membership, participation, and connections.',
+      description: `Deep dive into a specific symbol, cluster, or process. Use after search or overview to understand a specific entity in detail.
+- Auto-detects target type if not specified (checks process → cluster → symbol in order).
+- For SYMBOL: returns cluster membership, process participation, and all incoming/outgoing connections with edge types and confidence.
+- For CLUSTER: returns all members (up to 50), cohesion score, description, and processes touching this cluster.
+- For PROCESS: returns step-by-step execution trace with file paths, and clusters traversed.
+- Use for: "tell me about AppStateProvider", "what's in the Auth cluster", "trace the Login process".
+- Do NOT use for finding code (use search instead) or analyzing change impact (use impact instead).
+- Use overview first to discover cluster/process names, then explore to deep-dive.`,
       schema: z.object({
-        target: z.string().describe('Name or ID of a symbol, cluster, or process'),
-        type: z.enum(['symbol', 'cluster', 'process']).optional().nullable().describe('Optional target type (auto-detected if omitted)'),
+        target: z.string().describe('Name or ID to explore, e.g. "AppStateProvider", "comm_1", "Auth", "proc_0_login"'),
+        type: z.enum(['symbol', 'cluster', 'process']).optional().nullable().describe('Target type. Omit to auto-detect. Set explicitly if name is ambiguous.'),
       }),
     }
   );
@@ -1451,38 +1484,25 @@ MATCH (n:Function {id: emb.nodeId}) RETURN n`,
     },
     {
       name: 'impact',
-      description: `Analyze the impact of changing a function, class, or file.
+      description: `Analyze the impact of changing a function, class, or file. Use for dependency analysis and change risk assessment.
+- upstream: find what CALLS/IMPORTS/EXTENDS this target → what would BREAK if you changed it.
+- downstream: find what this target CALLS/IMPORTS/EXTENDS → its own dependencies.
+- Do NOT use for conceptual questions (use search) or for exploring a symbol's metadata (use explore).
+- Do NOT write manual multi-hop cypher queries for dependency analysis — use this tool instead, it handles depth traversal, deduplication, and risk scoring automatically.
+- Results are trusted graph analysis. Do NOT re-validate with cypher. Optionally follow up with grep for dynamic patterns.
 
-Use when users ask:
-- "What would break if I changed X?"
-- "What depends on X?"
-- "Impact analysis for X"
-
-Direction:
-- upstream: Find what CALLS/IMPORTS/EXTENDS this target (what would break)
-- downstream: Find what this target CALLS/IMPORTS/EXTENDS (dependencies)
-
-Output format (compact tabular):
+Returns per depth level:
   Type|Name|File:Line|EdgeType|Confidence%
-  
-EdgeType: CALLS, IMPORTS, EXTENDS, IMPLEMENTS
-Confidence: 100% = certain, <80% = fuzzy match (may be false positive)
+Plus: affected processes (with step positions), affected clusters (direct/indirect), risk level (LOW/MEDIUM/HIGH/CRITICAL), and call-site code snippets for d=1 results.
 
-relationTypes filter (optional):
-- Default: CALLS, IMPORTS, EXTENDS, IMPLEMENTS (usage-based)
-- Can add CONTAINS, DEFINES for structural analysis
-
-Additional output sections:
-- Affected processes (with step impact)
-- Affected clusters (direct/indirect)
-- Risk summary (based on direct callers, processes, clusters)`,
+Use when asked: "what would break if I changed X?", "what depends on X?", "impact analysis", "is it safe to refactor X?"`,
       schema: z.object({
-        target: z.string().describe('Name of the function, class, or file to analyze'),
-        direction: z.enum(['upstream', 'downstream']).describe('upstream = what depends on this; downstream = what this depends on'),
-        maxDepth: z.number().optional().nullable().describe('Max traversal depth (default: 3, max: 10)'),
-        relationTypes: z.array(z.string()).optional().nullable().describe('Filter by relation types: CALLS, IMPORTS, EXTENDS, IMPLEMENTS, CONTAINS, DEFINES (default: usage-based)'),
-        includeTests: z.boolean().optional().nullable().describe('Include test files in results (default: false, excludes .test.ts, .spec.ts, __tests__)'),
-        minConfidence: z.number().optional().nullable().describe('Minimum edge confidence 0-1 (default: 0.7, excludes fuzzy/inferred matches)'),
+        target: z.string().describe('Function, class, or file name to analyze, e.g. "executeQuery", "AuthService", "src/utils/helpers.ts"'),
+        direction: z.enum(['upstream', 'downstream']).describe('upstream = what DEPENDS ON this (breakage risk); downstream = what this RELIES ON'),
+        maxDepth: z.number().optional().nullable().describe('Traversal depth 1-10 (default: 3). Use 1 for direct callers only, 3 for full impact.'),
+        relationTypes: z.array(z.string()).optional().nullable().describe('Edge types to follow. Default: ["CALLS","IMPORTS","EXTENDS","IMPLEMENTS"]. Add "CONTAINS","DEFINES" for structural.'),
+        includeTests: z.boolean().optional().nullable().describe('Include test files (default: false — excludes .test.ts, .spec.ts, __tests__)'),
+        minConfidence: z.number().optional().nullable().describe('Min edge confidence 0.0-1.0 (default: 0.7). Lower to include fuzzy/inferred matches.'),
       }),
     }
   );
