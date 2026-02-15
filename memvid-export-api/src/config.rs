@@ -1,11 +1,13 @@
 use std::{env, fs, net::SocketAddr, path::PathBuf};
 
-use anyhow::{Context, Result};
+use anyhow::Result;
+use uuid::Uuid;
 
 #[derive(Debug, Clone)]
 pub struct Config {
     pub bind_addr: SocketAddr,
     pub api_key: String,
+    pub api_key_is_fallback: bool,
     pub export_root: PathBuf,
     pub retention_seconds: u64,
     pub queue_capacity: usize,
@@ -30,21 +32,7 @@ impl Config {
             .parse::<SocketAddr>()
             .unwrap_or_else(|_| SocketAddr::from(([0, 0, 0, 0], 8080)));
 
-        let api_key = match env::var("MEMVID_EXPORT_API_KEY") {
-            Ok(value) if !value.trim().is_empty() => value,
-            _ => {
-                let key_file = env::var("MEMVID_EXPORT_API_KEY_FILE")
-                    .context("Set MEMVID_EXPORT_API_KEY or MEMVID_EXPORT_API_KEY_FILE")?;
-                let key = fs::read_to_string(&key_file).with_context(|| {
-                    format!("Failed to read MEMVID_EXPORT_API_KEY_FILE at {key_file}")
-                })?;
-                let trimmed = key.trim().to_string();
-                if trimmed.is_empty() {
-                    anyhow::bail!("MEMVID_EXPORT_API_KEY_FILE is empty: {key_file}");
-                }
-                trimmed
-            }
-        };
+        let (api_key, api_key_is_fallback) = resolve_api_key();
 
         let export_root = PathBuf::from(
             env::var("MEMVID_EXPORT_ROOT").unwrap_or_else(|_| "/data/exports".to_string()),
@@ -103,6 +91,7 @@ impl Config {
         Ok(Self {
             bind_addr,
             api_key,
+            api_key_is_fallback,
             export_root,
             retention_seconds,
             queue_capacity,
@@ -114,4 +103,41 @@ impl Config {
             mcp_cache_capacity,
         })
     }
+}
+
+fn resolve_api_key() -> (String, bool) {
+    if let Ok(value) = env::var("MEMVID_EXPORT_API_KEY") {
+        let trimmed = value.trim();
+        if !trimmed.is_empty() {
+            return (trimmed.to_string(), false);
+        }
+    }
+
+    if let Ok(key_file) = env::var("MEMVID_EXPORT_API_KEY_FILE") {
+        match fs::read_to_string(&key_file) {
+            Ok(raw) => {
+                let trimmed = raw.trim();
+                if !trimmed.is_empty() {
+                    return (trimmed.to_string(), false);
+                }
+                eprintln!(
+                    "[memvid-export-api] MEMVID_EXPORT_API_KEY_FILE is empty: {}. Falling back to generated key.",
+                    key_file
+                );
+            }
+            Err(err) => {
+                eprintln!(
+                    "[memvid-export-api] Failed reading MEMVID_EXPORT_API_KEY_FILE at {}: {}. Falling back to generated key.",
+                    key_file, err
+                );
+            }
+        }
+    } else {
+        eprintln!(
+            "[memvid-export-api] MEMVID_EXPORT_API_KEY not set. Falling back to generated key."
+        );
+    }
+
+    let generated = format!("fallback-{}", Uuid::new_v4());
+    (generated, true)
 }

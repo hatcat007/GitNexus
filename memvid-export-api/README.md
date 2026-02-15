@@ -34,6 +34,8 @@ Rust API for exporting GitNexus graph data into Memvid `.mv2` capsules.
 - `MEMVID_MCP_ALLOW_EXTERNAL_CAPSULES` (default `false`)
 - `MEMVID_MCP_CACHE_CAPACITY` (default `256`)
 
+If no valid API key is provided, the service now boots with a generated fallback key and logs a warning. This keeps healthchecks green but is intended only as a recovery mode; set `MEMVID_EXPORT_API_KEY` in production.
+
 ## MCP v1 Contract
 
 - Transport: Streamable HTTP JSON-RPC over `POST /mcp`

@@ -28,7 +28,7 @@ use tower_http::{
     cors::{Any, CorsLayer},
     trace::TraceLayer,
 };
-use tracing::info;
+use tracing::{info, warn};
 
 const MAX_EXPORT_BODY_BYTES: usize = 500 * 1024 * 1024;
 
@@ -51,8 +51,31 @@ async fn main() -> Result<()> {
         )
         .init();
 
-    let config = Config::from_env()?;
-    artifact_store::ensure_export_root(&config.export_root).await?;
+    let mut config = Config::from_env()?;
+    if let Err(err) = artifact_store::ensure_export_root(&config.export_root).await {
+        let fallback = std::path::PathBuf::from("/tmp/memvid-export-api/exports");
+        warn!(
+            error = %err,
+            original_root = %config.export_root.display(),
+            fallback_root = %fallback.display(),
+            "Failed to initialize export root, falling back to /tmp path"
+        );
+        artifact_store::ensure_export_root(&fallback).await?;
+        config.export_root = fallback;
+    }
+
+    if config.api_key_is_fallback {
+        warn!(
+            "Using generated fallback API key because MEMVID_EXPORT_API_KEY/MEMVID_EXPORT_API_KEY_FILE was not usable"
+        );
+    }
+
+    info!(
+        bind_addr = %config.bind_addr,
+        export_root = %config.export_root.display(),
+        fallback_key = config.api_key_is_fallback,
+        "Runtime configuration initialized"
+    );
 
     let (queue_tx, queue_rx) = mpsc::channel(config.queue_capacity);
     let state = AppState {
