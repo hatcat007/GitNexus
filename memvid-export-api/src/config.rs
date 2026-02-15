@@ -1,4 +1,4 @@
-use std::{env, net::SocketAddr, path::PathBuf};
+use std::{env, fs, net::SocketAddr, path::PathBuf};
 
 use anyhow::{Context, Result};
 
@@ -18,8 +18,21 @@ impl Config {
             .parse::<SocketAddr>()
             .context("Invalid MEMVID_EXPORT_BIND_ADDR")?;
 
-        let api_key =
-            env::var("MEMVID_EXPORT_API_KEY").context("MEMVID_EXPORT_API_KEY is required")?;
+        let api_key = match env::var("MEMVID_EXPORT_API_KEY") {
+            Ok(value) if !value.trim().is_empty() => value,
+            _ => {
+                let key_file = env::var("MEMVID_EXPORT_API_KEY_FILE")
+                    .context("Set MEMVID_EXPORT_API_KEY or MEMVID_EXPORT_API_KEY_FILE")?;
+                let key = fs::read_to_string(&key_file).with_context(|| {
+                    format!("Failed to read MEMVID_EXPORT_API_KEY_FILE at {key_file}")
+                })?;
+                let trimmed = key.trim().to_string();
+                if trimmed.is_empty() {
+                    anyhow::bail!("MEMVID_EXPORT_API_KEY_FILE is empty: {key_file}");
+                }
+                trimmed
+            }
+        };
 
         let export_root = PathBuf::from(
             env::var("MEMVID_EXPORT_ROOT").unwrap_or_else(|_| "/data/exports".to_string()),
