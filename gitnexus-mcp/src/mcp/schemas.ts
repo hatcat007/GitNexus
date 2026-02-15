@@ -14,8 +14,13 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 
 /**
  * Context tool - returns codebase context
+ * Supports an optional 'focus' parameter for adaptive context management.
  */
-export const ContextSchema = z.object({});
+export const ContextSchema = z.object({
+    focus: z.enum(['stats', 'hotspots', 'structure', 'tools', 'schema'], {
+        errorMap: () => ({ message: 'Focus must be one of: stats, hotspots, structure, tools, schema' }),
+    }).optional().describe('Optional section to focus on. Omit for full context.'),
+});
 
 /**
  * Search tool - hybrid search across codebase
@@ -153,6 +158,26 @@ export const TestImpactSchema = z.object({
     suggestTests: z.boolean().default(true),
 });
 
+/**
+ * Graph Action tool - drive the GitNexus visualization
+ */
+export const GraphActionSchema = z.object({
+    action: z.enum(['highlight', 'focus', 'annotate', 'reset'], {
+        errorMap: () => ({ message: 'Action must be one of: highlight, focus, annotate, reset' }),
+    }),
+    nodeIds: z.array(z.string().min(1)).optional().describe('Node IDs to target (required for highlight/focus/annotate)'),
+    color: z.string().optional().describe('Highlight color (hex or named)'),
+    label: z.string().optional().describe('Annotation label text for annotate action'),
+}).refine(
+    (data) => {
+        if (['highlight', 'focus', 'annotate'].includes(data.action) && (!data.nodeIds || data.nodeIds.length === 0)) {
+            return false;
+        }
+        return true;
+    },
+    { message: 'nodeIds is required for highlight, focus, and annotate actions' }
+);
+
 // ============================================
 // Schema Registry and Validation
 // ============================================
@@ -176,6 +201,7 @@ export const toolSchemaMap = {
     gitnexus_trace_flow: TraceFlowSchema,
     gitnexus_find_similar: FindSimilarSchema,
     gitnexus_test_impact: TestImpactSchema,
+    gitnexus_graph_action: GraphActionSchema,
 } as const;
 
 export type ToolName = keyof typeof toolSchemaMap;
@@ -206,7 +232,7 @@ export function validateToolInput<T extends ToolName>(
     input: unknown
 ): z.SafeParseReturnType<unknown, z.infer<typeof toolSchemaMap[T]>> {
     const schema = toolSchemaMap[toolName];
-    
+
     if (!schema) {
         // Return a failed parse result for unknown tool
         return {
@@ -220,7 +246,7 @@ export function validateToolInput<T extends ToolName>(
             ]),
         } as z.SafeParseReturnType<unknown, z.infer<typeof toolSchemaMap[T]>>;
     }
-    
+
     return schema.safeParse(input);
 }
 
@@ -240,3 +266,4 @@ export type ReviewFileInput = z.infer<typeof ReviewFileSchema>;
 export type TraceFlowInput = z.infer<typeof TraceFlowSchema>;
 export type FindSimilarInput = z.infer<typeof FindSimilarSchema>;
 export type TestImpactInput = z.infer<typeof TestImpactSchema>;
+export type GraphActionInput = z.infer<typeof GraphActionSchema>;

@@ -1,5 +1,14 @@
 /// <reference types="vite/client" />
 
+interface ImportMetaEnv {
+  readonly VITE_MEMVID_EXPORT_API_URL?: string;
+  readonly VITE_MEMVID_EXPORT_API_KEY?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+
 // File System Access API declarations
 interface FileSystemHandle {
   kind: 'file' | 'directory';

@@ -34,6 +34,10 @@ coverage/
 
 .vercel
 
+# Rust
+target/
+memvid-export-api/target/
+
 # Claude memory files (may contain secrets)
 .claude/
 

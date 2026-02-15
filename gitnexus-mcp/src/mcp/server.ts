@@ -37,29 +37,35 @@ interface ToolCaller {
 }
 
 /**
- * Format context as markdown for the resource
+ * Format context as markdown for the resource.
+ * Supports an optional `focus` section to reduce context window usage.
  */
-function formatContextAsMarkdown(context: CodebaseContext): string {
+function formatContextAsMarkdown(context: CodebaseContext, focus?: string): string {
   const { projectName, stats, hotspots, folderTree } = context;
-  
+
   const lines: string[] = [];
-  
+
   lines.push(`# GitNexus: ${projectName}`);
   lines.push('');
   lines.push('This codebase is currently loaded in GitNexus. Use the tools below to explore it.');
   lines.push('');
-  
+
+  // If focus is specified, only include the matching section
+  const showAll = !focus;
+
   // Stats
-  lines.push('## 📊 Statistics');
-  lines.push(`- **Files**: ${stats.fileCount}`);
-  lines.push(`- **Functions**: ${stats.functionCount}`);
-  if (stats.classCount > 0) lines.push(`- **Classes**: ${stats.classCount}`);
-  if (stats.interfaceCount > 0) lines.push(`- **Interfaces**: ${stats.interfaceCount}`);
-  if (stats.methodCount > 0) lines.push(`- **Methods**: ${stats.methodCount}`);
-  lines.push('');
-  
+  if (showAll || focus === 'stats') {
+    lines.push('## 📊 Statistics');
+    lines.push(`- **Files**: ${stats.fileCount}`);
+    lines.push(`- **Functions**: ${stats.functionCount}`);
+    if (stats.classCount > 0) lines.push(`- **Classes**: ${stats.classCount}`);
+    if (stats.interfaceCount > 0) lines.push(`- **Interfaces**: ${stats.interfaceCount}`);
+    if (stats.methodCount > 0) lines.push(`- **Methods**: ${stats.methodCount}`);
+    lines.push('');
+  }
+
   // Hotspots
-  if (hotspots.length > 0) {
+  if ((showAll || focus === 'hotspots') && hotspots.length > 0) {
     lines.push('## 🔥 Hotspots (Most Connected Nodes)');
     lines.push('');
     hotspots.forEach(h => {
@@ -67,9 +73,9 @@ function formatContextAsMarkdown(context: CodebaseContext): string {
     });
     lines.push('');
   }
-  
+
   // Folder tree
-  if (folderTree) {
+  if ((showAll || focus === 'structure') && folderTree) {
     lines.push('## 📁 Project Structure');
     lines.push('```');
     lines.push(projectName + '/');
@@ -77,34 +83,39 @@ function formatContextAsMarkdown(context: CodebaseContext): string {
     lines.push('```');
     lines.push('');
   }
-  
+
   // Usage hints
-  lines.push('## 🛠️ Available Tools');
-  lines.push('');
-  lines.push('- **search**: Semantic + keyword search across codebase');
-  lines.push('- **cypher**: Execute Cypher queries on knowledge graph');
-  lines.push('- **grep**: Regex pattern search in files');
-  lines.push('- **read**: Read file contents');
-  lines.push('- **explore**: Deep dive on symbol, cluster, or process');
-  lines.push('- **overview**: Codebase map (all clusters + processes)');
-  lines.push('- **impact**: Analyze change impact (upstream/downstream)');
-  lines.push('- **highlight**: Visualize nodes in graph');
-  lines.push('');
-  lines.push('## 📝 Graph Schema');
-  lines.push('');
-  lines.push('**Node Types**: File, Folder, Function, Class, Interface, Method, Community, Process');
-  lines.push('');
-  lines.push('**Relation**: `CodeRelation` with `type` property:');
-  lines.push('- CALLS, IMPORTS, EXTENDS, IMPLEMENTS, CONTAINS, DEFINES');
-  lines.push('- MEMBER_OF (symbol → community), STEP_IN_PROCESS (symbol → process)');
-  lines.push('');
-  lines.push('**Example Cypher Queries**:');
-  lines.push('```cypher');
-  lines.push('MATCH (f:Function) RETURN f.name LIMIT 10');
-  lines.push("MATCH (f:File)-[:CodeRelation {type: 'IMPORTS'}]->(g:File) RETURN f.name, g.name");
-  lines.push("MATCH (s)-[:CodeRelation {type: 'MEMBER_OF'}]->(c:Community) RETURN c.label, count(s)");
-  lines.push('```');
-  
+  if (showAll || focus === 'tools') {
+    lines.push('## 🛠️ Available Tools');
+    lines.push('');
+    lines.push('- **search**: Semantic + keyword search across codebase');
+    lines.push('- **cypher**: Execute Cypher queries on knowledge graph');
+    lines.push('- **grep**: Regex pattern search in files');
+    lines.push('- **read**: Read file contents');
+    lines.push('- **explore**: Deep dive on symbol, cluster, or process');
+    lines.push('- **overview**: Codebase map (all clusters + processes)');
+    lines.push('- **impact**: Analyze change impact (upstream/downstream)');
+    lines.push('- **graph_action**: Drive visualization (highlight, focus, annotate, reset)');
+    lines.push('');
+  }
+
+  if (showAll || focus === 'schema') {
+    lines.push('## 📝 Graph Schema');
+    lines.push('');
+    lines.push('**Node Types**: File, Folder, Function, Class, Interface, Method, Community, Process');
+    lines.push('');
+    lines.push('**Relation**: `CodeRelation` with `type` property:');
+    lines.push('- CALLS, IMPORTS, EXTENDS, IMPLEMENTS, CONTAINS, DEFINES');
+    lines.push('- MEMBER_OF (symbol → community), STEP_IN_PROCESS (symbol → process)');
+    lines.push('');
+    lines.push('**Example Cypher Queries**:');
+    lines.push('```cypher');
+    lines.push('MATCH (f:Function) RETURN f.name LIMIT 10');
+    lines.push("MATCH (f:File)-[:CodeRelation {type: 'IMPORTS'}]->(g:File) RETURN f.name, g.name");
+    lines.push("MATCH (s)-[:CodeRelation {type: 'MEMBER_OF'}]->(c:Community) RETURN c.label, count(s)");
+    lines.push('```');
+  }
+
   return lines.join('\n');
 }
 
@@ -140,7 +151,7 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
     (method: string, params: any) => client.callTool(method, params),
     { failureThreshold: 5, resetTimeoutMs: 30000 }
   );
-  
+
   // Log circuit breaker state changes
   breaker.on('open', () => {
     logger.warn('Circuit breaker opened - blocking requests');
@@ -155,7 +166,7 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
   // Handle list resources request
   server.setRequestHandler(ListResourcesRequestSchema, async () => {
     const context = client.context;
-    
+
     const resources: any[] = [
       {
         uri: 'gitnexus://codebase/health',
@@ -164,7 +175,7 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
         mimeType: 'application/json',
       },
     ];
-    
+
     if (context) {
       resources.unshift({
         uri: 'gitnexus://codebase/context',
@@ -173,14 +184,14 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
         mimeType: 'text/markdown',
       });
     }
-    
+
     return { resources };
   });
 
   // Handle read resource request
   server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
     const { uri } = request.params;
-    
+
     // Health check resource
     if (uri === 'gitnexus://codebase/health') {
       const context = client.context;
@@ -201,10 +212,10 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
         contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(health, null, 2) }],
       };
     }
-    
+
     if (uri === 'gitnexus://codebase/context') {
       const context = client.context;
-      
+
       if (!context) {
         return {
           contents: [
@@ -216,7 +227,7 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
           ],
         };
       }
-      
+
       return {
         contents: [
           {
@@ -227,7 +238,7 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
         ],
       };
     }
-    
+
     throw new Error(`Unknown resource: ${uri}`);
   });
 
@@ -243,19 +254,19 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
   // Handle tool calls
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args = {} } = request.params;
-    
+
     // Generate request ID and create child logger
     const requestId = `req_${Date.now()}`;
     const log = createRequestLogger(requestId, name);
     const startTime = Date.now();
-    
+
     log.info({ args }, 'Tool call started');
 
     try {
       // Step 1: Validate input against Zod schema BEFORE dispatch
       const prefixedName = `gitnexus_${name}` as Parameters<typeof validateToolInput>[0];
       const validation = validateToolInput(prefixedName, args);
-      
+
       if (!validation.success) {
         log.warn({ errors: validation.error.issues }, 'Validation failed');
         return formatError({
@@ -266,7 +277,7 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
           retryable: false,
         });
       }
-      
+
       // Step 2: For cypher tool, sanitize query BEFORE execution
       // Use validated data which has proper types
       const validatedArgs = validation.data;
@@ -286,7 +297,7 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
         // Update args with sanitized query
         args.query = sanitized.query;
       }
-      
+
       // Step 3: Call the tool handler with resilience (timeout + circuit breaker)
       // First check if circuit is open
       if (breaker.opened) {
@@ -311,7 +322,7 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
         // Re-throw for generic error handling below
         throw error;
       }
-      
+
       const duration = Date.now() - startTime;
       log.info({ duration }, 'Tool call completed');
 
@@ -326,9 +337,9 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
     } catch (error) {
       const duration = Date.now() - startTime;
       const message = error instanceof Error ? error.message : 'Unknown error';
-      
+
       log.error({ error: message, duration }, 'Tool call failed');
-      
+
       return formatError({
         code: ErrorCodes.INTERNAL_ERROR,
         message: 'Internal server error',
@@ -349,9 +360,9 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
   async function gracefulShutdown(signal: string) {
     if (isShuttingDown) return;
     isShuttingDown = true;
-    
+
     logger.info({ signal }, 'Starting graceful shutdown');
-    
+
     // 1. Stop accepting new requests
     try {
       await server.close();
@@ -359,14 +370,14 @@ export async function startMCPServer(client: ToolCaller): Promise<void> {
     } catch (e) {
       logger.error({ error: e }, 'Error closing MCP server');
     }
-    
+
     // 2. Wait briefly for pending requests (WebSocketBridge tracks these)
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
     // 3. Close WebSocket connections
     client.disconnect?.();
     logger.info('WebSocket disconnected');
-    
+
     logger.info('Graceful shutdown complete');
     process.exit(0);
   }

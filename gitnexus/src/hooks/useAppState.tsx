@@ -26,6 +26,20 @@ import { v4 as uuidv4 } from 'uuid';
 import type { RestoreProgress } from '../components/SessionRestoreOverlay';
 import { cloneRepository } from '../services/git-clone';
 import { addToast, type ChangeLogEntry } from './useToast';
+import {
+  buildMemvidFileName,
+  cancelMemvidExportJob,
+  downloadMemvidArtifact,
+  getMemvidExportJobStatus,
+  sourceBaseName,
+  startMemvidExportJob as submitMemvidExportJob,
+} from '../services/memvid-export';
+import type {
+  ExportJobAccepted,
+  ExportJobStatus,
+  ExportOptions,
+  ExportRequest,
+} from '../types/memvid-export';
 
 // Module-level guards: survive React StrictMode unmount/remount cycles
 let _autoRestoreStarted = false;
@@ -205,6 +219,13 @@ interface AppState {
   reindexFromGitHub: () => Promise<void>;
   /** Get diff between current and previous index (for MCP diff tool) */
   getIndexDiff: (filter?: 'all' | 'added' | 'modified' | 'deleted', includeContent?: boolean) => Promise<any>;
+
+  // Memvid export
+  exportStatus: ExportJobStatus | null;
+  exportError: string | null;
+  startMemvidExport: (options?: Partial<ExportOptions>) => Promise<ExportJobAccepted | null>;
+  pollMemvidExport: (jobId?: string) => Promise<ExportJobStatus | null>;
+  cancelMemvidExport: (jobId?: string) => Promise<boolean>;
 }
 
 const AppStateContext = createContext<AppState | null>(null);
@@ -351,6 +372,11 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
   // Background reindex state
   const [isReindexing, setIsReindexing] = useState(false);
 
+  // Memvid export state
+  const [exportStatus, setExportStatus] = useState<ExportJobStatus | null>(null);
+  const [exportError, setExportError] = useState<string | null>(null);
+  const downloadedExportJobRef = useRef<string | null>(null);
+
   // --- Session persistence methods ---
 
   const saveCurrentSession = useCallback(async (): Promise<void> => {
@@ -454,6 +480,9 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     _restoreInProgress = true;
 
     setIsRestoringSession(true);
+    setExportStatus(null);
+    setExportError(null);
+    downloadedExportJobRef.current = null;
     setRestoreProgress({ phase: 'opening-vault', percent: 5 });
 
     try {
@@ -647,6 +676,9 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     setAIToolHighlightedNodeIds(new Set());
     setBlastRadiusNodeIds(new Set());
     setQueryResult(null);
+    setExportStatus(null);
+    setExportError(null);
+    downloadedExportJobRef.current = null;
     setDepthFilter(null);
     setVisibleLabels(DEFAULT_VISIBLE_LABELS);
     setVisibleEdgeTypes(DEFAULT_VISIBLE_EDGES);
@@ -1379,6 +1411,152 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     return result;
   }, [currentSessionId]);
 
+  const startMemvidExport = useCallback(async (
+    options: Partial<ExportOptions> = {}
+  ): Promise<ExportJobAccepted | null> => {
+    if (!graph || !currentSessionId) {
+      const message = 'Load a graph before exporting to Memvid.';
+      setExportError(message);
+      addToast({ type: 'error', title: 'Export failed', message });
+      return null;
+    }
+
+    const mergedOptions: ExportOptions = {
+      semanticEnabled: options.semanticEnabled ?? false,
+      maxSnippetChars: options.maxSnippetChars ?? 1400,
+      maxNodeFrames: options.maxNodeFrames ?? 50_000,
+      maxRelationFrames: options.maxRelationFrames ?? 120_000,
+    };
+
+    const baseName = sourceBaseName(sessionSource, projectName || 'project');
+    const sourceDescriptor = {
+      type: sessionSource?.type ?? 'folder',
+      baseName,
+      displayName: projectName || baseName,
+      url: sessionSource?.type === 'github' ? sessionSource.url : undefined,
+      branch: sessionSource?.type === 'github' ? (sessionSource.branch || 'main') : undefined,
+      originalFileName: sessionSource?.type === 'zip' ? sessionSource.fileName : undefined,
+      folderName: sessionSource?.type === 'folder' ? sessionSource.name : undefined,
+    } as const;
+
+    const payload: ExportRequest = {
+      sessionId: currentSessionId,
+      projectName: projectName || 'project',
+      source: sourceDescriptor,
+      nodes: graph.nodes,
+      relationships: graph.relationships,
+      fileContents: Object.fromEntries(fileContents),
+      options: mergedOptions,
+    };
+
+    try {
+      setExportError(null);
+      const accepted = await submitMemvidExportJob(payload);
+      setExportStatus({
+        jobId: accepted.jobId,
+        status: accepted.status,
+        progress: accepted.progress ?? 0,
+        message: accepted.message ?? 'Export queued',
+        createdAt: accepted.createdAt,
+      });
+      downloadedExportJobRef.current = null;
+      addToast({
+        type: 'info',
+        title: 'Memvid export started',
+        message: mergedOptions.semanticEnabled
+          ? 'Semantic indexing enabled for this export.'
+          : 'Lexical-only export started.',
+      });
+      return accepted;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unknown export error';
+      setExportError(message);
+      setExportStatus(null);
+      addToast({ type: 'error', title: 'Export failed', message, duration: 8000 });
+      return null;
+    }
+  }, [currentSessionId, fileContents, graph, projectName, sessionSource]);
+
+  const pollMemvidExport = useCallback(async (jobId?: string): Promise<ExportJobStatus | null> => {
+    const activeJobId = jobId ?? exportStatus?.jobId;
+    if (!activeJobId) return null;
+
+    try {
+      const status = await getMemvidExportJobStatus(activeJobId);
+      setExportStatus(status);
+
+      if (status.status === 'failed') {
+        const message = status.error?.message || status.message || 'Export failed';
+        setExportError(message);
+        addToast({ type: 'error', title: 'Export failed', message, duration: 8000 });
+      }
+
+      if (status.status === 'canceled') {
+        setExportError(null);
+      }
+
+      return status;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to poll export status';
+      setExportError(message);
+      return null;
+    }
+  }, [exportStatus?.jobId]);
+
+  const cancelMemvidExport = useCallback(async (jobId?: string): Promise<boolean> => {
+    const activeJobId = jobId ?? exportStatus?.jobId;
+    if (!activeJobId) return false;
+
+    try {
+      const status = await cancelMemvidExportJob(activeJobId);
+      setExportStatus(status);
+      setExportError(null);
+      addToast({ type: 'warning', title: 'Export canceled', message: 'Memvid export job canceled.' });
+      return true;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to cancel export';
+      setExportError(message);
+      addToast({ type: 'error', title: 'Cancel failed', message, duration: 8000 });
+      return false;
+    }
+  }, [exportStatus?.jobId]);
+
+  // Poll export progress while the job is active.
+  useEffect(() => {
+    if (!exportStatus || !['queued', 'running'].includes(exportStatus.status)) return;
+    const timer = setInterval(() => {
+      pollMemvidExport(exportStatus.jobId).catch(() => {
+        // Errors are captured in state, interval continues for retries.
+      });
+    }, 1500);
+
+    return () => clearInterval(timer);
+  }, [exportStatus?.jobId, exportStatus?.status, pollMemvidExport]);
+
+  // Download when export completes.
+  useEffect(() => {
+    if (!exportStatus || exportStatus.status !== 'completed' || !exportStatus.artifact) return;
+    if (downloadedExportJobRef.current === exportStatus.jobId) return;
+    downloadedExportJobRef.current = exportStatus.jobId;
+
+    const fallbackFileName = buildMemvidFileName(sessionSource, projectName || 'project');
+    downloadMemvidArtifact(exportStatus.artifact, fallbackFileName)
+      .then(() => {
+        setExportError(null);
+        addToast({
+          type: 'success',
+          title: 'Memvid export ready',
+          message: `Downloaded ${exportStatus.artifact?.fileName || fallbackFileName}`,
+        });
+      })
+      .catch((err) => {
+        downloadedExportJobRef.current = null;
+        const message = err instanceof Error ? err.message : 'Download failed';
+        setExportError(message);
+        addToast({ type: 'error', title: 'Download failed', message, duration: 8000 });
+      });
+  }, [exportStatus, projectName, sessionSource]);
+
   const sendChatMessage = useCallback(async (message: string): Promise<void> => {
     const api = apiRef.current;
     if (!api) {
@@ -1892,6 +2070,12 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     isReindexing,
     reindexFromGitHub,
     getIndexDiff,
+    // Memvid export
+    exportStatus,
+    exportError,
+    startMemvidExport,
+    pollMemvidExport,
+    cancelMemvidExport,
   };
 
   return (
@@ -1908,4 +2092,3 @@ export const useAppState = (): AppState => {
   }
   return context;
 };
-

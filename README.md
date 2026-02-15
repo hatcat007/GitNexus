@@ -105,6 +105,26 @@ npm run dev
 
 Open http://localhost:5173, drag & drop a ZIP of your codebase, and start exploring.
 
+## 🧠 Memvid Export Setup
+
+GitNexus can export the in-memory graph into a Memvid `.mv2` capsule using the Rust API in `/memvid-export-api`.
+
+Set these frontend env vars before `npm run dev`:
+
+```bash
+export VITE_MEMVID_EXPORT_API_URL="https://your-coolify-domain"
+export VITE_MEMVID_EXPORT_API_KEY="your-static-bearer-key"
+```
+
+The API service requires:
+
+```bash
+export MEMVID_EXPORT_API_KEY="your-static-bearer-key"
+export MEMVID_EXPORT_ROOT="/data/exports"
+```
+
+See `/memvid-export-api/README.md` for endpoints, Docker, and runtime config.
+
 ---
 
 ## 🏗️ Indexing Architecture

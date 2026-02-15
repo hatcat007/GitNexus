@@ -24,7 +24,14 @@ Returns:
 - Directory structure (TOON format for token efficiency)
 - Tool usage guidance
 
-ALWAYS call this first to understand the codebase before searching or querying.`,
+OPTIONAL 'focus' parameter — request a specific section to reduce context window usage:
+- 'stats': Only project statistics
+- 'hotspots': Only hotspot nodes
+- 'structure': Only folder tree
+- 'tools': Only available tools list
+- 'schema': Only graph schema
+
+Omit 'focus' for full context. ALWAYS call this first to understand the codebase.`,
     inputSchema: toolSchemas.gitnexus_context,
   },
   {
@@ -140,13 +147,21 @@ Depth groups:
     inputSchema: toolSchemas.gitnexus_impact,
   },
   {
-    name: 'highlight',
-    description: `Highlight nodes in the GitNexus graph visualization.
-Use after search/analysis to show the user what you found.
+    name: 'graph_action',
+    description: `Drive the GitNexus graph visualization. Replaces the old 'highlight' tool.
 
-The user will see the nodes glow in the graph view.
-Great for visual confirmation of your findings.`,
-    inputSchema: toolSchemas.gitnexus_highlight,
+ACTIONS:
+- 'highlight': Make nodes glow in the graph view (visual confirmation of findings).
+- 'focus': Pan and zoom the graph to center on specific nodes.
+- 'annotate': Attach a text label to nodes in the graph (e.g., "entry point", "bug here").
+- 'reset': Clear all highlights, focus, and annotations.
+
+'nodeIds' is required for highlight, focus, and annotate.
+'color' is optional (hex or named color) for highlight.
+'label' is optional text for annotate.
+
+Great for visual storytelling during code exploration.`,
+    inputSchema: toolSchemas.gitnexus_graph_action,
   },
 
   // ── New Tools ──────────────────────────────────────────────

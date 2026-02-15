@@ -6,7 +6,7 @@
 
 export interface BridgeMessage {
   id: string;
-  type?: 'register_peer' | 'tool_call' | 'tool_result' | 'agent_info' | 'handshake' | 'handshake_ack' | 'context';
+  type?: 'register_peer' | 'tool_call' | 'tool_result' | 'agent_info' | 'handshake' | 'handshake_ack' | 'handshake_nack' | 'context';
   method?: string;
   params?: any;
   result?: any;
@@ -16,6 +16,8 @@ export interface BridgeMessage {
   };
   agentName?: string;
   peerId?: string;
+  /** Auth token sent during handshake (peers → hub) */
+  token?: string;
 }
 
 export type ToolCallRequest = BridgeMessage & { method: string };

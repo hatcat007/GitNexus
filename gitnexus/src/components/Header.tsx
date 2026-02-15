@@ -1,4 +1,4 @@
-import { Search, Settings, HelpCircle, Sparkles, Github, Star, RefreshCw, Plus, ArrowLeftRight } from 'lucide-react';
+import { Search, Settings, HelpCircle, Sparkles, RefreshCw, ArrowLeftRight, Download, X } from 'lucide-react';
 import { useAppState } from '../hooks/useAppState';
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { GraphNode } from '../core/graph/types';
@@ -59,6 +59,10 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
     isReindexing,
     reindexFromGitHub,
     getIndexDiff,
+    exportStatus,
+    exportError,
+    startMemvidExport,
+    cancelMemvidExport,
   } = useAppState();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -68,6 +72,21 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
 
   const nodeCount = graph?.nodes.length ?? 0;
   const edgeCount = graph?.relationships.length ?? 0;
+  const isExportActive = exportStatus ? ['queued', 'running'].includes(exportStatus.status) : false;
+
+  const exportButtonLabel = useMemo(() => {
+    if (!exportStatus) return 'Export .mv2';
+    if (exportStatus.status === 'queued') return 'Export queued';
+    if (exportStatus.status === 'running') {
+      const pct = Math.max(0, Math.min(100, Math.round(exportStatus.progress ?? 0)));
+      return `Export ${pct}%`;
+    }
+    if (exportStatus.status === 'completed') return 'Re-export .mv2';
+    if (exportStatus.status === 'failed') return 'Retry export';
+    if (exportStatus.status === 'canceled') return 'Export canceled';
+    if (exportStatus.status === 'expired') return 'Artifact expired';
+    return 'Export .mv2';
+  }, [exportStatus]);
 
   // Search results - filter nodes by name
   const searchResults = useMemo(() => {
@@ -653,6 +672,31 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
           }}
         />
 
+        {/* Memvid export */}
+        <button
+          onClick={(e) => {
+            if (isExportActive) {
+              cancelMemvidExport();
+              return;
+            }
+            const semanticEnabled = e.altKey;
+            startMemvidExport({ semanticEnabled });
+          }}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors border ${
+            isExportActive
+              ? 'text-amber-300 bg-amber-500/10 border-amber-500/40 hover:bg-amber-500/20'
+              : exportStatus?.status === 'failed'
+                ? 'text-red-300 bg-red-500/10 border-red-500/40 hover:bg-red-500/20'
+                : 'text-text-secondary hover:bg-hover hover:text-text-primary border-border-subtle'
+          }`}
+          title={exportError
+            ? `Export error: ${exportError}`
+            : 'Export graph knowledge to Memvid .mv2 (Alt+Click enables semantic indexing)'}
+        >
+          {isExportActive ? <X className="w-4 h-4" /> : <Download className="w-4 h-4" />}
+          <span className="hidden sm:inline">{isExportActive ? 'Cancel export' : exportButtonLabel}</span>
+        </button>
+
         {/* Session actions */}
         {sessionSource && (
           <button
@@ -721,4 +765,3 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
     </header>
   );
 };
-
