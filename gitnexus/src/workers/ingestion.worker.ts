@@ -55,6 +55,21 @@ let enrichmentCancelled = false;
 let isRestoringSession = false;
 
 /**
+ * Reset graph-query runtime state before loading a new graph snapshot.
+ * Prevents stale nodes in KuzuDB and stale embedding-ready flags.
+ */
+const resetRuntimeForGraphLoad = async (context: string) => {
+  const kuzu = await getKuzuAdapter();
+  await kuzu.resetKuzu();
+  isEmbeddingComplete = false;
+  embeddingProgress = null;
+  if (import.meta.env.DEV) {
+    console.log(`[${context}] KuzuDB reset + embedding state cleared`);
+  }
+  return kuzu;
+};
+
+/**
  * Worker API exposed via Comlink
  * 
  * Note: The onProgress callback is passed as a Comlink.proxy() from the main thread,
@@ -67,13 +82,7 @@ const workerApi = {
    * to avoid duplicate primary key errors.
    */
   async resetForReindex(): Promise<void> {
-    const kuzu = await getKuzuAdapter();
-    await kuzu.resetKuzu();
-    isEmbeddingComplete = false;
-    embeddingProgress = null;
-    if (import.meta.env.DEV) {
-      console.log('[ReIndex] KuzuDB reset + embedding state cleared');
-    }
+    await resetRuntimeForGraphLoad('ReIndex');
   },
 
   /**
@@ -115,7 +124,7 @@ const workerApi = {
         },
       });
       
-      const kuzu = await getKuzuAdapter();
+      const kuzu = await resetRuntimeForGraphLoad('Pipeline');
       await kuzu.loadGraphToKuzu(result.graph, result.fileContents);
       
       if (import.meta.env.DEV) {
@@ -219,7 +228,7 @@ const workerApi = {
         },
       });
       
-      const kuzu = await getKuzuAdapter();
+      const kuzu = await resetRuntimeForGraphLoad('Pipeline');
       await kuzu.loadGraphToKuzu(result.graph, result.fileContents);
       
       if (import.meta.env.DEV) {
@@ -297,8 +306,7 @@ const workerApi = {
     // 5. Reset KuzuDB (clean state to avoid duplicate key errors) and load
     let embeddingsRestored = false;
     try {
-      const kuzu = await getKuzuAdapter();
-      await kuzu.resetKuzu();
+      const kuzu = await resetRuntimeForGraphLoad('Session Restore');
       await kuzu.loadGraphToKuzu(graph, storedFileContents);
 
       // 6. Restore embeddings if saved
@@ -977,4 +985,3 @@ Comlink.expose(workerApi);
 
 // TypeScript type for the exposed API (used by the hook)
 export type IngestionWorkerApi = typeof workerApi;
-
