@@ -16,6 +16,7 @@ use crate::{
 pub fn spawn_export_worker(state: AppState, mut queue_rx: mpsc::Receiver<String>) {
     tokio::spawn(async move {
         while let Some(job_id) = queue_rx.recv().await {
+            info!(job_id = %job_id, "Worker picked export job");
             if let Err(err) = process_export_job(state.clone(), &job_id).await {
                 error!("Export job {job_id} failed: {err:#}");
                 let mut jobs = state.jobs.write().await;
@@ -47,6 +48,31 @@ pub fn spawn_cleanup_worker(state: AppState) {
     });
 }
 
+async fn set_job_progress(
+    state: &AppState,
+    job_id: &str,
+    progress: f64,
+    message: impl Into<String>,
+) -> Result<bool> {
+    let message = message.into();
+    let mut jobs = state.jobs.write().await;
+    let Some(job) = jobs.get_mut(job_id) else {
+        anyhow::bail!("Unknown job id: {job_id}");
+    };
+
+    if matches!(job.status, JobState::Canceled) {
+        info!(job_id = %job_id, progress, "Skipping progress update: job canceled");
+        return Ok(false);
+    }
+
+    job.progress = progress;
+    job.message = Some(message.clone());
+    job.updated_at = Utc::now();
+
+    info!(job_id = %job_id, progress, message = %message, "Export progress update");
+    Ok(true)
+}
+
 async fn process_export_job(state: AppState, job_id: &str) -> Result<()> {
     let request = {
         let mut jobs = state.jobs.write().await;
@@ -68,26 +94,70 @@ async fn process_export_job(state: AppState, job_id: &str) -> Result<()> {
         job.request.clone().context("Missing request payload")?
     };
 
+    info!(job_id = %job_id, progress = 5.0, message = "Transforming graph data", "Export progress update");
+
+    info!(
+        job_id = %job_id,
+        session_id = %request.session_id,
+        project = %request.project_name,
+        nodes = request.nodes.len(),
+        relationships = request.relationships.len(),
+        files = request.file_contents.len(),
+        semantic = request.options.semantic_enabled,
+        "Export job started"
+    );
+
     let date_stamp = Utc::now().format("%Y-%m-%d").to_string();
     let file_name = build_job_file_name(&request.source.base_name, &date_stamp);
     let output_path = job_output_path(&state.config.export_root, job_id, &file_name);
     ensure_job_dir(&output_path).await?;
 
+    if !set_job_progress(&state, job_id, 20.0, "Preparing frame documents").await? {
+        return Ok(());
+    }
+
     let docs = build_frame_documents(&request);
 
+    info!(
+        job_id = %job_id,
+        frames = docs.len(),
+        "Frame documents prepared"
+    );
+
+    if !set_job_progress(
+        &state,
+        job_id,
+        45.0,
+        format!("Prepared {} frames", docs.len()),
+    )
+    .await?
     {
-        let mut jobs = state.jobs.write().await;
-        if let Some(job) = jobs.get_mut(job_id) {
-            if matches!(job.status, JobState::Canceled) {
-                return Ok(());
-            }
-            job.progress = 30.0;
-            job.message = Some(format!("Writing {} frames", docs.len()));
-            job.updated_at = Utc::now();
-        }
+        return Ok(());
+    }
+
+    if !set_job_progress(
+        &state,
+        job_id,
+        60.0,
+        format!("Writing {} frames to capsule", docs.len()),
+    )
+    .await?
+    {
+        return Ok(());
     }
 
     write_mv2(&output_path, &docs, request.options.semantic_enabled)?;
+
+    info!(
+        job_id = %job_id,
+        output_path = %output_path.display(),
+        "MV2 artifact write finished"
+    );
+
+    if !set_job_progress(&state, job_id, 80.0, "Finalizing artifact metadata").await? {
+        delete_file_if_exists(&output_path).await?;
+        return Ok(());
+    }
 
     {
         let jobs = state.jobs.read().await;
@@ -108,6 +178,11 @@ async fn process_export_job(state: AppState, job_id: &str) -> Result<()> {
     let now = Utc::now();
     let expires_at = now + ChronoDuration::seconds(state.config.retention_seconds as i64);
 
+    if !set_job_progress(&state, job_id, 90.0, "Preparing download artifact").await? {
+        delete_file_if_exists(&output_path).await?;
+        return Ok(());
+    }
+
     let artifact = ExportArtifact {
         file_name: file_name.clone(),
         download_url: format!("/v1/exports/{job_id}/download"),
@@ -126,6 +201,13 @@ async fn process_export_job(state: AppState, job_id: &str) -> Result<()> {
         job.error = None;
         job.request = None;
     }
+
+    info!(
+        job_id = %job_id,
+        artifact = %file_name,
+        size_bytes = metadata.len(),
+        "Export job completed"
+    );
 
     Ok(())
 }
@@ -149,6 +231,7 @@ async fn cleanup_expired_artifacts(state: &AppState) -> Result<()> {
                 if let Some(path) = &job.artifact_path {
                     files_to_delete.push(path.clone());
                 }
+                info!(job_id = %job.job_id, "Expiring export artifact");
                 job.status = JobState::Expired;
                 job.updated_at = now;
                 job.message = Some("Artifact expired and removed".to_string());

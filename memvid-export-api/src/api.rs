@@ -8,7 +8,7 @@ use axum::{
 use chrono::Utc;
 use serde_json::json;
 use tokio::fs;
-use tracing::warn;
+use tracing::{info, warn};
 use uuid::Uuid;
 
 use crate::{
@@ -46,6 +46,12 @@ pub async fn create_export(
 
     let now = Utc::now();
     let job_id = Uuid::new_v4().to_string();
+    let session_id = payload.session_id.clone();
+    let project_name = payload.project_name.clone();
+    let node_count = payload.nodes.len();
+    let relation_count = payload.relationships.len();
+    let file_count = payload.file_contents.len();
+
     let record = JobRecord {
         job_id: job_id.clone(),
         created_at: now,
@@ -78,6 +84,16 @@ pub async fn create_export(
         )
             .into_response();
     }
+
+    info!(
+        job_id = %job_id,
+        session_id = %session_id,
+        project = %project_name,
+        nodes = node_count,
+        relationships = relation_count,
+        files = file_count,
+        "Export job queued"
+    );
 
     let response = ExportAcceptedResponse {
         job_id,
@@ -153,6 +169,8 @@ pub async fn cancel_export(
             job.artifact = None;
             job.artifact_path = None;
         }
+
+        info!(job_id = %job_id, status = ?job.status, "Export job cancel request handled");
 
         job.to_response()
     };
@@ -270,6 +288,13 @@ pub async fn download_export(
     };
 
     let content_disposition = format!("attachment; filename=\"{artifact_file_name}\"");
+
+    info!(
+        job_id = %job_id,
+        artifact = %artifact_file_name,
+        bytes = bytes.len(),
+        "Export artifact downloaded"
+    );
 
     Response::builder()
         .status(StatusCode::OK)
