@@ -30,6 +30,8 @@ export MEMVID_EXPORT_API_KEY=change-me
 cargo run
 ```
 
+Rust toolchain requirement: `>= 1.89`.
+
 ## Build Docker image
 
 ```bash
