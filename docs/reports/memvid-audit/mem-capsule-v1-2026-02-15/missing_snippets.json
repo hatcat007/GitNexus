@@ -1,0 +1,695 @@
+[
+  {
+    "frameId": 0,
+    "uri": "mv2://nodes/Folder:MEM-Capsule v1",
+    "frameType": "node",
+    "firstLine": "Node Folder",
+    "preview": "Node Folder\nid=Folder:MEM-Capsule v1\nname=MEM-Capsule v1\nfilePath=MEM-Capsule v1\nsnippet:\n<no source content available>\n"
+  },
+  {
+    "frameId": 68,
+    "uri": "mv2://nodes/Folder:MEM-Capsule v1/Docs",
+    "frameType": "node",
+    "firstLine": "Node Folder",
+    "preview": "Node Folder\nid=Folder:MEM-Capsule v1/Docs\nname=Docs\nfilePath=MEM-Capsule v1/Docs\nsnippet:\n<no source content available>\n"
+  },
+  {
+    "frameId": 96,
+    "uri": "mv2://nodes/Folder:MEM-Capsule v1/src",
+    "frameType": "node",
+    "firstLine": "Node Folder",
+    "preview": "Node Folder\nid=Folder:MEM-Capsule v1/src\nname=src\nfilePath=MEM-Capsule v1/src\nsnippet:\n<no source content available>\nmet"
+  },
+  {
+    "frameId": 809,
+    "uri": "mv2://communities/comm_131",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_131\nname=Pages\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.0417032484"
+  },
+  {
+    "frameId": 810,
+    "uri": "mv2://communities/comm_9",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_9\nname=Services\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.049833887"
+  },
+  {
+    "frameId": 811,
+    "uri": "mv2://communities/comm_8",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_8\nname=Verification\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.09756"
+  },
+  {
+    "frameId": 812,
+    "uri": "mv2://communities/comm_0",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_0\nname=Worker\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.05668016194"
+  },
+  {
+    "frameId": 813,
+    "uri": "mv2://communities/comm_10",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_10\nname=Pages\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.06984126984"
+  },
+  {
+    "frameId": 814,
+    "uri": "mv2://communities/comm_54",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_54\nname=Graph\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.08870967741"
+  },
+  {
+    "frameId": 815,
+    "uri": "mv2://communities/comm_47",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_47\nname=Worker\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.1231527093"
+  },
+  {
+    "frameId": 816,
+    "uri": "mv2://communities/comm_130",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_130\nname=Ui\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.08,\"communiti"
+  },
+  {
+    "frameId": 817,
+    "uri": "mv2://communities/comm_6",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_6\nname=Graph\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.130434782608"
+  },
+  {
+    "frameId": 818,
+    "uri": "mv2://communities/comm_18",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_18\nname=Gateway\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.151515151"
+  },
+  {
+    "frameId": 819,
+    "uri": "mv2://communities/comm_62",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_62\nname=Worker\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.1315789473"
+  },
+  {
+    "frameId": 820,
+    "uri": "mv2://communities/comm_55",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_55\nname=Graph\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.20879120879"
+  },
+  {
+    "frameId": 821,
+    "uri": "mv2://communities/comm_157",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_157\nname=Pages\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.1818181818"
+  },
+  {
+    "frameId": 822,
+    "uri": "mv2://communities/comm_40",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_40\nname=Storage\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.381818181"
+  },
+  {
+    "frameId": 823,
+    "uri": "mv2://communities/comm_150",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_150\nname=Components\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.18181"
+  },
+  {
+    "frameId": 824,
+    "uri": "mv2://communities/comm_57",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_57\nname=Providers\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.2666666"
+  },
+  {
+    "frameId": 825,
+    "uri": "mv2://communities/comm_60",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_60\nname=Worker\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.2888888888"
+  },
+  {
+    "frameId": 826,
+    "uri": "mv2://communities/comm_85",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_85\nname=Gateway\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.222222222"
+  },
+  {
+    "frameId": 827,
+    "uri": "mv2://communities/comm_58",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_58\nname=Providers\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.6,\"comm"
+  },
+  {
+    "frameId": 828,
+    "uri": "mv2://communities/comm_147",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_147\nname=Components\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.33333"
+  },
+  {
+    "frameId": 829,
+    "uri": "mv2://communities/comm_23",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_23\nname=Storage\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.5,\"commun"
+  },
+  {
+    "frameId": 830,
+    "uri": "mv2://communities/comm_21",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_21\nname=Storage\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.666666666"
+  },
+  {
+    "frameId": 831,
+    "uri": "mv2://communities/comm_27",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_27\nname=Storage\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.666666666"
+  },
+  {
+    "frameId": 832,
+    "uri": "mv2://communities/comm_86",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_86\nname=Gateway\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.666666666"
+  },
+  {
+    "frameId": 833,
+    "uri": "mv2://communities/comm_1",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_1\nname=Worker\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":1.0,\"communit"
+  },
+  {
+    "frameId": 834,
+    "uri": "mv2://communities/comm_31",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_31\nname=Storage\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":1.0,\"commun"
+  },
+  {
+    "frameId": 835,
+    "uri": "mv2://communities/comm_34",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_34\nname=Storage\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":1.0,\"commun"
+  },
+  {
+    "frameId": 836,
+    "uri": "mv2://communities/comm_35",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_35\nname=Storage\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":1.0,\"commun"
+  },
+  {
+    "frameId": 837,
+    "uri": "mv2://communities/comm_45",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_45\nname=Cluster_45\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":1.0,\"com"
+  },
+  {
+    "frameId": 838,
+    "uri": "mv2://communities/comm_48",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_48\nname=Worker\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":1.0,\"communi"
+  },
+  {
+    "frameId": 839,
+    "uri": "mv2://communities/comm_83",
+    "frameType": "community",
+    "firstLine": "Node Community",
+    "preview": "Node Community\nid=comm_83\nname=Gateway\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":1.0,\"commun"
+  },
+  {
+    "frameId": 840,
+    "uri": "mv2://processes/proc_0_dashboard",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_0_dashboard\nname=Dashboard → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"c"
+  },
+  {
+    "frameId": 841,
+    "uri": "mv2://processes/proc_1_dashboard",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_1_dashboard\nname=Dashboard → IsNoticeLevel\nfilePath=\nsnippet:\n<no source content available>\nmetadat"
+  },
+  {
+    "frameId": 842,
+    "uri": "mv2://processes/proc_2_dashboard",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_2_dashboard\nname=Dashboard → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"coh"
+  },
+  {
+    "frameId": 843,
+    "uri": "mv2://processes/proc_3_dashboard",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_3_dashboard\nname=Dashboard → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"c"
+  },
+  {
+    "frameId": 844,
+    "uri": "mv2://processes/proc_4_dashboard",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_4_dashboard\nname=Dashboard → ToMessageArray\nfilePath=\nsnippet:\n<no source content available>\nmetada"
+  },
+  {
+    "frameId": 845,
+    "uri": "mv2://processes/proc_5_dashboard",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_5_dashboard\nname=Dashboard → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesi"
+  },
+  {
+    "frameId": 846,
+    "uri": "mv2://processes/proc_6_dashboard",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_6_dashboard\nname=Dashboard → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"coh"
+  },
+  {
+    "frameId": 847,
+    "uri": "mv2://processes/proc_7_searchpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_7_searchpage\nname=SearchPage → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetadata={"
+  },
+  {
+    "frameId": 848,
+    "uri": "mv2://processes/proc_8_searchpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_8_searchpage\nname=SearchPage → IsNoticeLevel\nfilePath=\nsnippet:\n<no source content available>\nmetad"
+  },
+  {
+    "frameId": 849,
+    "uri": "mv2://processes/proc_9_searchpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_9_searchpage\nname=SearchPage → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"c"
+  },
+  {
+    "frameId": 850,
+    "uri": "mv2://processes/proc_10_handlesave",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_10_handlesave\nname=HandleSave → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\""
+  },
+  {
+    "frameId": 851,
+    "uri": "mv2://processes/proc_11_handlereset",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_11_handlereset\nname=HandleReset → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata="
+  },
+  {
+    "frameId": 852,
+    "uri": "mv2://processes/proc_12_handledelete",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_12_handledelete\nname=HandleDelete → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadat"
+  },
+  {
+    "frameId": 853,
+    "uri": "mv2://processes/proc_13_handledelete",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_13_handledelete\nname=HandleDelete → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetad"
+  },
+  {
+    "frameId": 854,
+    "uri": "mv2://processes/proc_14_globalgraphpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_14_globalgraphpage\nname=GlobalGraphPage → AsRecord\nfilePath=\nsnippet:\n<no source content available>"
+  },
+  {
+    "frameId": 856,
+    "uri": "mv2://processes/proc_16_globalgraphpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_16_globalgraphpage\nname=GlobalGraphPage → Delete\nfilePath=\nsnippet:\n<no source content available>\nm"
+  },
+  {
+    "frameId": 857,
+    "uri": "mv2://processes/proc_17_handleask",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_17_handleask\nname=HandleAsk → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\""
+  },
+  {
+    "frameId": 858,
+    "uri": "mv2://processes/proc_18_handleask",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_18_handleask\nname=HandleAsk → IsNoticeLevel\nfilePath=\nsnippet:\n<no source content available>\nmetada"
+  },
+  {
+    "frameId": 859,
+    "uri": "mv2://processes/proc_19_handleask",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_19_handleask\nname=HandleAsk → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"co"
+  },
+  {
+    "frameId": 863,
+    "uri": "mv2://processes/proc_23_handleimpact",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_23_handleimpact\nname=HandleImpact → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetad"
+  },
+  {
+    "frameId": 864,
+    "uri": "mv2://processes/proc_24_handleimpact",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_24_handleimpact\nname=HandleImpact → IsNoticeLevel\nfilePath=\nsnippet:\n<no source content available>\n"
+  },
+  {
+    "frameId": 865,
+    "uri": "mv2://processes/proc_25_handleimpact",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_25_handleimpact\nname=HandleImpact → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadat"
+  },
+  {
+    "frameId": 866,
+    "uri": "mv2://processes/proc_26_memorydetail",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_26_memorydetail\nname=MemoryDetail → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadat"
+  },
+  {
+    "frameId": 867,
+    "uri": "mv2://processes/proc_27_memorydetail",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_27_memorydetail\nname=MemoryDetail → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetad"
+  },
+  {
+    "frameId": 868,
+    "uri": "mv2://processes/proc_28_memorydetail",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_28_memorydetail\nname=MemoryDetail → ToMessageArray\nfilePath=\nsnippet:\n<no source content available>"
+  },
+  {
+    "frameId": 869,
+    "uri": "mv2://processes/proc_29_memorydetail",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_29_memorydetail\nname=MemoryDetail → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={"
+  },
+  {
+    "frameId": 870,
+    "uri": "mv2://processes/proc_30_uploadpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_30_uploadpage\nname=UploadPage → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\""
+  },
+  {
+    "frameId": 871,
+    "uri": "mv2://processes/proc_31_uploadpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_31_uploadpage\nname=UploadPage → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetadata="
+  },
+  {
+    "frameId": 872,
+    "uri": "mv2://processes/proc_32_uploadpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_32_uploadpage\nname=UploadPage → ToMessageArray\nfilePath=\nsnippet:\n<no source content available>\nmet"
+  },
+  {
+    "frameId": 873,
+    "uri": "mv2://processes/proc_33_uploadpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_33_uploadpage\nname=UploadPage → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"coh"
+  },
+  {
+    "frameId": 874,
+    "uri": "mv2://processes/proc_34_handleprocess",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_34_handleprocess\nname=HandleProcess → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetad"
+  },
+  {
+    "frameId": 875,
+    "uri": "mv2://processes/proc_35_handleprocess",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_35_handleprocess\nname=HandleProcess → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata"
+  },
+  {
+    "frameId": 876,
+    "uri": "mv2://processes/proc_36_handleprocess",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_36_handleprocess\nname=HandleProcess → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmet"
+  },
+  {
+    "frameId": 878,
+    "uri": "mv2://processes/proc_38_dashboard",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_38_dashboard\nname=Dashboard → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"co"
+  },
+  {
+    "frameId": 879,
+    "uri": "mv2://processes/proc_39_dashboard",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_39_dashboard\nname=Dashboard → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohes"
+  },
+  {
+    "frameId": 880,
+    "uri": "mv2://processes/proc_40_searchpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_40_searchpage\nname=SearchPage → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetadata="
+  },
+  {
+    "frameId": 881,
+    "uri": "mv2://processes/proc_41_searchpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_41_searchpage\nname=SearchPage → ToMessageArray\nfilePath=\nsnippet:\n<no source content available>\nmet"
+  },
+  {
+    "frameId": 882,
+    "uri": "mv2://processes/proc_42_searchpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_42_searchpage\nname=SearchPage → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"coh"
+  },
+  {
+    "frameId": 883,
+    "uri": "mv2://processes/proc_43_searchpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_43_searchpage\nname=SearchPage → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\""
+  },
+  {
+    "frameId": 884,
+    "uri": "mv2://processes/proc_44_settingspage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_44_settingspage\nname=SettingsPage → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadat"
+  },
+  {
+    "frameId": 885,
+    "uri": "mv2://processes/proc_45_handlesave",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_45_handlesave\nname=HandleSave → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\""
+  },
+  {
+    "frameId": 886,
+    "uri": "mv2://processes/proc_46_handlereset",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_46_handlereset\nname=HandleReset → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata="
+  },
+  {
+    "frameId": 887,
+    "uri": "mv2://processes/proc_47_handledelete",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_47_handledelete\nname=HandleDelete → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadat"
+  },
+  {
+    "frameId": 888,
+    "uri": "mv2://processes/proc_48_handledelete",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_48_handledelete\nname=HandleDelete → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetad"
+  },
+  {
+    "frameId": 889,
+    "uri": "mv2://processes/proc_49_handledelete",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_49_handledelete\nname=HandleDelete → ToMessageArray\nfilePath=\nsnippet:\n<no source content available>"
+  },
+  {
+    "frameId": 890,
+    "uri": "mv2://processes/proc_50_handledelete",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_50_handledelete\nname=HandleDelete → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={"
+  },
+  {
+    "frameId": 891,
+    "uri": "mv2://processes/proc_51_handledelete",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_51_handledelete\nname=HandleDelete → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadat"
+  },
+  {
+    "frameId": 892,
+    "uri": "mv2://processes/proc_52_handledelete",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_52_handledelete\nname=HandleDelete → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={"
+  },
+  {
+    "frameId": 893,
+    "uri": "mv2://processes/proc_53_globalgraphpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_53_globalgraphpage\nname=GlobalGraphPage → AsRecord\nfilePath=\nsnippet:\n<no source content available>"
+  },
+  {
+    "frameId": 895,
+    "uri": "mv2://processes/proc_55_globalgraphpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_55_globalgraphpage\nname=GlobalGraphPage → Get\nfilePath=\nsnippet:\n<no source content available>\nmeta"
+  },
+  {
+    "frameId": 896,
+    "uri": "mv2://processes/proc_56_globalgraphpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_56_globalgraphpage\nname=GlobalGraphPage → Delete\nfilePath=\nsnippet:\n<no source content available>\nm"
+  },
+  {
+    "frameId": 897,
+    "uri": "mv2://processes/proc_57_globalgraphpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_57_globalgraphpage\nname=GlobalGraphPage → Get\nfilePath=\nsnippet:\n<no source content available>\nmeta"
+  },
+  {
+    "frameId": 898,
+    "uri": "mv2://processes/proc_58_handleask",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_58_handleask\nname=HandleAsk → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\""
+  },
+  {
+    "frameId": 899,
+    "uri": "mv2://processes/proc_59_handleask",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_59_handleask\nname=HandleAsk → ToMessageArray\nfilePath=\nsnippet:\n<no source content available>\nmetad"
+  },
+  {
+    "frameId": 900,
+    "uri": "mv2://processes/proc_60_handleask",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_60_handleask\nname=HandleAsk → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohes"
+  },
+  {
+    "frameId": 901,
+    "uri": "mv2://processes/proc_61_handleask",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_61_handleask\nname=HandleAsk → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"co"
+  },
+  {
+    "frameId": 906,
+    "uri": "mv2://processes/proc_66_handleimpact",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_66_handleimpact\nname=HandleImpact → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetad"
+  },
+  {
+    "frameId": 907,
+    "uri": "mv2://processes/proc_67_handleimpact",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_67_handleimpact\nname=HandleImpact → ToMessageArray\nfilePath=\nsnippet:\n<no source content available>"
+  },
+  {
+    "frameId": 908,
+    "uri": "mv2://processes/proc_68_handleimpact",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_68_handleimpact\nname=HandleImpact → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={"
+  },
+  {
+    "frameId": 909,
+    "uri": "mv2://processes/proc_69_handleimpact",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_69_handleimpact\nname=HandleImpact → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadat"
+  },
+  {
+    "frameId": 910,
+    "uri": "mv2://processes/proc_70_memorydetail",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_70_memorydetail\nname=MemoryDetail → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={"
+  },
+  {
+    "frameId": 911,
+    "uri": "mv2://processes/proc_71_memorydetail",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_71_memorydetail\nname=MemoryDetail → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={"
+  },
+  {
+    "frameId": 912,
+    "uri": "mv2://processes/proc_72_uploadpage",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_72_uploadpage\nname=UploadPage → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"coh"
+  },
+  {
+    "frameId": 913,
+    "uri": "mv2://processes/proc_73_handleprocess",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_73_handleprocess\nname=HandleProcess → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmet"
+  },
+  {
+    "frameId": 914,
+    "uri": "mv2://processes/proc_74_handleprocess",
+    "frameType": "process",
+    "firstLine": "Node Process",
+    "preview": "Node Process\nid=proc_74_handleprocess\nname=HandleProcess → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata"
+  }
+]

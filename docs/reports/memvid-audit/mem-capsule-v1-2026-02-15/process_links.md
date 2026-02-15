@@ -1,0 +1,1053 @@
+# Process Links
+
+- processes: 75
+
+## 1. proc_0_dashboard
+- processUri: mv2://processes/proc_0_dashboard
+- processName: Dashboard → AsRecord
+- linkedFunctionsCount: 8
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: Dashboard, asRecord, collectPayloadNotices, emitPayloadNotices, http, listCapsules, refresh, toNotice
+- linkedFunctionFiles: src/lib/api.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_0_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_0_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_0_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_0_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_5_proc_0_dashboard
+
+## 2. proc_1_dashboard
+- processUri: mv2://processes/proc_1_dashboard
+- processName: Dashboard → IsNoticeLevel
+- linkedFunctionsCount: 8
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: Dashboard, collectPayloadNotices, emitPayloadNotices, http, isNoticeLevel, listCapsules, refresh, toNotice
+- linkedFunctionFiles: src/lib/api.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_1_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_1_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_1_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_1_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_5_proc_1_dashboard
+
+## 3. proc_2_dashboard
+- processUri: mv2://processes/proc_2_dashboard
+- processName: Dashboard → Delete
+- linkedFunctionsCount: 8
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: Dashboard, compactSeenNotices, delete, emitNotice, emitPayloadNotices, http, listCapsules, refresh
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_2_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_2_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_2_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_2_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_5_proc_2_dashboard
+
+## 4. proc_10_handlesave
+- processUri: mv2://processes/proc_10_handlesave
+- processName: HandleSave → Delete
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: addToRemoveQueue, delete, dismiss, dispatch, handleSave, reducer, toast
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/hooks/use-toast.ts, src/pages/SettingsPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/SettingsPage.tsx:handleSave_step_1_proc_10_handlesave
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:toast_step_2_proc_10_handlesave
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dismiss_step_3_proc_10_handlesave
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_4_proc_10_handlesave
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_5_proc_10_handlesave
+
+## 5. proc_11_handlereset
+- processUri: mv2://processes/proc_11_handlereset
+- processName: HandleReset → Delete
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: addToRemoveQueue, delete, dismiss, dispatch, handleReset, reducer, toast
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/hooks/use-toast.ts, src/pages/SettingsPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/SettingsPage.tsx:handleReset_step_1_proc_11_handlereset
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:toast_step_2_proc_11_handlereset
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dismiss_step_3_proc_11_handlereset
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_4_proc_11_handlereset
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_5_proc_11_handlereset
+
+## 6. proc_12_handledelete
+- processUri: mv2://processes/proc_12_handledelete
+- processName: HandleDelete → Delete
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: addToRemoveQueue, delete, dismiss, dispatch, handleDelete, reducer, toast
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/hooks/use-toast.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:handleDelete_step_1_proc_12_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:toast_step_2_proc_12_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dismiss_step_3_proc_12_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_4_proc_12_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_5_proc_12_handledelete
+
+## 7. proc_13_handledelete
+- processUri: mv2://processes/proc_13_handledelete
+- processName: HandleDelete → AsRecord
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: asRecord, collectPayloadNotices, deleteCapsule, emitPayloadNotices, handleDelete, http, toNotice
+- linkedFunctionFiles: src/lib/api.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:handleDelete_step_1_proc_13_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:deleteCapsule_step_2_proc_13_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_13_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_13_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_13_handledelete
+
+## 8. proc_14_globalgraphpage
+- processUri: mv2://processes/proc_14_globalgraphpage
+- processName: GlobalGraphPage → AsRecord
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: GlobalGraphPage, asRecord, collectPayloadNotices, emitPayloadNotices, getGlobalGraph, http, toNotice
+- linkedFunctionFiles: src/lib/api.ts, src/pages/GlobalGraph.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage_step_1_proc_14_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getGlobalGraph_step_2_proc_14_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_14_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_14_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_14_globalgraphpage
+
+## 9. proc_15_globalgraphpage
+- processUri: mv2://processes/proc_15_globalgraphpage
+- processName: GlobalGraphPage → IsNoticeLevel
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: GlobalGraphPage, collectPayloadNotices, emitPayloadNotices, getGlobalGraph, http, isNoticeLevel, toNotice
+- linkedFunctionFiles: src/lib/api.ts, src/pages/GlobalGraph.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage_step_1_proc_15_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getGlobalGraph_step_2_proc_15_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_15_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_15_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_15_globalgraphpage
+
+## 10. proc_16_globalgraphpage
+- processUri: mv2://processes/proc_16_globalgraphpage
+- processName: GlobalGraphPage → Delete
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: GlobalGraphPage, compactSeenNotices, delete, emitNotice, emitPayloadNotices, getGlobalGraph, http
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/GlobalGraph.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage_step_1_proc_16_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getGlobalGraph_step_2_proc_16_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_16_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_16_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_16_globalgraphpage
+
+## 11. proc_17_handleask
+- processUri: mv2://processes/proc_17_handleask
+- processName: HandleAsk → AsRecord
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: asRecord, askCapsule, collectPayloadNotices, emitPayloadNotices, handleAsk, http, toNotice
+- linkedFunctionFiles: src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleAsk_step_1_proc_17_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:askCapsule_step_2_proc_17_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_17_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_17_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_17_handleask
+
+## 12. proc_18_handleask
+- processUri: mv2://processes/proc_18_handleask
+- processName: HandleAsk → IsNoticeLevel
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: askCapsule, collectPayloadNotices, emitPayloadNotices, handleAsk, http, isNoticeLevel, toNotice
+- linkedFunctionFiles: src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleAsk_step_1_proc_18_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:askCapsule_step_2_proc_18_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_18_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_18_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_18_handleask
+
+## 13. proc_19_handleask
+- processUri: mv2://processes/proc_19_handleask
+- processName: HandleAsk → Delete
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: askCapsule, compactSeenNotices, delete, emitNotice, emitPayloadNotices, handleAsk, http
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleAsk_step_1_proc_19_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:askCapsule_step_2_proc_19_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_19_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_19_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_19_handleask
+
+## 14. proc_20_handleloadtimeline
+- processUri: mv2://processes/proc_20_handleloadtimeline
+- processName: HandleLoadTimeline → AsRecord
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: asRecord, collectPayloadNotices, emitPayloadNotices, getCapsuleTimeline, handleLoadTimeline, http, toNotice
+- linkedFunctionFiles: src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleLoadTimeline_step_1_proc_20_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsuleTimeline_step_2_proc_20_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_20_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_20_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_20_handleloadtimeline
+
+## 15. proc_21_handleloadtimeline
+- processUri: mv2://processes/proc_21_handleloadtimeline
+- processName: HandleLoadTimeline → IsNoticeLevel
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: collectPayloadNotices, emitPayloadNotices, getCapsuleTimeline, handleLoadTimeline, http, isNoticeLevel, toNotice
+- linkedFunctionFiles: src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleLoadTimeline_step_1_proc_21_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsuleTimeline_step_2_proc_21_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_21_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_21_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_21_handleloadtimeline
+
+## 16. proc_22_handleloadtimeline
+- processUri: mv2://processes/proc_22_handleloadtimeline
+- processName: HandleLoadTimeline → Delete
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: compactSeenNotices, delete, emitNotice, emitPayloadNotices, getCapsuleTimeline, handleLoadTimeline, http
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleLoadTimeline_step_1_proc_22_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsuleTimeline_step_2_proc_22_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_22_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_22_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_22_handleloadtimeline
+
+## 17. proc_23_handleimpact
+- processUri: mv2://processes/proc_23_handleimpact
+- processName: HandleImpact → AsRecord
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: asRecord, collectPayloadNotices, emitPayloadNotices, handleImpact, http, impactCapsuleGraph, toNotice
+- linkedFunctionFiles: src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleImpact_step_1_proc_23_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:impactCapsuleGraph_step_2_proc_23_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_23_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_23_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_23_handleimpact
+
+## 18. proc_24_handleimpact
+- processUri: mv2://processes/proc_24_handleimpact
+- processName: HandleImpact → IsNoticeLevel
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: collectPayloadNotices, emitPayloadNotices, handleImpact, http, impactCapsuleGraph, isNoticeLevel, toNotice
+- linkedFunctionFiles: src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleImpact_step_1_proc_24_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:impactCapsuleGraph_step_2_proc_24_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_24_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_24_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_24_handleimpact
+
+## 19. proc_25_handleimpact
+- processUri: mv2://processes/proc_25_handleimpact
+- processName: HandleImpact → Delete
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: compactSeenNotices, delete, emitNotice, emitPayloadNotices, handleImpact, http, impactCapsuleGraph
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleImpact_step_1_proc_25_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:impactCapsuleGraph_step_2_proc_25_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_25_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_25_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_25_handleimpact
+
+## 20. proc_3_dashboard
+- processUri: mv2://processes/proc_3_dashboard
+- processName: Dashboard → AsRecord
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: Dashboard, asRecord, collectPayloadNotices, emitPayloadNotices, http, listCapsules, refresh
+- linkedFunctionFiles: src/lib/api.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_3_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_3_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_3_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_3_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_5_proc_3_dashboard
+
+## 21. proc_4_dashboard
+- processUri: mv2://processes/proc_4_dashboard
+- processName: Dashboard → ToMessageArray
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: Dashboard, collectPayloadNotices, emitPayloadNotices, http, listCapsules, refresh, toMessageArray
+- linkedFunctionFiles: src/lib/api.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_4_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_4_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_4_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_4_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_5_proc_4_dashboard
+
+## 22. proc_5_dashboard
+- processUri: mv2://processes/proc_5_dashboard
+- processName: Dashboard → Get
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: Dashboard, emitNotice, emitPayloadNotices, get, http, listCapsules, refresh
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_5_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_5_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_5_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_5_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_5_proc_5_dashboard
+
+## 23. proc_6_dashboard
+- processUri: mv2://processes/proc_6_dashboard
+- processName: Dashboard → Delete
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: Dashboard, compactSeenNotices, delete, emitNotice, http, listCapsules, refresh
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_6_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_6_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_6_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_6_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_6_dashboard
+
+## 24. proc_7_searchpage
+- processUri: mv2://processes/proc_7_searchpage
+- processName: SearchPage → AsRecord
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: SearchPage, asRecord, collectPayloadNotices, emitPayloadNotices, http, listCapsules, toNotice
+- linkedFunctionFiles: src/lib/api.ts, src/pages/SearchPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/SearchPage.tsx:SearchPage_step_1_proc_7_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_2_proc_7_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_7_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_7_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_7_searchpage
+
+## 25. proc_8_searchpage
+- processUri: mv2://processes/proc_8_searchpage
+- processName: SearchPage → IsNoticeLevel
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: SearchPage, collectPayloadNotices, emitPayloadNotices, http, isNoticeLevel, listCapsules, toNotice
+- linkedFunctionFiles: src/lib/api.ts, src/pages/SearchPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/SearchPage.tsx:SearchPage_step_1_proc_8_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_2_proc_8_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_8_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_8_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_8_searchpage
+
+## 26. proc_9_searchpage
+- processUri: mv2://processes/proc_9_searchpage
+- processName: SearchPage → Delete
+- linkedFunctionsCount: 7
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: SearchPage, compactSeenNotices, delete, emitNotice, emitPayloadNotices, http, listCapsules
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/SearchPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/SearchPage.tsx:SearchPage_step_1_proc_9_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_2_proc_9_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_9_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_9_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_9_searchpage
+
+## 27. proc_26_memorydetail
+- processUri: mv2://processes/proc_26_memorydetail
+- processName: MemoryDetail → Delete
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: MemoryDetail, addToRemoveQueue, delete, dispatch, reducer, useToast
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/hooks/use-toast.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:MemoryDetail_step_1_proc_26_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:useToast_step_2_proc_26_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_3_proc_26_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_4_proc_26_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue_step_5_proc_26_memorydetail
+
+## 28. proc_27_memorydetail
+- processUri: mv2://processes/proc_27_memorydetail
+- processName: MemoryDetail → AsRecord
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: MemoryDetail, asRecord, collectPayloadNotices, emitPayloadNotices, getCapsule, http
+- linkedFunctionFiles: src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:MemoryDetail_step_1_proc_27_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsule_step_2_proc_27_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_27_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_27_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_27_memorydetail
+
+## 29. proc_28_memorydetail
+- processUri: mv2://processes/proc_28_memorydetail
+- processName: MemoryDetail → ToMessageArray
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: MemoryDetail, collectPayloadNotices, emitPayloadNotices, getCapsule, http, toMessageArray
+- linkedFunctionFiles: src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:MemoryDetail_step_1_proc_28_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsule_step_2_proc_28_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_28_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_28_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_28_memorydetail
+
+## 30. proc_29_memorydetail
+- processUri: mv2://processes/proc_29_memorydetail
+- processName: MemoryDetail → Get
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: MemoryDetail, emitNotice, emitPayloadNotices, get, getCapsule, http
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:MemoryDetail_step_1_proc_29_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsule_step_2_proc_29_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_29_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_29_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_29_memorydetail
+
+## 31. proc_30_uploadpage
+- processUri: mv2://processes/proc_30_uploadpage
+- processName: UploadPage → Delete
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: UploadPage, addToRemoveQueue, delete, dispatch, reducer, useToast
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/hooks/use-toast.ts, src/pages/UploadPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:UploadPage_step_1_proc_30_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:useToast_step_2_proc_30_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_3_proc_30_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_4_proc_30_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue_step_5_proc_30_uploadpage
+
+## 32. proc_31_uploadpage
+- processUri: mv2://processes/proc_31_uploadpage
+- processName: UploadPage → AsRecord
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: UploadPage, asRecord, collectPayloadNotices, emitPayloadNotices, http, importCapsuleFile
+- linkedFunctionFiles: src/lib/api.ts, src/pages/UploadPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:UploadPage_step_1_proc_31_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:importCapsuleFile_step_2_proc_31_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_31_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_31_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_31_uploadpage
+
+## 33. proc_32_uploadpage
+- processUri: mv2://processes/proc_32_uploadpage
+- processName: UploadPage → ToMessageArray
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: UploadPage, collectPayloadNotices, emitPayloadNotices, http, importCapsuleFile, toMessageArray
+- linkedFunctionFiles: src/lib/api.ts, src/pages/UploadPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:UploadPage_step_1_proc_32_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:importCapsuleFile_step_2_proc_32_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_32_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_32_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_32_uploadpage
+
+## 34. proc_33_uploadpage
+- processUri: mv2://processes/proc_33_uploadpage
+- processName: UploadPage → Get
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: UploadPage, emitNotice, emitPayloadNotices, get, http, importCapsuleFile
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/UploadPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:UploadPage_step_1_proc_33_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:importCapsuleFile_step_2_proc_33_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_33_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_33_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_33_uploadpage
+
+## 35. proc_34_handleprocess
+- processUri: mv2://processes/proc_34_handleprocess
+- processName: HandleProcess → Delete
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: addToRemoveQueue, delete, dispatch, handleProcess, reducer, toast
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/hooks/use-toast.ts, src/pages/UploadPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:handleProcess_step_1_proc_34_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:toast_step_2_proc_34_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_3_proc_34_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_4_proc_34_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue_step_5_proc_34_handleprocess
+
+## 36. proc_35_handleprocess
+- processUri: mv2://processes/proc_35_handleprocess
+- processName: HandleProcess → Get
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: emitNotice, get, handleProcess, http, previewGitAutoContext7, runAutoContext7Preview
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/UploadPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:handleProcess_step_1_proc_35_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:runAutoContext7Preview_step_2_proc_35_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:previewGitAutoContext7_step_3_proc_35_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_35_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_35_handleprocess
+
+## 37. proc_36_handleprocess
+- processUri: mv2://processes/proc_36_handleprocess
+- processName: HandleProcess → AsRecord
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: asRecord, collectPayloadNotices, emitPayloadNotices, handleProcess, http, ingestCapsule
+- linkedFunctionFiles: src/lib/api.ts, src/pages/UploadPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:handleProcess_step_1_proc_36_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:ingestCapsule_step_2_proc_36_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_36_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_36_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_36_handleprocess
+
+## 38. proc_37_handleprocess
+- processUri: mv2://processes/proc_37_handleprocess
+- processName: HandleProcess → ToMessageArray
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: collectPayloadNotices, emitPayloadNotices, handleProcess, http, ingestCapsule, toMessageArray
+- linkedFunctionFiles: src/lib/api.ts, src/pages/UploadPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:handleProcess_step_1_proc_37_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:ingestCapsule_step_2_proc_37_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_37_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_37_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_37_handleprocess
+
+## 39. proc_38_dashboard
+- processUri: mv2://processes/proc_38_dashboard
+- processName: Dashboard → Delete
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: Dashboard, addToRemoveQueue, delete, dispatch, reducer, useToast
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/hooks/use-toast.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_38_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:useToast_step_2_proc_38_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_3_proc_38_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_4_proc_38_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue_step_5_proc_38_dashboard
+
+## 40. proc_39_dashboard
+- processUri: mv2://processes/proc_39_dashboard
+- processName: Dashboard → Get
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: Dashboard, emitNotice, get, http, listCapsules, refresh
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_39_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_39_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_39_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_39_dashboard
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_39_dashboard
+
+## 41. proc_40_searchpage
+- processUri: mv2://processes/proc_40_searchpage
+- processName: SearchPage → AsRecord
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: SearchPage, asRecord, collectPayloadNotices, emitPayloadNotices, http, listCapsules
+- linkedFunctionFiles: src/lib/api.ts, src/pages/SearchPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/SearchPage.tsx:SearchPage_step_1_proc_40_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_2_proc_40_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_40_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_40_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_40_searchpage
+
+## 42. proc_41_searchpage
+- processUri: mv2://processes/proc_41_searchpage
+- processName: SearchPage → ToMessageArray
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: SearchPage, collectPayloadNotices, emitPayloadNotices, http, listCapsules, toMessageArray
+- linkedFunctionFiles: src/lib/api.ts, src/pages/SearchPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/SearchPage.tsx:SearchPage_step_1_proc_41_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_2_proc_41_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_41_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_41_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_41_searchpage
+
+## 43. proc_42_searchpage
+- processUri: mv2://processes/proc_42_searchpage
+- processName: SearchPage → Get
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: SearchPage, emitNotice, emitPayloadNotices, get, http, listCapsules
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/SearchPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/SearchPage.tsx:SearchPage_step_1_proc_42_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_2_proc_42_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_42_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_42_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_42_searchpage
+
+## 44. proc_43_searchpage
+- processUri: mv2://processes/proc_43_searchpage
+- processName: SearchPage → Delete
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: SearchPage, compactSeenNotices, delete, emitNotice, http, listCapsules
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/SearchPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/SearchPage.tsx:SearchPage_step_1_proc_43_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_2_proc_43_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_43_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_43_searchpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:compactSeenNotices_step_5_proc_43_searchpage
+
+## 45. proc_44_settingspage
+- processUri: mv2://processes/proc_44_settingspage
+- processName: SettingsPage → Delete
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: SettingsPage, addToRemoveQueue, delete, dispatch, reducer, useToast
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/hooks/use-toast.ts, src/pages/SettingsPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/SettingsPage.tsx:SettingsPage_step_1_proc_44_settingspage
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:useToast_step_2_proc_44_settingspage
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_3_proc_44_settingspage
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_4_proc_44_settingspage
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue_step_5_proc_44_settingspage
+
+## 46. proc_45_handlesave
+- processUri: mv2://processes/proc_45_handlesave
+- processName: HandleSave → Delete
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: addToRemoveQueue, delete, dispatch, handleSave, reducer, toast
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/hooks/use-toast.ts, src/pages/SettingsPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/SettingsPage.tsx:handleSave_step_1_proc_45_handlesave
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:toast_step_2_proc_45_handlesave
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_3_proc_45_handlesave
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_4_proc_45_handlesave
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue_step_5_proc_45_handlesave
+
+## 47. proc_46_handlereset
+- processUri: mv2://processes/proc_46_handlereset
+- processName: HandleReset → Delete
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: addToRemoveQueue, delete, dispatch, handleReset, reducer, toast
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/hooks/use-toast.ts, src/pages/SettingsPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/SettingsPage.tsx:handleReset_step_1_proc_46_handlereset
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:toast_step_2_proc_46_handlereset
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_3_proc_46_handlereset
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_4_proc_46_handlereset
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue_step_5_proc_46_handlereset
+
+## 48. proc_47_handledelete
+- processUri: mv2://processes/proc_47_handledelete
+- processName: HandleDelete → Delete
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: addToRemoveQueue, delete, dispatch, handleDelete, reducer, toast
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/hooks/use-toast.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:handleDelete_step_1_proc_47_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:toast_step_2_proc_47_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_3_proc_47_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_4_proc_47_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue_step_5_proc_47_handledelete
+
+## 49. proc_48_handledelete
+- processUri: mv2://processes/proc_48_handledelete
+- processName: HandleDelete → AsRecord
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: asRecord, collectPayloadNotices, deleteCapsule, emitPayloadNotices, handleDelete, http
+- linkedFunctionFiles: src/lib/api.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:handleDelete_step_1_proc_48_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:deleteCapsule_step_2_proc_48_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_48_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_48_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_48_handledelete
+
+## 50. proc_49_handledelete
+- processUri: mv2://processes/proc_49_handledelete
+- processName: HandleDelete → ToMessageArray
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: collectPayloadNotices, deleteCapsule, emitPayloadNotices, handleDelete, http, toMessageArray
+- linkedFunctionFiles: src/lib/api.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:handleDelete_step_1_proc_49_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:deleteCapsule_step_2_proc_49_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_49_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_49_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_49_handledelete
+
+## 51. proc_50_handledelete
+- processUri: mv2://processes/proc_50_handledelete
+- processName: HandleDelete → Get
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: deleteCapsule, emitNotice, emitPayloadNotices, get, handleDelete, http
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:handleDelete_step_1_proc_50_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:deleteCapsule_step_2_proc_50_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_50_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_50_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_50_handledelete
+
+## 52. proc_51_handledelete
+- processUri: mv2://processes/proc_51_handledelete
+- processName: HandleDelete → Delete
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: compactSeenNotices, delete, deleteCapsule, emitNotice, handleDelete, http
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:handleDelete_step_1_proc_51_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:deleteCapsule_step_2_proc_51_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_51_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_51_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:compactSeenNotices_step_5_proc_51_handledelete
+
+## 53. proc_52_handledelete
+- processUri: mv2://processes/proc_52_handledelete
+- processName: HandleDelete → Get
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: emitNotice, get, handleDelete, http, listCapsules, refresh
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/Dashboard.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:handleDelete_step_1_proc_52_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_52_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_52_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_52_handledelete
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_52_handledelete
+
+## 54. proc_53_globalgraphpage
+- processUri: mv2://processes/proc_53_globalgraphpage
+- processName: GlobalGraphPage → AsRecord
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: GlobalGraphPage, asRecord, collectPayloadNotices, emitPayloadNotices, getGlobalGraph, http
+- linkedFunctionFiles: src/lib/api.ts, src/pages/GlobalGraph.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage_step_1_proc_53_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getGlobalGraph_step_2_proc_53_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_53_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_53_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_53_globalgraphpage
+
+## 55. proc_54_globalgraphpage
+- processUri: mv2://processes/proc_54_globalgraphpage
+- processName: GlobalGraphPage → ToMessageArray
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: GlobalGraphPage, collectPayloadNotices, emitPayloadNotices, getGlobalGraph, http, toMessageArray
+- linkedFunctionFiles: src/lib/api.ts, src/pages/GlobalGraph.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage_step_1_proc_54_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getGlobalGraph_step_2_proc_54_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_54_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_54_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_54_globalgraphpage
+
+## 56. proc_55_globalgraphpage
+- processUri: mv2://processes/proc_55_globalgraphpage
+- processName: GlobalGraphPage → Get
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: GlobalGraphPage, emitNotice, emitPayloadNotices, get, getGlobalGraph, http
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/GlobalGraph.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage_step_1_proc_55_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getGlobalGraph_step_2_proc_55_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_55_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_55_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_55_globalgraphpage
+
+## 57. proc_56_globalgraphpage
+- processUri: mv2://processes/proc_56_globalgraphpage
+- processName: GlobalGraphPage → Delete
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: GlobalGraphPage, compactSeenNotices, delete, emitNotice, getGlobalGraph, http
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/GlobalGraph.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage_step_1_proc_56_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getGlobalGraph_step_2_proc_56_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_56_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_56_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:compactSeenNotices_step_5_proc_56_globalgraphpage
+
+## 58. proc_57_globalgraphpage
+- processUri: mv2://processes/proc_57_globalgraphpage
+- processName: GlobalGraphPage → Get
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: GlobalGraphPage, emitNotice, get, handleSearch, http, searchGlobalGraph
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/GlobalGraph.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage_step_1_proc_57_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:handleSearch_step_2_proc_57_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:searchGlobalGraph_step_3_proc_57_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_57_globalgraphpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_57_globalgraphpage
+
+## 59. proc_58_handleask
+- processUri: mv2://processes/proc_58_handleask
+- processName: HandleAsk → AsRecord
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: asRecord, askCapsule, collectPayloadNotices, emitPayloadNotices, handleAsk, http
+- linkedFunctionFiles: src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleAsk_step_1_proc_58_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:askCapsule_step_2_proc_58_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_58_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_58_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_58_handleask
+
+## 60. proc_59_handleask
+- processUri: mv2://processes/proc_59_handleask
+- processName: HandleAsk → ToMessageArray
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: askCapsule, collectPayloadNotices, emitPayloadNotices, handleAsk, http, toMessageArray
+- linkedFunctionFiles: src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleAsk_step_1_proc_59_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:askCapsule_step_2_proc_59_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_59_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_59_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_59_handleask
+
+## 61. proc_60_handleask
+- processUri: mv2://processes/proc_60_handleask
+- processName: HandleAsk → Get
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: askCapsule, emitNotice, emitPayloadNotices, get, handleAsk, http
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleAsk_step_1_proc_60_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:askCapsule_step_2_proc_60_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_60_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_60_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_60_handleask
+
+## 62. proc_61_handleask
+- processUri: mv2://processes/proc_61_handleask
+- processName: HandleAsk → Delete
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: askCapsule, compactSeenNotices, delete, emitNotice, handleAsk, http
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleAsk_step_1_proc_61_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:askCapsule_step_2_proc_61_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_61_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_61_handleask
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:compactSeenNotices_step_5_proc_61_handleask
+
+## 63. proc_62_handleloadtimeline
+- processUri: mv2://processes/proc_62_handleloadtimeline
+- processName: HandleLoadTimeline → AsRecord
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: asRecord, collectPayloadNotices, emitPayloadNotices, getCapsuleTimeline, handleLoadTimeline, http
+- linkedFunctionFiles: src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleLoadTimeline_step_1_proc_62_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsuleTimeline_step_2_proc_62_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_62_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_62_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_62_handleloadtimeline
+
+## 64. proc_63_handleloadtimeline
+- processUri: mv2://processes/proc_63_handleloadtimeline
+- processName: HandleLoadTimeline → ToMessageArray
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: collectPayloadNotices, emitPayloadNotices, getCapsuleTimeline, handleLoadTimeline, http, toMessageArray
+- linkedFunctionFiles: src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleLoadTimeline_step_1_proc_63_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsuleTimeline_step_2_proc_63_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_63_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_63_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_63_handleloadtimeline
+
+## 65. proc_64_handleloadtimeline
+- processUri: mv2://processes/proc_64_handleloadtimeline
+- processName: HandleLoadTimeline → Get
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: emitNotice, emitPayloadNotices, get, getCapsuleTimeline, handleLoadTimeline, http
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleLoadTimeline_step_1_proc_64_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsuleTimeline_step_2_proc_64_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_64_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_64_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_64_handleloadtimeline
+
+## 66. proc_65_handleloadtimeline
+- processUri: mv2://processes/proc_65_handleloadtimeline
+- processName: HandleLoadTimeline → Delete
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: compactSeenNotices, delete, emitNotice, getCapsuleTimeline, handleLoadTimeline, http
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleLoadTimeline_step_1_proc_65_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsuleTimeline_step_2_proc_65_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_65_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_65_handleloadtimeline
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:compactSeenNotices_step_5_proc_65_handleloadtimeline
+
+## 67. proc_66_handleimpact
+- processUri: mv2://processes/proc_66_handleimpact
+- processName: HandleImpact → AsRecord
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: asRecord, collectPayloadNotices, emitPayloadNotices, handleImpact, http, impactCapsuleGraph
+- linkedFunctionFiles: src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleImpact_step_1_proc_66_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:impactCapsuleGraph_step_2_proc_66_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_66_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_66_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_66_handleimpact
+
+## 68. proc_67_handleimpact
+- processUri: mv2://processes/proc_67_handleimpact
+- processName: HandleImpact → ToMessageArray
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: collectPayloadNotices, emitPayloadNotices, handleImpact, http, impactCapsuleGraph, toMessageArray
+- linkedFunctionFiles: src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleImpact_step_1_proc_67_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:impactCapsuleGraph_step_2_proc_67_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_67_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_67_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_67_handleimpact
+
+## 69. proc_68_handleimpact
+- processUri: mv2://processes/proc_68_handleimpact
+- processName: HandleImpact → Get
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: emitNotice, emitPayloadNotices, get, handleImpact, http, impactCapsuleGraph
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleImpact_step_1_proc_68_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:impactCapsuleGraph_step_2_proc_68_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_68_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_68_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_68_handleimpact
+
+## 70. proc_69_handleimpact
+- processUri: mv2://processes/proc_69_handleimpact
+- processName: HandleImpact → Delete
+- linkedFunctionsCount: 6
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: compactSeenNotices, delete, emitNotice, handleImpact, http, impactCapsuleGraph
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleImpact_step_1_proc_69_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:impactCapsuleGraph_step_2_proc_69_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_69_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_69_handleimpact
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:compactSeenNotices_step_5_proc_69_handleimpact
+
+## 71. proc_70_memorydetail
+- processUri: mv2://processes/proc_70_memorydetail
+- processName: MemoryDetail → Get
+- linkedFunctionsCount: 5
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: MemoryDetail, emitNotice, get, getCapsule, http
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:MemoryDetail_step_1_proc_70_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsule_step_2_proc_70_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_70_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_70_memorydetail
+  - mv2://relations/Method:MEM-Capsule v1/backend/src/stores/capsule-store.ts:get_step_5_proc_70_memorydetail
+
+## 72. proc_71_memorydetail
+- processUri: mv2://processes/proc_71_memorydetail
+- processName: MemoryDetail → Get
+- linkedFunctionsCount: 5
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: MemoryDetail, emitNotice, get, getCapsuleGraphOverview, http
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/MemoryDetail.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:MemoryDetail_step_1_proc_71_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsuleGraphOverview_step_2_proc_71_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_71_memorydetail
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_71_memorydetail
+  - mv2://relations/Method:MEM-Capsule v1/backend/src/stores/capsule-store.ts:get_step_5_proc_71_memorydetail
+
+## 73. proc_72_uploadpage
+- processUri: mv2://processes/proc_72_uploadpage
+- processName: UploadPage → Get
+- linkedFunctionsCount: 5
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: UploadPage, emitNotice, get, http, importCapsuleFile
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/UploadPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:UploadPage_step_1_proc_72_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:importCapsuleFile_step_2_proc_72_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_72_uploadpage
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_72_uploadpage
+  - mv2://relations/Method:MEM-Capsule v1/backend/src/stores/capsule-store.ts:get_step_5_proc_72_uploadpage
+
+## 74. proc_73_handleprocess
+- processUri: mv2://processes/proc_73_handleprocess
+- processName: HandleProcess → AsRecord
+- linkedFunctionsCount: 5
+- linkedFunctionFilesCount: 2
+- linkedFunctionNames: asRecord, handleProcess, http, previewGitAutoContext7, runAutoContext7Preview
+- linkedFunctionFiles: src/lib/api.ts, src/pages/UploadPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:handleProcess_step_1_proc_73_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:runAutoContext7Preview_step_2_proc_73_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:previewGitAutoContext7_step_3_proc_73_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_73_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:asRecord_step_5_proc_73_handleprocess
+
+## 75. proc_74_handleprocess
+- processUri: mv2://processes/proc_74_handleprocess
+- processName: HandleProcess → Get
+- linkedFunctionsCount: 5
+- linkedFunctionFilesCount: 3
+- linkedFunctionNames: emitNotice, get, handleProcess, http, ingestCapsule
+- linkedFunctionFiles: backend/src/stores/capsule-store.ts, src/lib/api.ts, src/pages/UploadPage.tsx
+- sampleRelationUris:
+  - mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:handleProcess_step_1_proc_74_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:ingestCapsule_step_2_proc_74_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_74_handleprocess
+  - mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_74_handleprocess
+  - mv2://relations/Method:MEM-Capsule v1/backend/src/stores/capsule-store.ts:get_step_5_proc_74_handleprocess

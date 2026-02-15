@@ -1,0 +1,3893 @@
+{
+  "summary": {
+    "capsulePath": "/Users/buddythacat/Downloads/mem-capsule-v1-gitnexus-mem_capsule-2026-02-15.mv2",
+    "generatedAt": "2026-02-15T16:54:30.233Z",
+    "totalFrames": 3694,
+    "callsFramesFound": 887,
+    "uniqueCallSourceFiles": 87,
+    "unparsedCalls": 0,
+    "processFramesFound": 75,
+    "processesWithLinks": 75,
+    "missingSnippetFrames": 99,
+    "missingSnippetByType": {
+      "node": 3,
+      "community": 31,
+      "process": 65
+    },
+    "actionableMissingSnippetFrames": 0
+  },
+  "callsGrouped": [
+    {
+      "sourceFile": "backend/src/gateway/server.ts",
+      "calls": 140,
+      "sourceLabels": [
+        "File",
+        "Function"
+      ],
+      "sourceFunctions": 25,
+      "calledSymbols": 99,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/backend/src/gateway/server.ts:createStorageBundle->Function:MEM-Capsule v1/backend/src/storage/factory.ts:createStorageBundle",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/gateway/server.ts:parseInlineUploadFiles:asRecord->Function:MEM-Capsule v1/backend/src/gateway/server.ts:asRecord",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/gateway/server.ts:parseInlineUploadFiles:pickString->Function:MEM-Capsule v1/backend/src/gateway/server.ts:pickString"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/worker/verification/service.ts",
+      "calls": 85,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 21,
+      "calledSymbols": 38,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/verification/service.ts:normalizeScope:clamp->Function:MEM-Capsule v1/backend/src/worker/verification/service.ts:clamp",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/verification/service.ts:sanitizeVerificationSources:asRecord->Function:MEM-Capsule v1/backend/src/worker/verification/service.ts:asRecord",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/verification/service.ts:sanitizeVerificationSources:trimToMax->Function:MEM-Capsule v1/backend/src/worker/verification/service.ts:trimToMax"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/worker/server.ts",
+      "calls": 72,
+      "sourceLabels": [
+        "File",
+        "Function"
+      ],
+      "sourceFunctions": 11,
+      "calledSymbols": 57,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/server.ts:requireCapsulePath:asRecord->Function:MEM-Capsule v1/backend/src/worker/server.ts:asRecord",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/server.ts:openExistingCapsuleOrThrow:loadMemvid->Function:MEM-Capsule v1/backend/src/worker/memvid-adapter.ts:loadMemvid",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/server.ts:openExistingCapsuleOrThrow:openExistingCapsule->Function:MEM-Capsule v1/backend/src/worker/memvid-adapter.ts:openExistingCapsule"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/worker/memvid-adapter.ts",
+      "calls": 56,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 25,
+      "calledSymbols": 25,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/memvid-adapter.ts:asRecord:isRecord->Function:MEM-Capsule v1/backend/src/worker/memvid-adapter.ts:isRecord",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/memvid-adapter.ts:toIntValue:toNumberValue->Function:MEM-Capsule v1/backend/src/worker/memvid-adapter.ts:toNumberValue",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/memvid-adapter.ts:toUnixTimestamp:toNumberValue->Function:MEM-Capsule v1/backend/src/worker/memvid-adapter.ts:toNumberValue"
+      ]
+    },
+    {
+      "sourceFile": "src/lib/api.ts",
+      "calls": 52,
+      "sourceLabels": [
+        "File",
+        "Function"
+      ],
+      "sourceFunctions": 39,
+      "calledSymbols": 15,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/lib/api.ts:normalizeApiBase->Function:MEM-Capsule v1/src/lib/api.ts:normalizeApiBase",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/lib/api.ts:toNotice:asRecord->Function:MEM-Capsule v1/src/lib/api.ts:asRecord",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/lib/api.ts:toNotice:isNoticeLevel->Function:MEM-Capsule v1/src/lib/api.ts:isNoticeLevel"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/worker/graph/pipeline.ts",
+      "calls": 44,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 17,
+      "calledSymbols": 30,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/graph/pipeline.ts:stripTrailingMetadata:clean->Function:MEM-Capsule v1/backend/src/worker/graph/pipeline.ts:clean",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/graph/pipeline.ts:normalizeGroup:clean->Function:MEM-Capsule v1/backend/src/worker/graph/pipeline.ts:clean",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/graph/pipeline.ts:parseImports:clean->Function:MEM-Capsule v1/backend/src/worker/graph/pipeline.ts:clean"
+      ]
+    },
+    {
+      "sourceFile": "src/pages/MemoryDetail.tsx",
+      "calls": 41,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 12,
+      "calledSymbols": 34,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:formatRelativeRelevance:normalizeScore->Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:normalizeScore",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:MemoryDetail:useToast->Function:MEM-Capsule v1/src/hooks/use-toast.ts:useToast",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:MemoryDetail:loadAppSettings->Function:MEM-Capsule v1/src/lib/app-settings.ts:loadAppSettings"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/worker/graph/analysis.ts",
+      "calls": 32,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 14,
+      "calledSymbols": 15,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/graph/analysis.ts:buildIndex:get->Method:MEM-Capsule v1/backend/src/stores/capsule-store.ts:get",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/graph/analysis.ts:pickSubgraph:computeMetrics->Function:MEM-Capsule v1/backend/src/worker/graph/analysis.ts:computeMetrics",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/graph/analysis.ts:nodeMatchesQuery:normalizeText->Function:MEM-Capsule v1/backend/src/worker/graph/analysis.ts:normalizeText"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/services/worker-client.ts",
+      "calls": 27,
+      "sourceLabels": [
+        "Method"
+      ],
+      "sourceFunctions": 26,
+      "calledSymbols": 3,
+      "sampleUris": [
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/services/worker-client.ts:post:redact->Function:MEM-Capsule v1/backend/src/utils/redact.ts:redact",
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/services/worker-client.ts:post:parseWorkerMessage->Function:MEM-Capsule v1/backend/src/services/worker-client.ts:parseWorkerMessage",
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/services/worker-client.ts:health:post->Method:MEM-Capsule v1/backend/src/services/worker-client.ts:post"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/worker/openrouter.ts",
+      "calls": 26,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 11,
+      "calledSymbols": 20,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/openrouter.ts:extractJson:parseCandidate->Function:MEM-Capsule v1/backend/src/worker/openrouter.ts:parseCandidate",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/openrouter.ts:extractJson:stripFence->Function:MEM-Capsule v1/backend/src/worker/openrouter.ts:stripFence",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/openrouter.ts:extractJson:sliceBalanced->Function:MEM-Capsule v1/backend/src/worker/openrouter.ts:sliceBalanced"
+      ]
+    },
+    {
+      "sourceFile": "src/pages/UploadPage.tsx",
+      "calls": 25,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 5,
+      "calledSymbols": 19,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/UploadPage.tsx:UploadPage:loadAppSettings->Function:MEM-Capsule v1/src/lib/app-settings.ts:loadAppSettings",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/UploadPage.tsx:UploadPage:useToast->Function:MEM-Capsule v1/src/hooks/use-toast.ts:useToast",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/UploadPage.tsx:UploadPage:getFileType->Function:MEM-Capsule v1/src/pages/UploadPage.tsx:getFileType"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/storage/redis-metadata-store.ts",
+      "calls": 23,
+      "sourceLabels": [
+        "Method"
+      ],
+      "sourceFunctions": 7,
+      "calledSymbols": 6,
+      "sampleUris": [
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/storage/redis-metadata-store.ts:list:indexKey->Method:MEM-Capsule v1/backend/src/storage/redis-metadata-store.ts:indexKey",
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/storage/redis-metadata-store.ts:list:get->Method:MEM-Capsule v1/backend/src/storage/redis-metadata-store.ts:get",
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/storage/redis-metadata-store.ts:list:key->Method:MEM-Capsule v1/backend/src/storage/redis-metadata-store.ts:key"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/worker/graph/modes.ts",
+      "calls": 21,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 7,
+      "calledSymbols": 15,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/graph/modes.ts:isContext7Node:lower->Function:MEM-Capsule v1/backend/src/worker/graph/modes.ts:lower",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/graph/modes.ts:isContext7Node:asRecord->Function:MEM-Capsule v1/backend/src/worker/graph/modes.ts:asRecord",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/graph/modes.ts:modeNodeBoost:isContext7Node->Function:MEM-Capsule v1/backend/src/worker/graph/modes.ts:isContext7Node"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/services/job-queue.ts",
+      "calls": 19,
+      "sourceLabels": [
+        "Method"
+      ],
+      "sourceFunctions": 5,
+      "calledSymbols": 14,
+      "sampleUris": [
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/services/job-queue.ts:enqueue:tick->Method:MEM-Capsule v1/backend/src/services/job-queue.ts:tick",
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/services/job-queue.ts:runImmediately:runJob->Method:MEM-Capsule v1/backend/src/services/job-queue.ts:runJob",
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/services/job-queue.ts:tick:runJob->Method:MEM-Capsule v1/backend/src/services/job-queue.ts:runJob"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/worker/graph.ts",
+      "calls": 14,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 6,
+      "calledSymbols": 10,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/graph.ts:stripTrailingMetadata:clean->Function:MEM-Capsule v1/backend/src/worker/graph.ts:clean",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/graph.ts:normalizeGroup:clean->Function:MEM-Capsule v1/backend/src/worker/graph.ts:clean",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/graph.ts:uniqueMatches:clean->Function:MEM-Capsule v1/backend/src/worker/graph.ts:clean"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/worker/verification/providers/grokipedia.ts",
+      "calls": 12,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 4,
+      "calledSymbols": 9,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/verification/providers/grokipedia.ts:buildSlugCandidates:toSlugCandidate->Function:MEM-Capsule v1/backend/src/worker/verification/providers/grokipedia.ts:toSlugCandidate",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/verification/providers/grokipedia.ts:collectPageSources:pickString->Function:MEM-Capsule v1/backend/src/worker/verification/providers/grokipedia.ts:pickString",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/verification/providers/grokipedia.ts:collectPageSources:clip->Function:MEM-Capsule v1/backend/src/worker/verification/providers/grokipedia.ts:clip"
+      ]
+    },
+    {
+      "sourceFile": "src/components/KnowledgeGraph.tsx",
+      "calls": 11,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 2,
+      "calledSymbols": 11,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/KnowledgeGraph.tsx:toGraphData:asRecord->Function:MEM-Capsule v1/src/components/KnowledgeGraph.tsx:asRecord",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/KnowledgeGraph.tsx:toGraphData:clamp->Function:MEM-Capsule v1/src/components/KnowledgeGraph.tsx:clamp",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/KnowledgeGraph.tsx:toGraphData:get->Method:MEM-Capsule v1/backend/src/stores/capsule-store.ts:get"
+      ]
+    },
+    {
+      "sourceFile": "src/test/api.test.ts",
+      "calls": 11,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 11,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/test/api.test.ts:okJson->Function:MEM-Capsule v1/src/test/api.test.ts:okJson",
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/test/api.test.ts:ingestCapsule->Function:MEM-Capsule v1/src/lib/api.ts:ingestCapsule",
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/test/api.test.ts:listCapsules->Function:MEM-Capsule v1/src/lib/api.ts:listCapsules"
+      ]
+    },
+    {
+      "sourceFile": "src/hooks/use-toast.ts",
+      "calls": 10,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 7,
+      "calledSymbols": 6,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue:delete->Method:MEM-Capsule v1/backend/src/stores/capsule-store.ts:delete",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue:dispatch->Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer:addToRemoveQueue->Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue"
+      ]
+    },
+    {
+      "sourceFile": "src/pages/Dashboard.tsx",
+      "calls": 10,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 3,
+      "calledSymbols": 9,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard:useToast->Function:MEM-Capsule v1/src/hooks/use-toast.ts:useToast",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh:listCapsules->Function:MEM-Capsule v1/src/lib/api.ts:listCapsules",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard:refresh->Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/storage/blob-binary-store.ts",
+      "calls": 9,
+      "sourceLabels": [
+        "Method"
+      ],
+      "sourceFunctions": 5,
+      "calledSymbols": 7,
+      "sampleUris": [
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/storage/blob-binary-store.ts:materializeCapsule:resolveBlobUrl->Method:MEM-Capsule v1/backend/src/storage/blob-binary-store.ts:resolveBlobUrl",
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/storage/blob-binary-store.ts:materializeCapsule:localCachePath->Function:MEM-Capsule v1/backend/src/storage/blob-binary-store.ts:localCachePath",
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/storage/blob-binary-store.ts:materializeCapsule:fetchBlobBytes->Function:MEM-Capsule v1/backend/src/storage/blob-binary-store.ts:fetchBlobBytes"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/worker/verification/providers/jina.ts",
+      "calls": 9,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 3,
+      "calledSymbols": 5,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/verification/providers/jina.ts:collectSources:asRecord->Function:MEM-Capsule v1/backend/src/worker/verification/providers/jina.ts:asRecord",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/verification/providers/jina.ts:collectSources:pickString->Function:MEM-Capsule v1/backend/src/worker/verification/providers/jina.ts:pickString",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/verification/providers/jina.ts:normalizeStatus:asRecord->Function:MEM-Capsule v1/backend/src/worker/verification/providers/jina.ts:asRecord"
+      ]
+    },
+    {
+      "sourceFile": "src/pages/SearchPage.tsx",
+      "calls": 9,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 3,
+      "calledSymbols": 8,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/SearchPage.tsx:relativeRelevance:normalizeScore->Function:MEM-Capsule v1/src/pages/SearchPage.tsx:normalizeScore",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/SearchPage.tsx:SearchPage:get->Method:MEM-Capsule v1/backend/src/stores/capsule-store.ts:get",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/SearchPage.tsx:SearchPage:listCapsules->Function:MEM-Capsule v1/src/lib/api.ts:listCapsules"
+      ]
+    },
+    {
+      "sourceFile": "src/lib/app-settings.ts",
+      "calls": 8,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 3,
+      "calledSymbols": 7,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/lib/app-settings.ts:sanitizeSettings:parseAttempts->Function:MEM-Capsule v1/src/lib/app-settings.ts:parseAttempts",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/lib/app-settings.ts:sanitizeSettings:parseBackoffSeconds->Function:MEM-Capsule v1/src/lib/app-settings.ts:parseBackoffSeconds",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/lib/app-settings.ts:sanitizeSettings:parseRelations->Function:MEM-Capsule v1/src/lib/app-settings.ts:parseRelations"
+      ]
+    },
+    {
+      "sourceFile": "src/pages/SettingsPage.tsx",
+      "calls": 8,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 3,
+      "calledSymbols": 7,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/SettingsPage.tsx:SettingsPage:loadAppSettings->Function:MEM-Capsule v1/src/lib/app-settings.ts:loadAppSettings",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/SettingsPage.tsx:SettingsPage:useToast->Function:MEM-Capsule v1/src/hooks/use-toast.ts:useToast",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/SettingsPage.tsx:handleSave:saveAppSettings->Function:MEM-Capsule v1/src/lib/app-settings.ts:saveAppSettings"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/pagination.tsx",
+      "calls": 6,
+      "sourceLabels": [
+        "File",
+        "Function"
+      ],
+      "sourceFunctions": 6,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/pagination.tsx:Pagination:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/pagination.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/pagination.tsx:PaginationLink:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/worker/graph/store.ts",
+      "calls": 5,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 3,
+      "calledSymbols": 3,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/graph/store.ts:saveGraphArtifact:ensureDir->Function:MEM-Capsule v1/backend/src/utils/fs.ts:ensureDir",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/graph/store.ts:saveGraphArtifact:graphPathFor->Function:MEM-Capsule v1/backend/src/worker/graph/store.ts:graphPathFor",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/graph/store.ts:loadGraphArtifact:graphPathFor->Function:MEM-Capsule v1/backend/src/worker/graph/store.ts:graphPathFor"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/config.ts",
+      "calls": 4,
+      "sourceLabels": [
+        "File",
+        "Function"
+      ],
+      "sourceFunctions": 2,
+      "calledSymbols": 4,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/config.ts:resolveDefaultStorageRoot:toMemCapsuleRoot->Function:MEM-Capsule v1/backend/src/config.ts:toMemCapsuleRoot",
+        "mv2://relations/CALLS:File:MEM-Capsule v1/backend/src/config.ts:detectContainerRuntime->Function:MEM-Capsule v1/backend/src/config.ts:detectContainerRuntime",
+        "mv2://relations/CALLS:File:MEM-Capsule v1/backend/src/config.ts:resolveDefaultStorageRoot->Function:MEM-Capsule v1/backend/src/config.ts:resolveDefaultStorageRoot"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/storage/fs-binary-store.ts",
+      "calls": 4,
+      "sourceLabels": [
+        "Method"
+      ],
+      "sourceFunctions": 3,
+      "calledSymbols": 3,
+      "sampleUris": [
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/storage/fs-binary-store.ts:persistCapsule:statSize->Function:MEM-Capsule v1/backend/src/utils/fs.ts:statSize",
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/storage/fs-binary-store.ts:persistArtifact:artifactPathFor->Function:MEM-Capsule v1/backend/src/storage/fs-binary-store.ts:artifactPathFor",
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/storage/fs-binary-store.ts:persistArtifact:ensureDir->Function:MEM-Capsule v1/backend/src/utils/fs.ts:ensureDir"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/worker/verification/scorer.ts",
+      "calls": 4,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 2,
+      "calledSymbols": 3,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/verification/scorer.ts:tokenizeEntity:normalize->Function:MEM-Capsule v1/backend/src/worker/verification/scorer.ts:normalize",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/verification/scorer.ts:scoreEvidence:tokenizeEntity->Function:MEM-Capsule v1/backend/src/worker/verification/scorer.ts:tokenizeEntity",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/worker/verification/scorer.ts:scoreEvidence:normalize->Function:MEM-Capsule v1/backend/src/worker/verification/scorer.ts:normalize"
+      ]
+    },
+    {
+      "sourceFile": "src/pages/GlobalGraph.tsx",
+      "calls": 4,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 3,
+      "calledSymbols": 4,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage:getGlobalGraph->Function:MEM-Capsule v1/src/lib/api.ts:getGlobalGraph",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:handleSearch:searchGlobalGraph->Function:MEM-Capsule v1/src/lib/api.ts:searchGlobalGraph",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:handleImpact:impactGlobalGraph->Function:MEM-Capsule v1/src/lib/api.ts:impactGlobalGraph"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/stores/job-store.ts",
+      "calls": 3,
+      "sourceLabels": [
+        "Method"
+      ],
+      "sourceFunctions": 3,
+      "calledSymbols": 3,
+      "sampleUris": [
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/stores/job-store.ts:write:writeJsonFile->Function:MEM-Capsule v1/backend/src/utils/fs.ts:writeJsonFile",
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/stores/job-store.ts:update:nowIso->Function:MEM-Capsule v1/backend/src/config.ts:nowIso",
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/stores/job-store.ts:appendLog:get->Method:MEM-Capsule v1/backend/src/stores/job-store.ts:get"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ApiToastBridge.tsx",
+      "calls": 3,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 3,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ApiToastBridge.tsx:ApiToastBridge:subscribeApiNotices->Function:MEM-Capsule v1/src/lib/api.ts:subscribeApiNotices",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ApiToastBridge.tsx:ApiToastBridge:toast->Function:MEM-Capsule v1/src/hooks/use-toast.ts:toast",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ApiToastBridge.tsx:ApiToastBridge:titleForNotice->Function:MEM-Capsule v1/src/components/ApiToastBridge.tsx:titleForNotice"
+      ]
+    },
+    {
+      "sourceFile": "src/components/Layout.tsx",
+      "calls": 3,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 2,
+      "calledSymbols": 3,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/Layout.tsx:Layout:getStoredTheme->Function:MEM-Capsule v1/src/lib/theme.ts:getStoredTheme",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/Layout.tsx:Layout:applyTheme->Function:MEM-Capsule v1/src/lib/theme.ts:applyTheme",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/Layout.tsx:toggleTheme:setTheme->Function:MEM-Capsule v1/src/lib/theme.ts:setTheme"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/alert-dialog.tsx",
+      "calls": 3,
+      "sourceLabels": [
+        "File",
+        "Function"
+      ],
+      "sourceFunctions": 3,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/alert-dialog.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/alert-dialog.tsx:AlertDialogHeader:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/alert-dialog.tsx:AlertDialogFooter:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/breadcrumb.tsx",
+      "calls": 3,
+      "sourceLabels": [
+        "File",
+        "Function"
+      ],
+      "sourceFunctions": 3,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/breadcrumb.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/breadcrumb.tsx:BreadcrumbSeparator:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/breadcrumb.tsx:BreadcrumbEllipsis:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/chart.tsx",
+      "calls": 3,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 3,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/chart.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/chart.tsx:useChart->Function:MEM-Capsule v1/src/components/ui/chart.tsx:useChart",
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/chart.tsx:getPayloadConfigFromPayload->Function:MEM-Capsule v1/src/components/ui/chart.tsx:getPayloadConfigFromPayload"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/dialog.tsx",
+      "calls": 3,
+      "sourceLabels": [
+        "File",
+        "Function"
+      ],
+      "sourceFunctions": 3,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/dialog.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/dialog.tsx:DialogHeader:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/dialog.tsx:DialogFooter:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/drawer.tsx",
+      "calls": 3,
+      "sourceLabels": [
+        "File",
+        "Function"
+      ],
+      "sourceFunctions": 3,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/drawer.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/drawer.tsx:DrawerHeader:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/drawer.tsx:DrawerFooter:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/sheet.tsx",
+      "calls": 3,
+      "sourceLabels": [
+        "File",
+        "Function"
+      ],
+      "sourceFunctions": 3,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/sheet.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/sheet.tsx:SheetHeader:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/sheet.tsx:SheetFooter:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/sidebar.tsx",
+      "calls": 3,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 3,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/sidebar.tsx:useIsMobile->Function:MEM-Capsule v1/src/hooks/use-mobile.tsx:useIsMobile",
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/sidebar.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/sidebar.tsx:useSidebar->Function:MEM-Capsule v1/src/components/ui/sidebar.tsx:useSidebar"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/storage/factory.ts",
+      "calls": 2,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 2,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/storage/factory.ts:createStorageBundle:createRedisMetadataStore->Function:MEM-Capsule v1/backend/src/storage/redis-metadata-store.ts:createRedisMetadataStore",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/storage/factory.ts:createStorageBundle:createFsMetadataStore->Function:MEM-Capsule v1/backend/src/storage/fs-metadata-store.ts:createFsMetadataStore"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/stores/capsule-store.ts",
+      "calls": 2,
+      "sourceLabels": [
+        "Method"
+      ],
+      "sourceFunctions": 2,
+      "calledSymbols": 2,
+      "sampleUris": [
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/stores/capsule-store.ts:write:writeJsonFile->Function:MEM-Capsule v1/backend/src/utils/fs.ts:writeJsonFile",
+        "mv2://relations/CALLS:Method:MEM-Capsule v1/backend/src/stores/capsule-store.ts:update:nowIso->Function:MEM-Capsule v1/backend/src/config.ts:nowIso"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/carousel.tsx",
+      "calls": 2,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 2,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/carousel.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/carousel.tsx:useCarousel->Function:MEM-Capsule v1/src/components/ui/carousel.tsx:useCarousel"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/command.tsx",
+      "calls": 2,
+      "sourceLabels": [
+        "File",
+        "Function"
+      ],
+      "sourceFunctions": 2,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/command.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/command.tsx:CommandShortcut:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/context-menu.tsx",
+      "calls": 2,
+      "sourceLabels": [
+        "File",
+        "Function"
+      ],
+      "sourceFunctions": 2,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/context-menu.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/context-menu.tsx:ContextMenuShortcut:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/dropdown-menu.tsx",
+      "calls": 2,
+      "sourceLabels": [
+        "File",
+        "Function"
+      ],
+      "sourceFunctions": 2,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/dropdown-menu.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/dropdown-menu.tsx:DropdownMenuShortcut:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/form.tsx",
+      "calls": 2,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 2,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/form.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/form.tsx:useFormField->Function:MEM-Capsule v1/src/components/ui/form.tsx:useFormField"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/menubar.tsx",
+      "calls": 2,
+      "sourceLabels": [
+        "File",
+        "Function"
+      ],
+      "sourceFunctions": 2,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/menubar.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/menubar.tsx:MenubarShortcut:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/resizable.tsx",
+      "calls": 2,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 2,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/resizable.tsx:ResizablePanelGroup:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/resizable.tsx:ResizableHandle:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/lib/theme.ts",
+      "calls": 2,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 2,
+      "calledSymbols": 2,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/lib/theme.ts:getStoredTheme:sanitizeTheme->Function:MEM-Capsule v1/src/lib/theme.ts:sanitizeTheme",
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/lib/theme.ts:setTheme:applyTheme->Function:MEM-Capsule v1/src/lib/theme.ts:applyTheme"
+      ]
+    },
+    {
+      "sourceFile": "backend/api/[...route].ts",
+      "calls": 1,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/api/[...route].ts:handler:initializeGateway->Function:MEM-Capsule v1/backend/src/gateway/server.ts:initializeGateway"
+      ]
+    },
+    {
+      "sourceFile": "backend/api/capsules/import.ts",
+      "calls": 1,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/api/capsules/import.ts:handler:initializeGateway->Function:MEM-Capsule v1/backend/src/gateway/server.ts:initializeGateway"
+      ]
+    },
+    {
+      "sourceFile": "backend/api/worker/[...route].ts",
+      "calls": 1,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/api/worker/[...route].ts:handler:rewriteWorkerPath->Function:MEM-Capsule v1/backend/api/worker/[...route].ts:rewriteWorkerPath"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/utils/fs.ts",
+      "calls": 1,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/utils/fs.ts:writeJsonFile:ensureDir->Function:MEM-Capsule v1/backend/src/utils/fs.ts:ensureDir"
+      ]
+    },
+    {
+      "sourceFile": "backend/src/utils/redact.ts",
+      "calls": 1,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/backend/src/utils/redact.ts:redactObject:redact->Function:MEM-Capsule v1/backend/src/utils/redact.ts:redact"
+      ]
+    },
+    {
+      "sourceFile": "src/components/NavLink.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/NavLink.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/accordion.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/accordion.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/alert.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/alert.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/avatar.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/avatar.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/badge.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/badge.tsx:Badge:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/button.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/button.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/calendar.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/calendar.tsx:Calendar:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/card.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/card.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/checkbox.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/checkbox.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/hover-card.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/hover-card.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/input-otp.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/input-otp.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/input.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/input.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/label.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/label.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/navigation-menu.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/navigation-menu.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/popover.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/popover.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/progress.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/progress.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/radio-group.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/radio-group.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/scroll-area.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/scroll-area.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/select.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/select.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/separator.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/separator.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/skeleton.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/skeleton.tsx:Skeleton:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/slider.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/slider.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/switch.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/switch.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/table.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/table.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/tabs.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/tabs.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/textarea.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/textarea.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/toast.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/toast.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/toaster.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "Function"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:Function:MEM-Capsule v1/src/components/ui/toaster.tsx:Toaster:useToast->Function:MEM-Capsule v1/src/hooks/use-toast.ts:useToast"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/toggle-group.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/toggle-group.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/toggle.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/toggle.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    },
+    {
+      "sourceFile": "src/components/ui/tooltip.tsx",
+      "calls": 1,
+      "sourceLabels": [
+        "File"
+      ],
+      "sourceFunctions": 1,
+      "calledSymbols": 1,
+      "sampleUris": [
+        "mv2://relations/CALLS:File:MEM-Capsule v1/src/components/ui/tooltip.tsx:cn->Function:MEM-Capsule v1/src/lib/utils.ts:cn"
+      ]
+    }
+  ],
+  "processLinks": [
+    {
+      "processId": "proc_0_dashboard",
+      "processUri": "mv2://processes/proc_0_dashboard",
+      "processName": "Dashboard → AsRecord",
+      "linkedFunctionsCount": 8,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "Dashboard",
+        "asRecord",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "http",
+        "listCapsules",
+        "refresh",
+        "toNotice"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_0_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_0_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_0_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_0_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_5_proc_0_dashboard"
+      ]
+    },
+    {
+      "processId": "proc_1_dashboard",
+      "processUri": "mv2://processes/proc_1_dashboard",
+      "processName": "Dashboard → IsNoticeLevel",
+      "linkedFunctionsCount": 8,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "Dashboard",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "http",
+        "isNoticeLevel",
+        "listCapsules",
+        "refresh",
+        "toNotice"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_1_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_1_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_1_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_1_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_5_proc_1_dashboard"
+      ]
+    },
+    {
+      "processId": "proc_2_dashboard",
+      "processUri": "mv2://processes/proc_2_dashboard",
+      "processName": "Dashboard → Delete",
+      "linkedFunctionsCount": 8,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "Dashboard",
+        "compactSeenNotices",
+        "delete",
+        "emitNotice",
+        "emitPayloadNotices",
+        "http",
+        "listCapsules",
+        "refresh"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_2_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_2_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_2_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_2_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_5_proc_2_dashboard"
+      ]
+    },
+    {
+      "processId": "proc_10_handlesave",
+      "processUri": "mv2://processes/proc_10_handlesave",
+      "processName": "HandleSave → Delete",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "addToRemoveQueue",
+        "delete",
+        "dismiss",
+        "dispatch",
+        "handleSave",
+        "reducer",
+        "toast"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/hooks/use-toast.ts",
+        "src/pages/SettingsPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/SettingsPage.tsx:handleSave_step_1_proc_10_handlesave",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:toast_step_2_proc_10_handlesave",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dismiss_step_3_proc_10_handlesave",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_4_proc_10_handlesave",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_5_proc_10_handlesave"
+      ]
+    },
+    {
+      "processId": "proc_11_handlereset",
+      "processUri": "mv2://processes/proc_11_handlereset",
+      "processName": "HandleReset → Delete",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "addToRemoveQueue",
+        "delete",
+        "dismiss",
+        "dispatch",
+        "handleReset",
+        "reducer",
+        "toast"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/hooks/use-toast.ts",
+        "src/pages/SettingsPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/SettingsPage.tsx:handleReset_step_1_proc_11_handlereset",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:toast_step_2_proc_11_handlereset",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dismiss_step_3_proc_11_handlereset",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_4_proc_11_handlereset",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_5_proc_11_handlereset"
+      ]
+    },
+    {
+      "processId": "proc_12_handledelete",
+      "processUri": "mv2://processes/proc_12_handledelete",
+      "processName": "HandleDelete → Delete",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "addToRemoveQueue",
+        "delete",
+        "dismiss",
+        "dispatch",
+        "handleDelete",
+        "reducer",
+        "toast"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/hooks/use-toast.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:handleDelete_step_1_proc_12_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:toast_step_2_proc_12_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dismiss_step_3_proc_12_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_4_proc_12_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_5_proc_12_handledelete"
+      ]
+    },
+    {
+      "processId": "proc_13_handledelete",
+      "processUri": "mv2://processes/proc_13_handledelete",
+      "processName": "HandleDelete → AsRecord",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "asRecord",
+        "collectPayloadNotices",
+        "deleteCapsule",
+        "emitPayloadNotices",
+        "handleDelete",
+        "http",
+        "toNotice"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:handleDelete_step_1_proc_13_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:deleteCapsule_step_2_proc_13_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_13_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_13_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_13_handledelete"
+      ]
+    },
+    {
+      "processId": "proc_14_globalgraphpage",
+      "processUri": "mv2://processes/proc_14_globalgraphpage",
+      "processName": "GlobalGraphPage → AsRecord",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "GlobalGraphPage",
+        "asRecord",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "getGlobalGraph",
+        "http",
+        "toNotice"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/GlobalGraph.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage_step_1_proc_14_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getGlobalGraph_step_2_proc_14_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_14_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_14_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_14_globalgraphpage"
+      ]
+    },
+    {
+      "processId": "proc_15_globalgraphpage",
+      "processUri": "mv2://processes/proc_15_globalgraphpage",
+      "processName": "GlobalGraphPage → IsNoticeLevel",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "GlobalGraphPage",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "getGlobalGraph",
+        "http",
+        "isNoticeLevel",
+        "toNotice"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/GlobalGraph.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage_step_1_proc_15_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getGlobalGraph_step_2_proc_15_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_15_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_15_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_15_globalgraphpage"
+      ]
+    },
+    {
+      "processId": "proc_16_globalgraphpage",
+      "processUri": "mv2://processes/proc_16_globalgraphpage",
+      "processName": "GlobalGraphPage → Delete",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "GlobalGraphPage",
+        "compactSeenNotices",
+        "delete",
+        "emitNotice",
+        "emitPayloadNotices",
+        "getGlobalGraph",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/GlobalGraph.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage_step_1_proc_16_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getGlobalGraph_step_2_proc_16_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_16_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_16_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_16_globalgraphpage"
+      ]
+    },
+    {
+      "processId": "proc_17_handleask",
+      "processUri": "mv2://processes/proc_17_handleask",
+      "processName": "HandleAsk → AsRecord",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "asRecord",
+        "askCapsule",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "handleAsk",
+        "http",
+        "toNotice"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleAsk_step_1_proc_17_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:askCapsule_step_2_proc_17_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_17_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_17_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_17_handleask"
+      ]
+    },
+    {
+      "processId": "proc_18_handleask",
+      "processUri": "mv2://processes/proc_18_handleask",
+      "processName": "HandleAsk → IsNoticeLevel",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "askCapsule",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "handleAsk",
+        "http",
+        "isNoticeLevel",
+        "toNotice"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleAsk_step_1_proc_18_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:askCapsule_step_2_proc_18_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_18_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_18_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_18_handleask"
+      ]
+    },
+    {
+      "processId": "proc_19_handleask",
+      "processUri": "mv2://processes/proc_19_handleask",
+      "processName": "HandleAsk → Delete",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "askCapsule",
+        "compactSeenNotices",
+        "delete",
+        "emitNotice",
+        "emitPayloadNotices",
+        "handleAsk",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleAsk_step_1_proc_19_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:askCapsule_step_2_proc_19_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_19_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_19_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_19_handleask"
+      ]
+    },
+    {
+      "processId": "proc_20_handleloadtimeline",
+      "processUri": "mv2://processes/proc_20_handleloadtimeline",
+      "processName": "HandleLoadTimeline → AsRecord",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "asRecord",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "getCapsuleTimeline",
+        "handleLoadTimeline",
+        "http",
+        "toNotice"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleLoadTimeline_step_1_proc_20_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsuleTimeline_step_2_proc_20_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_20_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_20_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_20_handleloadtimeline"
+      ]
+    },
+    {
+      "processId": "proc_21_handleloadtimeline",
+      "processUri": "mv2://processes/proc_21_handleloadtimeline",
+      "processName": "HandleLoadTimeline → IsNoticeLevel",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "getCapsuleTimeline",
+        "handleLoadTimeline",
+        "http",
+        "isNoticeLevel",
+        "toNotice"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleLoadTimeline_step_1_proc_21_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsuleTimeline_step_2_proc_21_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_21_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_21_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_21_handleloadtimeline"
+      ]
+    },
+    {
+      "processId": "proc_22_handleloadtimeline",
+      "processUri": "mv2://processes/proc_22_handleloadtimeline",
+      "processName": "HandleLoadTimeline → Delete",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "compactSeenNotices",
+        "delete",
+        "emitNotice",
+        "emitPayloadNotices",
+        "getCapsuleTimeline",
+        "handleLoadTimeline",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleLoadTimeline_step_1_proc_22_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsuleTimeline_step_2_proc_22_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_22_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_22_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_22_handleloadtimeline"
+      ]
+    },
+    {
+      "processId": "proc_23_handleimpact",
+      "processUri": "mv2://processes/proc_23_handleimpact",
+      "processName": "HandleImpact → AsRecord",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "asRecord",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "handleImpact",
+        "http",
+        "impactCapsuleGraph",
+        "toNotice"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleImpact_step_1_proc_23_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:impactCapsuleGraph_step_2_proc_23_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_23_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_23_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_23_handleimpact"
+      ]
+    },
+    {
+      "processId": "proc_24_handleimpact",
+      "processUri": "mv2://processes/proc_24_handleimpact",
+      "processName": "HandleImpact → IsNoticeLevel",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "handleImpact",
+        "http",
+        "impactCapsuleGraph",
+        "isNoticeLevel",
+        "toNotice"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleImpact_step_1_proc_24_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:impactCapsuleGraph_step_2_proc_24_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_24_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_24_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_24_handleimpact"
+      ]
+    },
+    {
+      "processId": "proc_25_handleimpact",
+      "processUri": "mv2://processes/proc_25_handleimpact",
+      "processName": "HandleImpact → Delete",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "compactSeenNotices",
+        "delete",
+        "emitNotice",
+        "emitPayloadNotices",
+        "handleImpact",
+        "http",
+        "impactCapsuleGraph"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleImpact_step_1_proc_25_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:impactCapsuleGraph_step_2_proc_25_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_25_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_25_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_25_handleimpact"
+      ]
+    },
+    {
+      "processId": "proc_3_dashboard",
+      "processUri": "mv2://processes/proc_3_dashboard",
+      "processName": "Dashboard → AsRecord",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "Dashboard",
+        "asRecord",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "http",
+        "listCapsules",
+        "refresh"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_3_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_3_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_3_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_3_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_5_proc_3_dashboard"
+      ]
+    },
+    {
+      "processId": "proc_4_dashboard",
+      "processUri": "mv2://processes/proc_4_dashboard",
+      "processName": "Dashboard → ToMessageArray",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "Dashboard",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "http",
+        "listCapsules",
+        "refresh",
+        "toMessageArray"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_4_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_4_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_4_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_4_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_5_proc_4_dashboard"
+      ]
+    },
+    {
+      "processId": "proc_5_dashboard",
+      "processUri": "mv2://processes/proc_5_dashboard",
+      "processName": "Dashboard → Get",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "Dashboard",
+        "emitNotice",
+        "emitPayloadNotices",
+        "get",
+        "http",
+        "listCapsules",
+        "refresh"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_5_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_5_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_5_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_5_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_5_proc_5_dashboard"
+      ]
+    },
+    {
+      "processId": "proc_6_dashboard",
+      "processUri": "mv2://processes/proc_6_dashboard",
+      "processName": "Dashboard → Delete",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "Dashboard",
+        "compactSeenNotices",
+        "delete",
+        "emitNotice",
+        "http",
+        "listCapsules",
+        "refresh"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_6_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_6_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_6_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_6_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_6_dashboard"
+      ]
+    },
+    {
+      "processId": "proc_7_searchpage",
+      "processUri": "mv2://processes/proc_7_searchpage",
+      "processName": "SearchPage → AsRecord",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "SearchPage",
+        "asRecord",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "http",
+        "listCapsules",
+        "toNotice"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/SearchPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/SearchPage.tsx:SearchPage_step_1_proc_7_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_2_proc_7_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_7_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_7_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_7_searchpage"
+      ]
+    },
+    {
+      "processId": "proc_8_searchpage",
+      "processUri": "mv2://processes/proc_8_searchpage",
+      "processName": "SearchPage → IsNoticeLevel",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "SearchPage",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "http",
+        "isNoticeLevel",
+        "listCapsules",
+        "toNotice"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/SearchPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/SearchPage.tsx:SearchPage_step_1_proc_8_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_2_proc_8_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_8_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_8_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_8_searchpage"
+      ]
+    },
+    {
+      "processId": "proc_9_searchpage",
+      "processUri": "mv2://processes/proc_9_searchpage",
+      "processName": "SearchPage → Delete",
+      "linkedFunctionsCount": 7,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "SearchPage",
+        "compactSeenNotices",
+        "delete",
+        "emitNotice",
+        "emitPayloadNotices",
+        "http",
+        "listCapsules"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/SearchPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/SearchPage.tsx:SearchPage_step_1_proc_9_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_2_proc_9_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_9_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_9_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_9_searchpage"
+      ]
+    },
+    {
+      "processId": "proc_26_memorydetail",
+      "processUri": "mv2://processes/proc_26_memorydetail",
+      "processName": "MemoryDetail → Delete",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "MemoryDetail",
+        "addToRemoveQueue",
+        "delete",
+        "dispatch",
+        "reducer",
+        "useToast"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/hooks/use-toast.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:MemoryDetail_step_1_proc_26_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:useToast_step_2_proc_26_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_3_proc_26_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_4_proc_26_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue_step_5_proc_26_memorydetail"
+      ]
+    },
+    {
+      "processId": "proc_27_memorydetail",
+      "processUri": "mv2://processes/proc_27_memorydetail",
+      "processName": "MemoryDetail → AsRecord",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "MemoryDetail",
+        "asRecord",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "getCapsule",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:MemoryDetail_step_1_proc_27_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsule_step_2_proc_27_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_27_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_27_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_27_memorydetail"
+      ]
+    },
+    {
+      "processId": "proc_28_memorydetail",
+      "processUri": "mv2://processes/proc_28_memorydetail",
+      "processName": "MemoryDetail → ToMessageArray",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "MemoryDetail",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "getCapsule",
+        "http",
+        "toMessageArray"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:MemoryDetail_step_1_proc_28_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsule_step_2_proc_28_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_28_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_28_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_28_memorydetail"
+      ]
+    },
+    {
+      "processId": "proc_29_memorydetail",
+      "processUri": "mv2://processes/proc_29_memorydetail",
+      "processName": "MemoryDetail → Get",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "MemoryDetail",
+        "emitNotice",
+        "emitPayloadNotices",
+        "get",
+        "getCapsule",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:MemoryDetail_step_1_proc_29_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsule_step_2_proc_29_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_29_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_29_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_29_memorydetail"
+      ]
+    },
+    {
+      "processId": "proc_30_uploadpage",
+      "processUri": "mv2://processes/proc_30_uploadpage",
+      "processName": "UploadPage → Delete",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "UploadPage",
+        "addToRemoveQueue",
+        "delete",
+        "dispatch",
+        "reducer",
+        "useToast"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/hooks/use-toast.ts",
+        "src/pages/UploadPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:UploadPage_step_1_proc_30_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:useToast_step_2_proc_30_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_3_proc_30_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_4_proc_30_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue_step_5_proc_30_uploadpage"
+      ]
+    },
+    {
+      "processId": "proc_31_uploadpage",
+      "processUri": "mv2://processes/proc_31_uploadpage",
+      "processName": "UploadPage → AsRecord",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "UploadPage",
+        "asRecord",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "http",
+        "importCapsuleFile"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/UploadPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:UploadPage_step_1_proc_31_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:importCapsuleFile_step_2_proc_31_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_31_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_31_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_31_uploadpage"
+      ]
+    },
+    {
+      "processId": "proc_32_uploadpage",
+      "processUri": "mv2://processes/proc_32_uploadpage",
+      "processName": "UploadPage → ToMessageArray",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "UploadPage",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "http",
+        "importCapsuleFile",
+        "toMessageArray"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/UploadPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:UploadPage_step_1_proc_32_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:importCapsuleFile_step_2_proc_32_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_32_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_32_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_32_uploadpage"
+      ]
+    },
+    {
+      "processId": "proc_33_uploadpage",
+      "processUri": "mv2://processes/proc_33_uploadpage",
+      "processName": "UploadPage → Get",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "UploadPage",
+        "emitNotice",
+        "emitPayloadNotices",
+        "get",
+        "http",
+        "importCapsuleFile"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/UploadPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:UploadPage_step_1_proc_33_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:importCapsuleFile_step_2_proc_33_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_33_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_33_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_33_uploadpage"
+      ]
+    },
+    {
+      "processId": "proc_34_handleprocess",
+      "processUri": "mv2://processes/proc_34_handleprocess",
+      "processName": "HandleProcess → Delete",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "addToRemoveQueue",
+        "delete",
+        "dispatch",
+        "handleProcess",
+        "reducer",
+        "toast"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/hooks/use-toast.ts",
+        "src/pages/UploadPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:handleProcess_step_1_proc_34_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:toast_step_2_proc_34_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_3_proc_34_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_4_proc_34_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue_step_5_proc_34_handleprocess"
+      ]
+    },
+    {
+      "processId": "proc_35_handleprocess",
+      "processUri": "mv2://processes/proc_35_handleprocess",
+      "processName": "HandleProcess → Get",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "emitNotice",
+        "get",
+        "handleProcess",
+        "http",
+        "previewGitAutoContext7",
+        "runAutoContext7Preview"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/UploadPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:handleProcess_step_1_proc_35_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:runAutoContext7Preview_step_2_proc_35_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:previewGitAutoContext7_step_3_proc_35_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_35_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_35_handleprocess"
+      ]
+    },
+    {
+      "processId": "proc_36_handleprocess",
+      "processUri": "mv2://processes/proc_36_handleprocess",
+      "processName": "HandleProcess → AsRecord",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "asRecord",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "handleProcess",
+        "http",
+        "ingestCapsule"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/UploadPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:handleProcess_step_1_proc_36_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:ingestCapsule_step_2_proc_36_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_36_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_36_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_36_handleprocess"
+      ]
+    },
+    {
+      "processId": "proc_37_handleprocess",
+      "processUri": "mv2://processes/proc_37_handleprocess",
+      "processName": "HandleProcess → ToMessageArray",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "handleProcess",
+        "http",
+        "ingestCapsule",
+        "toMessageArray"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/UploadPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:handleProcess_step_1_proc_37_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:ingestCapsule_step_2_proc_37_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_37_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_37_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_37_handleprocess"
+      ]
+    },
+    {
+      "processId": "proc_38_dashboard",
+      "processUri": "mv2://processes/proc_38_dashboard",
+      "processName": "Dashboard → Delete",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "Dashboard",
+        "addToRemoveQueue",
+        "delete",
+        "dispatch",
+        "reducer",
+        "useToast"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/hooks/use-toast.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_38_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:useToast_step_2_proc_38_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_3_proc_38_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_4_proc_38_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue_step_5_proc_38_dashboard"
+      ]
+    },
+    {
+      "processId": "proc_39_dashboard",
+      "processUri": "mv2://processes/proc_39_dashboard",
+      "processName": "Dashboard → Get",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "Dashboard",
+        "emitNotice",
+        "get",
+        "http",
+        "listCapsules",
+        "refresh"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:Dashboard_step_1_proc_39_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_39_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_39_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_39_dashboard",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_39_dashboard"
+      ]
+    },
+    {
+      "processId": "proc_40_searchpage",
+      "processUri": "mv2://processes/proc_40_searchpage",
+      "processName": "SearchPage → AsRecord",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "SearchPage",
+        "asRecord",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "http",
+        "listCapsules"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/SearchPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/SearchPage.tsx:SearchPage_step_1_proc_40_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_2_proc_40_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_40_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_40_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_40_searchpage"
+      ]
+    },
+    {
+      "processId": "proc_41_searchpage",
+      "processUri": "mv2://processes/proc_41_searchpage",
+      "processName": "SearchPage → ToMessageArray",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "SearchPage",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "http",
+        "listCapsules",
+        "toMessageArray"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/SearchPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/SearchPage.tsx:SearchPage_step_1_proc_41_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_2_proc_41_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_41_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_41_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_41_searchpage"
+      ]
+    },
+    {
+      "processId": "proc_42_searchpage",
+      "processUri": "mv2://processes/proc_42_searchpage",
+      "processName": "SearchPage → Get",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "SearchPage",
+        "emitNotice",
+        "emitPayloadNotices",
+        "get",
+        "http",
+        "listCapsules"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/SearchPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/SearchPage.tsx:SearchPage_step_1_proc_42_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_2_proc_42_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_42_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_42_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_42_searchpage"
+      ]
+    },
+    {
+      "processId": "proc_43_searchpage",
+      "processUri": "mv2://processes/proc_43_searchpage",
+      "processName": "SearchPage → Delete",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "SearchPage",
+        "compactSeenNotices",
+        "delete",
+        "emitNotice",
+        "http",
+        "listCapsules"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/SearchPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/SearchPage.tsx:SearchPage_step_1_proc_43_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_2_proc_43_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_43_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_43_searchpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:compactSeenNotices_step_5_proc_43_searchpage"
+      ]
+    },
+    {
+      "processId": "proc_44_settingspage",
+      "processUri": "mv2://processes/proc_44_settingspage",
+      "processName": "SettingsPage → Delete",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "SettingsPage",
+        "addToRemoveQueue",
+        "delete",
+        "dispatch",
+        "reducer",
+        "useToast"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/hooks/use-toast.ts",
+        "src/pages/SettingsPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/SettingsPage.tsx:SettingsPage_step_1_proc_44_settingspage",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:useToast_step_2_proc_44_settingspage",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_3_proc_44_settingspage",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_4_proc_44_settingspage",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue_step_5_proc_44_settingspage"
+      ]
+    },
+    {
+      "processId": "proc_45_handlesave",
+      "processUri": "mv2://processes/proc_45_handlesave",
+      "processName": "HandleSave → Delete",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "addToRemoveQueue",
+        "delete",
+        "dispatch",
+        "handleSave",
+        "reducer",
+        "toast"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/hooks/use-toast.ts",
+        "src/pages/SettingsPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/SettingsPage.tsx:handleSave_step_1_proc_45_handlesave",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:toast_step_2_proc_45_handlesave",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_3_proc_45_handlesave",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_4_proc_45_handlesave",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue_step_5_proc_45_handlesave"
+      ]
+    },
+    {
+      "processId": "proc_46_handlereset",
+      "processUri": "mv2://processes/proc_46_handlereset",
+      "processName": "HandleReset → Delete",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "addToRemoveQueue",
+        "delete",
+        "dispatch",
+        "handleReset",
+        "reducer",
+        "toast"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/hooks/use-toast.ts",
+        "src/pages/SettingsPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/SettingsPage.tsx:handleReset_step_1_proc_46_handlereset",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:toast_step_2_proc_46_handlereset",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_3_proc_46_handlereset",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_4_proc_46_handlereset",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue_step_5_proc_46_handlereset"
+      ]
+    },
+    {
+      "processId": "proc_47_handledelete",
+      "processUri": "mv2://processes/proc_47_handledelete",
+      "processName": "HandleDelete → Delete",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "addToRemoveQueue",
+        "delete",
+        "dispatch",
+        "handleDelete",
+        "reducer",
+        "toast"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/hooks/use-toast.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:handleDelete_step_1_proc_47_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:toast_step_2_proc_47_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:dispatch_step_3_proc_47_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:reducer_step_4_proc_47_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/hooks/use-toast.ts:addToRemoveQueue_step_5_proc_47_handledelete"
+      ]
+    },
+    {
+      "processId": "proc_48_handledelete",
+      "processUri": "mv2://processes/proc_48_handledelete",
+      "processName": "HandleDelete → AsRecord",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "asRecord",
+        "collectPayloadNotices",
+        "deleteCapsule",
+        "emitPayloadNotices",
+        "handleDelete",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:handleDelete_step_1_proc_48_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:deleteCapsule_step_2_proc_48_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_48_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_48_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_48_handledelete"
+      ]
+    },
+    {
+      "processId": "proc_49_handledelete",
+      "processUri": "mv2://processes/proc_49_handledelete",
+      "processName": "HandleDelete → ToMessageArray",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "collectPayloadNotices",
+        "deleteCapsule",
+        "emitPayloadNotices",
+        "handleDelete",
+        "http",
+        "toMessageArray"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:handleDelete_step_1_proc_49_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:deleteCapsule_step_2_proc_49_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_49_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_49_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_49_handledelete"
+      ]
+    },
+    {
+      "processId": "proc_50_handledelete",
+      "processUri": "mv2://processes/proc_50_handledelete",
+      "processName": "HandleDelete → Get",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "deleteCapsule",
+        "emitNotice",
+        "emitPayloadNotices",
+        "get",
+        "handleDelete",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:handleDelete_step_1_proc_50_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:deleteCapsule_step_2_proc_50_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_50_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_50_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_50_handledelete"
+      ]
+    },
+    {
+      "processId": "proc_51_handledelete",
+      "processUri": "mv2://processes/proc_51_handledelete",
+      "processName": "HandleDelete → Delete",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "compactSeenNotices",
+        "delete",
+        "deleteCapsule",
+        "emitNotice",
+        "handleDelete",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:handleDelete_step_1_proc_51_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:deleteCapsule_step_2_proc_51_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_51_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_51_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:compactSeenNotices_step_5_proc_51_handledelete"
+      ]
+    },
+    {
+      "processId": "proc_52_handledelete",
+      "processUri": "mv2://processes/proc_52_handledelete",
+      "processName": "HandleDelete → Get",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "emitNotice",
+        "get",
+        "handleDelete",
+        "http",
+        "listCapsules",
+        "refresh"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/Dashboard.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:handleDelete_step_1_proc_52_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/Dashboard.tsx:refresh_step_2_proc_52_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:listCapsules_step_3_proc_52_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_52_handledelete",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_52_handledelete"
+      ]
+    },
+    {
+      "processId": "proc_53_globalgraphpage",
+      "processUri": "mv2://processes/proc_53_globalgraphpage",
+      "processName": "GlobalGraphPage → AsRecord",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "GlobalGraphPage",
+        "asRecord",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "getGlobalGraph",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/GlobalGraph.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage_step_1_proc_53_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getGlobalGraph_step_2_proc_53_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_53_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_53_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_53_globalgraphpage"
+      ]
+    },
+    {
+      "processId": "proc_54_globalgraphpage",
+      "processUri": "mv2://processes/proc_54_globalgraphpage",
+      "processName": "GlobalGraphPage → ToMessageArray",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "GlobalGraphPage",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "getGlobalGraph",
+        "http",
+        "toMessageArray"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/GlobalGraph.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage_step_1_proc_54_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getGlobalGraph_step_2_proc_54_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_54_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_54_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_54_globalgraphpage"
+      ]
+    },
+    {
+      "processId": "proc_55_globalgraphpage",
+      "processUri": "mv2://processes/proc_55_globalgraphpage",
+      "processName": "GlobalGraphPage → Get",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "GlobalGraphPage",
+        "emitNotice",
+        "emitPayloadNotices",
+        "get",
+        "getGlobalGraph",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/GlobalGraph.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage_step_1_proc_55_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getGlobalGraph_step_2_proc_55_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_55_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_55_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_55_globalgraphpage"
+      ]
+    },
+    {
+      "processId": "proc_56_globalgraphpage",
+      "processUri": "mv2://processes/proc_56_globalgraphpage",
+      "processName": "GlobalGraphPage → Delete",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "GlobalGraphPage",
+        "compactSeenNotices",
+        "delete",
+        "emitNotice",
+        "getGlobalGraph",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/GlobalGraph.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage_step_1_proc_56_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getGlobalGraph_step_2_proc_56_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_56_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_56_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:compactSeenNotices_step_5_proc_56_globalgraphpage"
+      ]
+    },
+    {
+      "processId": "proc_57_globalgraphpage",
+      "processUri": "mv2://processes/proc_57_globalgraphpage",
+      "processName": "GlobalGraphPage → Get",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "GlobalGraphPage",
+        "emitNotice",
+        "get",
+        "handleSearch",
+        "http",
+        "searchGlobalGraph"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/GlobalGraph.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:GlobalGraphPage_step_1_proc_57_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/GlobalGraph.tsx:handleSearch_step_2_proc_57_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:searchGlobalGraph_step_3_proc_57_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_57_globalgraphpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_57_globalgraphpage"
+      ]
+    },
+    {
+      "processId": "proc_58_handleask",
+      "processUri": "mv2://processes/proc_58_handleask",
+      "processName": "HandleAsk → AsRecord",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "asRecord",
+        "askCapsule",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "handleAsk",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleAsk_step_1_proc_58_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:askCapsule_step_2_proc_58_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_58_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_58_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_58_handleask"
+      ]
+    },
+    {
+      "processId": "proc_59_handleask",
+      "processUri": "mv2://processes/proc_59_handleask",
+      "processName": "HandleAsk → ToMessageArray",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "askCapsule",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "handleAsk",
+        "http",
+        "toMessageArray"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleAsk_step_1_proc_59_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:askCapsule_step_2_proc_59_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_59_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_59_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_59_handleask"
+      ]
+    },
+    {
+      "processId": "proc_60_handleask",
+      "processUri": "mv2://processes/proc_60_handleask",
+      "processName": "HandleAsk → Get",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "askCapsule",
+        "emitNotice",
+        "emitPayloadNotices",
+        "get",
+        "handleAsk",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleAsk_step_1_proc_60_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:askCapsule_step_2_proc_60_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_60_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_60_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_60_handleask"
+      ]
+    },
+    {
+      "processId": "proc_61_handleask",
+      "processUri": "mv2://processes/proc_61_handleask",
+      "processName": "HandleAsk → Delete",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "askCapsule",
+        "compactSeenNotices",
+        "delete",
+        "emitNotice",
+        "handleAsk",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleAsk_step_1_proc_61_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:askCapsule_step_2_proc_61_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_61_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_61_handleask",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:compactSeenNotices_step_5_proc_61_handleask"
+      ]
+    },
+    {
+      "processId": "proc_62_handleloadtimeline",
+      "processUri": "mv2://processes/proc_62_handleloadtimeline",
+      "processName": "HandleLoadTimeline → AsRecord",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "asRecord",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "getCapsuleTimeline",
+        "handleLoadTimeline",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleLoadTimeline_step_1_proc_62_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsuleTimeline_step_2_proc_62_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_62_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_62_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_62_handleloadtimeline"
+      ]
+    },
+    {
+      "processId": "proc_63_handleloadtimeline",
+      "processUri": "mv2://processes/proc_63_handleloadtimeline",
+      "processName": "HandleLoadTimeline → ToMessageArray",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "getCapsuleTimeline",
+        "handleLoadTimeline",
+        "http",
+        "toMessageArray"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleLoadTimeline_step_1_proc_63_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsuleTimeline_step_2_proc_63_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_63_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_63_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_63_handleloadtimeline"
+      ]
+    },
+    {
+      "processId": "proc_64_handleloadtimeline",
+      "processUri": "mv2://processes/proc_64_handleloadtimeline",
+      "processName": "HandleLoadTimeline → Get",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "emitNotice",
+        "emitPayloadNotices",
+        "get",
+        "getCapsuleTimeline",
+        "handleLoadTimeline",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleLoadTimeline_step_1_proc_64_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsuleTimeline_step_2_proc_64_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_64_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_64_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_64_handleloadtimeline"
+      ]
+    },
+    {
+      "processId": "proc_65_handleloadtimeline",
+      "processUri": "mv2://processes/proc_65_handleloadtimeline",
+      "processName": "HandleLoadTimeline → Delete",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "compactSeenNotices",
+        "delete",
+        "emitNotice",
+        "getCapsuleTimeline",
+        "handleLoadTimeline",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleLoadTimeline_step_1_proc_65_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsuleTimeline_step_2_proc_65_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_65_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_65_handleloadtimeline",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:compactSeenNotices_step_5_proc_65_handleloadtimeline"
+      ]
+    },
+    {
+      "processId": "proc_66_handleimpact",
+      "processUri": "mv2://processes/proc_66_handleimpact",
+      "processName": "HandleImpact → AsRecord",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "asRecord",
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "handleImpact",
+        "http",
+        "impactCapsuleGraph"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleImpact_step_1_proc_66_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:impactCapsuleGraph_step_2_proc_66_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_66_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_66_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_66_handleimpact"
+      ]
+    },
+    {
+      "processId": "proc_67_handleimpact",
+      "processUri": "mv2://processes/proc_67_handleimpact",
+      "processName": "HandleImpact → ToMessageArray",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "collectPayloadNotices",
+        "emitPayloadNotices",
+        "handleImpact",
+        "http",
+        "impactCapsuleGraph",
+        "toMessageArray"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleImpact_step_1_proc_67_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:impactCapsuleGraph_step_2_proc_67_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_67_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_67_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:collectPayloadNotices_step_5_proc_67_handleimpact"
+      ]
+    },
+    {
+      "processId": "proc_68_handleimpact",
+      "processUri": "mv2://processes/proc_68_handleimpact",
+      "processName": "HandleImpact → Get",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "emitNotice",
+        "emitPayloadNotices",
+        "get",
+        "handleImpact",
+        "http",
+        "impactCapsuleGraph"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleImpact_step_1_proc_68_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:impactCapsuleGraph_step_2_proc_68_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_68_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitPayloadNotices_step_4_proc_68_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_5_proc_68_handleimpact"
+      ]
+    },
+    {
+      "processId": "proc_69_handleimpact",
+      "processUri": "mv2://processes/proc_69_handleimpact",
+      "processName": "HandleImpact → Delete",
+      "linkedFunctionsCount": 6,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "compactSeenNotices",
+        "delete",
+        "emitNotice",
+        "handleImpact",
+        "http",
+        "impactCapsuleGraph"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:handleImpact_step_1_proc_69_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:impactCapsuleGraph_step_2_proc_69_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_69_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_69_handleimpact",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:compactSeenNotices_step_5_proc_69_handleimpact"
+      ]
+    },
+    {
+      "processId": "proc_70_memorydetail",
+      "processUri": "mv2://processes/proc_70_memorydetail",
+      "processName": "MemoryDetail → Get",
+      "linkedFunctionsCount": 5,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "MemoryDetail",
+        "emitNotice",
+        "get",
+        "getCapsule",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:MemoryDetail_step_1_proc_70_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsule_step_2_proc_70_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_70_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_70_memorydetail",
+        "mv2://relations/Method:MEM-Capsule v1/backend/src/stores/capsule-store.ts:get_step_5_proc_70_memorydetail"
+      ]
+    },
+    {
+      "processId": "proc_71_memorydetail",
+      "processUri": "mv2://processes/proc_71_memorydetail",
+      "processName": "MemoryDetail → Get",
+      "linkedFunctionsCount": 5,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "MemoryDetail",
+        "emitNotice",
+        "get",
+        "getCapsuleGraphOverview",
+        "http"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/MemoryDetail.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/MemoryDetail.tsx:MemoryDetail_step_1_proc_71_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:getCapsuleGraphOverview_step_2_proc_71_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_71_memorydetail",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_71_memorydetail",
+        "mv2://relations/Method:MEM-Capsule v1/backend/src/stores/capsule-store.ts:get_step_5_proc_71_memorydetail"
+      ]
+    },
+    {
+      "processId": "proc_72_uploadpage",
+      "processUri": "mv2://processes/proc_72_uploadpage",
+      "processName": "UploadPage → Get",
+      "linkedFunctionsCount": 5,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "UploadPage",
+        "emitNotice",
+        "get",
+        "http",
+        "importCapsuleFile"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/UploadPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:UploadPage_step_1_proc_72_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:importCapsuleFile_step_2_proc_72_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_72_uploadpage",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_72_uploadpage",
+        "mv2://relations/Method:MEM-Capsule v1/backend/src/stores/capsule-store.ts:get_step_5_proc_72_uploadpage"
+      ]
+    },
+    {
+      "processId": "proc_73_handleprocess",
+      "processUri": "mv2://processes/proc_73_handleprocess",
+      "processName": "HandleProcess → AsRecord",
+      "linkedFunctionsCount": 5,
+      "linkedFunctionFilesCount": 2,
+      "linkedFunctionNames": [
+        "asRecord",
+        "handleProcess",
+        "http",
+        "previewGitAutoContext7",
+        "runAutoContext7Preview"
+      ],
+      "linkedFunctionFiles": [
+        "src/lib/api.ts",
+        "src/pages/UploadPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:handleProcess_step_1_proc_73_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:runAutoContext7Preview_step_2_proc_73_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:previewGitAutoContext7_step_3_proc_73_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_4_proc_73_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:asRecord_step_5_proc_73_handleprocess"
+      ]
+    },
+    {
+      "processId": "proc_74_handleprocess",
+      "processUri": "mv2://processes/proc_74_handleprocess",
+      "processName": "HandleProcess → Get",
+      "linkedFunctionsCount": 5,
+      "linkedFunctionFilesCount": 3,
+      "linkedFunctionNames": [
+        "emitNotice",
+        "get",
+        "handleProcess",
+        "http",
+        "ingestCapsule"
+      ],
+      "linkedFunctionFiles": [
+        "backend/src/stores/capsule-store.ts",
+        "src/lib/api.ts",
+        "src/pages/UploadPage.tsx"
+      ],
+      "sampleRelationUris": [
+        "mv2://relations/Function:MEM-Capsule v1/src/pages/UploadPage.tsx:handleProcess_step_1_proc_74_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:ingestCapsule_step_2_proc_74_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:http_step_3_proc_74_handleprocess",
+        "mv2://relations/Function:MEM-Capsule v1/src/lib/api.ts:emitNotice_step_4_proc_74_handleprocess",
+        "mv2://relations/Method:MEM-Capsule v1/backend/src/stores/capsule-store.ts:get_step_5_proc_74_handleprocess"
+      ]
+    }
+  ],
+  "missingSnippets": [
+    {
+      "frameId": 0,
+      "uri": "mv2://nodes/Folder:MEM-Capsule v1",
+      "frameType": "node",
+      "firstLine": "Node Folder",
+      "preview": "Node Folder\nid=Folder:MEM-Capsule v1\nname=MEM-Capsule v1\nfilePath=MEM-Capsule v1\nsnippet:\n<no source content available>\n"
+    },
+    {
+      "frameId": 68,
+      "uri": "mv2://nodes/Folder:MEM-Capsule v1/Docs",
+      "frameType": "node",
+      "firstLine": "Node Folder",
+      "preview": "Node Folder\nid=Folder:MEM-Capsule v1/Docs\nname=Docs\nfilePath=MEM-Capsule v1/Docs\nsnippet:\n<no source content available>\n"
+    },
+    {
+      "frameId": 96,
+      "uri": "mv2://nodes/Folder:MEM-Capsule v1/src",
+      "frameType": "node",
+      "firstLine": "Node Folder",
+      "preview": "Node Folder\nid=Folder:MEM-Capsule v1/src\nname=src\nfilePath=MEM-Capsule v1/src\nsnippet:\n<no source content available>\nmet"
+    },
+    {
+      "frameId": 809,
+      "uri": "mv2://communities/comm_131",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_131\nname=Pages\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.0417032484"
+    },
+    {
+      "frameId": 810,
+      "uri": "mv2://communities/comm_9",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_9\nname=Services\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.049833887"
+    },
+    {
+      "frameId": 811,
+      "uri": "mv2://communities/comm_8",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_8\nname=Verification\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.09756"
+    },
+    {
+      "frameId": 812,
+      "uri": "mv2://communities/comm_0",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_0\nname=Worker\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.05668016194"
+    },
+    {
+      "frameId": 813,
+      "uri": "mv2://communities/comm_10",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_10\nname=Pages\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.06984126984"
+    },
+    {
+      "frameId": 814,
+      "uri": "mv2://communities/comm_54",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_54\nname=Graph\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.08870967741"
+    },
+    {
+      "frameId": 815,
+      "uri": "mv2://communities/comm_47",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_47\nname=Worker\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.1231527093"
+    },
+    {
+      "frameId": 816,
+      "uri": "mv2://communities/comm_130",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_130\nname=Ui\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.08,\"communiti"
+    },
+    {
+      "frameId": 817,
+      "uri": "mv2://communities/comm_6",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_6\nname=Graph\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.130434782608"
+    },
+    {
+      "frameId": 818,
+      "uri": "mv2://communities/comm_18",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_18\nname=Gateway\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.151515151"
+    },
+    {
+      "frameId": 819,
+      "uri": "mv2://communities/comm_62",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_62\nname=Worker\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.1315789473"
+    },
+    {
+      "frameId": 820,
+      "uri": "mv2://communities/comm_55",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_55\nname=Graph\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.20879120879"
+    },
+    {
+      "frameId": 821,
+      "uri": "mv2://communities/comm_157",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_157\nname=Pages\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.1818181818"
+    },
+    {
+      "frameId": 822,
+      "uri": "mv2://communities/comm_40",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_40\nname=Storage\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.381818181"
+    },
+    {
+      "frameId": 823,
+      "uri": "mv2://communities/comm_150",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_150\nname=Components\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.18181"
+    },
+    {
+      "frameId": 824,
+      "uri": "mv2://communities/comm_57",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_57\nname=Providers\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.2666666"
+    },
+    {
+      "frameId": 825,
+      "uri": "mv2://communities/comm_60",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_60\nname=Worker\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.2888888888"
+    },
+    {
+      "frameId": 826,
+      "uri": "mv2://communities/comm_85",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_85\nname=Gateway\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.222222222"
+    },
+    {
+      "frameId": 827,
+      "uri": "mv2://communities/comm_58",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_58\nname=Providers\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.6,\"comm"
+    },
+    {
+      "frameId": 828,
+      "uri": "mv2://communities/comm_147",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_147\nname=Components\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.33333"
+    },
+    {
+      "frameId": 829,
+      "uri": "mv2://communities/comm_23",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_23\nname=Storage\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.5,\"commun"
+    },
+    {
+      "frameId": 830,
+      "uri": "mv2://communities/comm_21",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_21\nname=Storage\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.666666666"
+    },
+    {
+      "frameId": 831,
+      "uri": "mv2://communities/comm_27",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_27\nname=Storage\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.666666666"
+    },
+    {
+      "frameId": 832,
+      "uri": "mv2://communities/comm_86",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_86\nname=Gateway\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":0.666666666"
+    },
+    {
+      "frameId": 833,
+      "uri": "mv2://communities/comm_1",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_1\nname=Worker\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":1.0,\"communit"
+    },
+    {
+      "frameId": 834,
+      "uri": "mv2://communities/comm_31",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_31\nname=Storage\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":1.0,\"commun"
+    },
+    {
+      "frameId": 835,
+      "uri": "mv2://communities/comm_34",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_34\nname=Storage\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":1.0,\"commun"
+    },
+    {
+      "frameId": 836,
+      "uri": "mv2://communities/comm_35",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_35\nname=Storage\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":1.0,\"commun"
+    },
+    {
+      "frameId": 837,
+      "uri": "mv2://communities/comm_45",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_45\nname=Cluster_45\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":1.0,\"com"
+    },
+    {
+      "frameId": 838,
+      "uri": "mv2://communities/comm_48",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_48\nname=Worker\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":1.0,\"communi"
+    },
+    {
+      "frameId": 839,
+      "uri": "mv2://communities/comm_83",
+      "frameType": "community",
+      "firstLine": "Node Community",
+      "preview": "Node Community\nid=comm_83\nname=Gateway\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesion\":1.0,\"commun"
+    },
+    {
+      "frameId": 840,
+      "uri": "mv2://processes/proc_0_dashboard",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_0_dashboard\nname=Dashboard → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"c"
+    },
+    {
+      "frameId": 841,
+      "uri": "mv2://processes/proc_1_dashboard",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_1_dashboard\nname=Dashboard → IsNoticeLevel\nfilePath=\nsnippet:\n<no source content available>\nmetadat"
+    },
+    {
+      "frameId": 842,
+      "uri": "mv2://processes/proc_2_dashboard",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_2_dashboard\nname=Dashboard → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"coh"
+    },
+    {
+      "frameId": 843,
+      "uri": "mv2://processes/proc_3_dashboard",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_3_dashboard\nname=Dashboard → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"c"
+    },
+    {
+      "frameId": 844,
+      "uri": "mv2://processes/proc_4_dashboard",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_4_dashboard\nname=Dashboard → ToMessageArray\nfilePath=\nsnippet:\n<no source content available>\nmetada"
+    },
+    {
+      "frameId": 845,
+      "uri": "mv2://processes/proc_5_dashboard",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_5_dashboard\nname=Dashboard → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohesi"
+    },
+    {
+      "frameId": 846,
+      "uri": "mv2://processes/proc_6_dashboard",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_6_dashboard\nname=Dashboard → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"coh"
+    },
+    {
+      "frameId": 847,
+      "uri": "mv2://processes/proc_7_searchpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_7_searchpage\nname=SearchPage → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetadata={"
+    },
+    {
+      "frameId": 848,
+      "uri": "mv2://processes/proc_8_searchpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_8_searchpage\nname=SearchPage → IsNoticeLevel\nfilePath=\nsnippet:\n<no source content available>\nmetad"
+    },
+    {
+      "frameId": 849,
+      "uri": "mv2://processes/proc_9_searchpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_9_searchpage\nname=SearchPage → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"c"
+    },
+    {
+      "frameId": 850,
+      "uri": "mv2://processes/proc_10_handlesave",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_10_handlesave\nname=HandleSave → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\""
+    },
+    {
+      "frameId": 851,
+      "uri": "mv2://processes/proc_11_handlereset",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_11_handlereset\nname=HandleReset → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata="
+    },
+    {
+      "frameId": 852,
+      "uri": "mv2://processes/proc_12_handledelete",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_12_handledelete\nname=HandleDelete → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadat"
+    },
+    {
+      "frameId": 853,
+      "uri": "mv2://processes/proc_13_handledelete",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_13_handledelete\nname=HandleDelete → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetad"
+    },
+    {
+      "frameId": 854,
+      "uri": "mv2://processes/proc_14_globalgraphpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_14_globalgraphpage\nname=GlobalGraphPage → AsRecord\nfilePath=\nsnippet:\n<no source content available>"
+    },
+    {
+      "frameId": 856,
+      "uri": "mv2://processes/proc_16_globalgraphpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_16_globalgraphpage\nname=GlobalGraphPage → Delete\nfilePath=\nsnippet:\n<no source content available>\nm"
+    },
+    {
+      "frameId": 857,
+      "uri": "mv2://processes/proc_17_handleask",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_17_handleask\nname=HandleAsk → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\""
+    },
+    {
+      "frameId": 858,
+      "uri": "mv2://processes/proc_18_handleask",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_18_handleask\nname=HandleAsk → IsNoticeLevel\nfilePath=\nsnippet:\n<no source content available>\nmetada"
+    },
+    {
+      "frameId": 859,
+      "uri": "mv2://processes/proc_19_handleask",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_19_handleask\nname=HandleAsk → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"co"
+    },
+    {
+      "frameId": 863,
+      "uri": "mv2://processes/proc_23_handleimpact",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_23_handleimpact\nname=HandleImpact → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetad"
+    },
+    {
+      "frameId": 864,
+      "uri": "mv2://processes/proc_24_handleimpact",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_24_handleimpact\nname=HandleImpact → IsNoticeLevel\nfilePath=\nsnippet:\n<no source content available>\n"
+    },
+    {
+      "frameId": 865,
+      "uri": "mv2://processes/proc_25_handleimpact",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_25_handleimpact\nname=HandleImpact → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadat"
+    },
+    {
+      "frameId": 866,
+      "uri": "mv2://processes/proc_26_memorydetail",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_26_memorydetail\nname=MemoryDetail → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadat"
+    },
+    {
+      "frameId": 867,
+      "uri": "mv2://processes/proc_27_memorydetail",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_27_memorydetail\nname=MemoryDetail → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetad"
+    },
+    {
+      "frameId": 868,
+      "uri": "mv2://processes/proc_28_memorydetail",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_28_memorydetail\nname=MemoryDetail → ToMessageArray\nfilePath=\nsnippet:\n<no source content available>"
+    },
+    {
+      "frameId": 869,
+      "uri": "mv2://processes/proc_29_memorydetail",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_29_memorydetail\nname=MemoryDetail → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={"
+    },
+    {
+      "frameId": 870,
+      "uri": "mv2://processes/proc_30_uploadpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_30_uploadpage\nname=UploadPage → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\""
+    },
+    {
+      "frameId": 871,
+      "uri": "mv2://processes/proc_31_uploadpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_31_uploadpage\nname=UploadPage → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetadata="
+    },
+    {
+      "frameId": 872,
+      "uri": "mv2://processes/proc_32_uploadpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_32_uploadpage\nname=UploadPage → ToMessageArray\nfilePath=\nsnippet:\n<no source content available>\nmet"
+    },
+    {
+      "frameId": 873,
+      "uri": "mv2://processes/proc_33_uploadpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_33_uploadpage\nname=UploadPage → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"coh"
+    },
+    {
+      "frameId": 874,
+      "uri": "mv2://processes/proc_34_handleprocess",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_34_handleprocess\nname=HandleProcess → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetad"
+    },
+    {
+      "frameId": 875,
+      "uri": "mv2://processes/proc_35_handleprocess",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_35_handleprocess\nname=HandleProcess → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata"
+    },
+    {
+      "frameId": 876,
+      "uri": "mv2://processes/proc_36_handleprocess",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_36_handleprocess\nname=HandleProcess → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmet"
+    },
+    {
+      "frameId": 878,
+      "uri": "mv2://processes/proc_38_dashboard",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_38_dashboard\nname=Dashboard → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"co"
+    },
+    {
+      "frameId": 879,
+      "uri": "mv2://processes/proc_39_dashboard",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_39_dashboard\nname=Dashboard → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohes"
+    },
+    {
+      "frameId": 880,
+      "uri": "mv2://processes/proc_40_searchpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_40_searchpage\nname=SearchPage → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetadata="
+    },
+    {
+      "frameId": 881,
+      "uri": "mv2://processes/proc_41_searchpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_41_searchpage\nname=SearchPage → ToMessageArray\nfilePath=\nsnippet:\n<no source content available>\nmet"
+    },
+    {
+      "frameId": 882,
+      "uri": "mv2://processes/proc_42_searchpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_42_searchpage\nname=SearchPage → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"coh"
+    },
+    {
+      "frameId": 883,
+      "uri": "mv2://processes/proc_43_searchpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_43_searchpage\nname=SearchPage → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\""
+    },
+    {
+      "frameId": 884,
+      "uri": "mv2://processes/proc_44_settingspage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_44_settingspage\nname=SettingsPage → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadat"
+    },
+    {
+      "frameId": 885,
+      "uri": "mv2://processes/proc_45_handlesave",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_45_handlesave\nname=HandleSave → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\""
+    },
+    {
+      "frameId": 886,
+      "uri": "mv2://processes/proc_46_handlereset",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_46_handlereset\nname=HandleReset → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata="
+    },
+    {
+      "frameId": 887,
+      "uri": "mv2://processes/proc_47_handledelete",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_47_handledelete\nname=HandleDelete → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadat"
+    },
+    {
+      "frameId": 888,
+      "uri": "mv2://processes/proc_48_handledelete",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_48_handledelete\nname=HandleDelete → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetad"
+    },
+    {
+      "frameId": 889,
+      "uri": "mv2://processes/proc_49_handledelete",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_49_handledelete\nname=HandleDelete → ToMessageArray\nfilePath=\nsnippet:\n<no source content available>"
+    },
+    {
+      "frameId": 890,
+      "uri": "mv2://processes/proc_50_handledelete",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_50_handledelete\nname=HandleDelete → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={"
+    },
+    {
+      "frameId": 891,
+      "uri": "mv2://processes/proc_51_handledelete",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_51_handledelete\nname=HandleDelete → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadat"
+    },
+    {
+      "frameId": 892,
+      "uri": "mv2://processes/proc_52_handledelete",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_52_handledelete\nname=HandleDelete → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={"
+    },
+    {
+      "frameId": 893,
+      "uri": "mv2://processes/proc_53_globalgraphpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_53_globalgraphpage\nname=GlobalGraphPage → AsRecord\nfilePath=\nsnippet:\n<no source content available>"
+    },
+    {
+      "frameId": 895,
+      "uri": "mv2://processes/proc_55_globalgraphpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_55_globalgraphpage\nname=GlobalGraphPage → Get\nfilePath=\nsnippet:\n<no source content available>\nmeta"
+    },
+    {
+      "frameId": 896,
+      "uri": "mv2://processes/proc_56_globalgraphpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_56_globalgraphpage\nname=GlobalGraphPage → Delete\nfilePath=\nsnippet:\n<no source content available>\nm"
+    },
+    {
+      "frameId": 897,
+      "uri": "mv2://processes/proc_57_globalgraphpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_57_globalgraphpage\nname=GlobalGraphPage → Get\nfilePath=\nsnippet:\n<no source content available>\nmeta"
+    },
+    {
+      "frameId": 898,
+      "uri": "mv2://processes/proc_58_handleask",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_58_handleask\nname=HandleAsk → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\""
+    },
+    {
+      "frameId": 899,
+      "uri": "mv2://processes/proc_59_handleask",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_59_handleask\nname=HandleAsk → ToMessageArray\nfilePath=\nsnippet:\n<no source content available>\nmetad"
+    },
+    {
+      "frameId": 900,
+      "uri": "mv2://processes/proc_60_handleask",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_60_handleask\nname=HandleAsk → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"cohes"
+    },
+    {
+      "frameId": 901,
+      "uri": "mv2://processes/proc_61_handleask",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_61_handleask\nname=HandleAsk → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"co"
+    },
+    {
+      "frameId": 906,
+      "uri": "mv2://processes/proc_66_handleimpact",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_66_handleimpact\nname=HandleImpact → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmetad"
+    },
+    {
+      "frameId": 907,
+      "uri": "mv2://processes/proc_67_handleimpact",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_67_handleimpact\nname=HandleImpact → ToMessageArray\nfilePath=\nsnippet:\n<no source content available>"
+    },
+    {
+      "frameId": 908,
+      "uri": "mv2://processes/proc_68_handleimpact",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_68_handleimpact\nname=HandleImpact → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={"
+    },
+    {
+      "frameId": 909,
+      "uri": "mv2://processes/proc_69_handleimpact",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_69_handleimpact\nname=HandleImpact → Delete\nfilePath=\nsnippet:\n<no source content available>\nmetadat"
+    },
+    {
+      "frameId": 910,
+      "uri": "mv2://processes/proc_70_memorydetail",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_70_memorydetail\nname=MemoryDetail → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={"
+    },
+    {
+      "frameId": 911,
+      "uri": "mv2://processes/proc_71_memorydetail",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_71_memorydetail\nname=MemoryDetail → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={"
+    },
+    {
+      "frameId": 912,
+      "uri": "mv2://processes/proc_72_uploadpage",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_72_uploadpage\nname=UploadPage → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata={\"coh"
+    },
+    {
+      "frameId": 913,
+      "uri": "mv2://processes/proc_73_handleprocess",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_73_handleprocess\nname=HandleProcess → AsRecord\nfilePath=\nsnippet:\n<no source content available>\nmet"
+    },
+    {
+      "frameId": 914,
+      "uri": "mv2://processes/proc_74_handleprocess",
+      "frameType": "process",
+      "firstLine": "Node Process",
+      "preview": "Node Process\nid=proc_74_handleprocess\nname=HandleProcess → Get\nfilePath=\nsnippet:\n<no source content available>\nmetadata"
+    }
+  ],
+  "actionable": {
+    "breakdown": {
+      "totalMissing": 99,
+      "expectedByDesign": 96,
+      "nodeMissing": 3,
+      "folderNodeMissing": 3,
+      "actionableMissing": 0
+    },
+    "actionable": []
+  }
+}

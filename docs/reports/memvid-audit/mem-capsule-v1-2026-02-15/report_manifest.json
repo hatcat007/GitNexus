@@ -1,0 +1,18 @@
+{
+  "capsulePath": "/Users/buddythacat/Downloads/mem-capsule-v1-gitnexus-mem_capsule-2026-02-15.mv2",
+  "timelineFile": "timeline.json",
+  "reports": [
+    "summary.json",
+    "summary.md",
+    "calls_grouped_by_source_file.json",
+    "calls_grouped_by_source_file.md",
+    "process_links.json",
+    "process_links.md",
+    "missing_snippets.json",
+    "missing_snippets.md",
+    "actionable_missing_snippets.json",
+    "actionable_missing_snippets.md",
+    "full_audit_report.json",
+    "full_audit_report.md"
+  ]
+}

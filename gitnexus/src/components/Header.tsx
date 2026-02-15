@@ -76,7 +76,10 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
 
   const exportButtonLabel = useMemo(() => {
     if (!exportStatus) return 'Export .mv2';
-    if (exportStatus.status === 'queued') return 'Export queued';
+    if (exportStatus.status === 'queued') {
+      const pct = Math.max(0, Math.min(100, Math.round(exportStatus.progress ?? 0)));
+      return `Queued ${pct}%`;
+    }
     if (exportStatus.status === 'running') {
       const pct = Math.max(0, Math.min(100, Math.round(exportStatus.progress ?? 0)));
       return `Export ${pct}%`;
@@ -87,6 +90,19 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
     if (exportStatus.status === 'expired') return 'Artifact expired';
     return 'Export .mv2';
   }, [exportStatus]);
+
+  const exportButtonTitle = useMemo(() => {
+    if (exportError) return `Export error: ${exportError}`;
+    if (!exportStatus) {
+      return 'Export graph knowledge to Memvid .mv2 (Alt+Click enables semantic indexing)';
+    }
+
+    const base = `${exportButtonLabel}${exportStatus.message ? ` - ${exportStatus.message}` : ''}`;
+    if (isExportActive) {
+      return `${base} (click to cancel)`;
+    }
+    return base;
+  }, [exportButtonLabel, exportError, exportStatus, isExportActive]);
 
   // Search results - filter nodes by name
   const searchResults = useMemo(() => {
@@ -689,12 +705,10 @@ export const Header = ({ onFocusNode }: HeaderProps) => {
                 ? 'text-red-300 bg-red-500/10 border-red-500/40 hover:bg-red-500/20'
                 : 'text-text-secondary hover:bg-hover hover:text-text-primary border-border-subtle'
           }`}
-          title={exportError
-            ? `Export error: ${exportError}`
-            : 'Export graph knowledge to Memvid .mv2 (Alt+Click enables semantic indexing)'}
+          title={exportButtonTitle}
         >
           {isExportActive ? <X className="w-4 h-4" /> : <Download className="w-4 h-4" />}
-          <span className="hidden sm:inline">{isExportActive ? 'Cancel export' : exportButtonLabel}</span>
+          <span>{exportButtonLabel}</span>
         </button>
 
         {/* Session actions */}

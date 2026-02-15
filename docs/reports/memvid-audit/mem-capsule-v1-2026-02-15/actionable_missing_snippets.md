@@ -1,0 +1,9 @@
+# Actionable Missing Snippet Report
+
+- totalMissing: 99
+- expectedByDesign: 96
+- nodeMissing: 3
+- folderNodeMissing: 3
+- actionableMissing: 0
+
+No actionable missing snippet frames detected.
