@@ -1,0 +1,144 @@
+{
+  "contractVersion": "gitnexus.ai-bible.v1",
+  "schemaVersion": "gitnexus.mcp.v1",
+  "toolSetVersion": "gitnexus.tools.v1",
+  "mcp": {
+    "transport": "streamable_http_jsonrpc",
+    "endpoint": "/mcp",
+    "auth": "bearer",
+    "rateLimitHeaders": [
+      "X-RateLimit-Limit",
+      "X-RateLimit-Remaining",
+      "X-RateLimit-Reset"
+    ]
+  },
+  "responseEnvelope": {
+    "required": [
+      "schemaVersion",
+      "traceId",
+      "tool",
+      "confidence",
+      "result",
+      "pagination",
+      "timingMs"
+    ],
+    "confidenceRequired": true
+  },
+  "schemaRefs": {
+    "envelope": "./schemas/mcp-envelope.v1.schema.json",
+    "toolResults": "./schemas/mcp-tool-results.v1.schema.json"
+  },
+  "tools": [
+    "symbol_lookup",
+    "node_get",
+    "neighbors_get",
+    "edge_get",
+    "text_search",
+    "call_trace",
+    "callers_of",
+    "callees_of",
+    "process_list",
+    "process_get",
+    "impact_analysis",
+    "file_outline",
+    "file_snippet",
+    "community_list",
+    "manifest_get",
+    "query_explain"
+  ],
+  "routing": {
+    "root_cause_from_symptom": [
+      "text_search",
+      "symbol_lookup",
+      "call_trace",
+      "impact_analysis",
+      "file_snippet"
+    ],
+    "change_impact_before_edit": [
+      "symbol_lookup",
+      "node_get",
+      "neighbors_get",
+      "callers_of",
+      "callees_of",
+      "impact_analysis"
+    ],
+    "subsystem_architecture_extraction": [
+      "community_list",
+      "process_list",
+      "process_get",
+      "neighbors_get",
+      "manifest_get"
+    ],
+    "process_comprehension": [
+      "process_list",
+      "process_get",
+      "file_snippet"
+    ]
+  },
+  "retrievalPolicy": {
+    "ladder": [
+      "graph_exact",
+      "lexical_search",
+      "graph_expansion_rerank",
+      "semantic_fallback_if_low_confidence"
+    ],
+    "semanticDefault": false,
+    "semanticRole": "fallback_only"
+  },
+  "confidencePolicy": {
+    "tiers": {
+      "high": {
+        "minScore": 0.85
+      },
+      "medium": {
+        "minScore": 0.6
+      },
+      "low": {
+        "minScore": 0.0
+      }
+    },
+    "requiredFields": [
+      "score",
+      "tier",
+      "factors",
+      "warnings"
+    ]
+  },
+  "paginationPolicy": {
+    "mode": "cursor",
+    "stableSort": "(primary_score DESC, stable_tiebreaker ASC)",
+    "defaultResponseBudgetBytes": 65536,
+    "resultTruncationCode": "RESULT_TRUNCATED"
+  },
+  "errors": [
+    "INVALID_ARGUMENT",
+    "NOT_FOUND",
+    "CAPSULE_INCOMPATIBLE",
+    "INDEX_BUILD_IN_PROGRESS",
+    "RESULT_TRUNCATED",
+    "RATE_LIMITED",
+    "INTERNAL_ERROR",
+    "TIMEOUT"
+  ],
+  "errorPayloadRequired": [
+    "code",
+    "message",
+    "traceId",
+    "retryable"
+  ],
+  "slo": {
+    "p95Ms": 300,
+    "commonReadTools": [
+      "symbol_lookup",
+      "node_get",
+      "neighbors_get",
+      "text_search",
+      "file_snippet"
+    ],
+    "scaleTarget": {
+      "nodes": 50000,
+      "capsuleBytes": 524288000
+    }
+  }
+}
+

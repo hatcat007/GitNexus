@@ -8,6 +8,18 @@ pub fn verify_bearer(
     headers: &HeaderMap,
     expected_key: &str,
 ) -> Result<(), (StatusCode, Json<serde_json::Value>)> {
+    let token = extract_bearer_token(headers)?;
+
+    if token.trim() != expected_key {
+        return Err(unauthorized("Invalid API key"));
+    }
+
+    Ok(())
+}
+
+pub fn extract_bearer_token(
+    headers: &HeaderMap,
+) -> Result<String, (StatusCode, Json<serde_json::Value>)> {
     let Some(raw_header) = headers.get(AUTHORIZATION) else {
         return Err(unauthorized("Missing Authorization header"));
     };
@@ -20,11 +32,7 @@ pub fn verify_bearer(
         return Err(unauthorized("Authorization must use Bearer token"));
     };
 
-    if token.trim() != expected_key {
-        return Err(unauthorized("Invalid API key"));
-    }
-
-    Ok(())
+    Ok(token.to_string())
 }
 
 fn unauthorized(message: &str) -> (StatusCode, Json<serde_json::Value>) {

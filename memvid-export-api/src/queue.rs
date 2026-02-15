@@ -7,6 +7,7 @@ use tracing::{error, info, warn};
 
 use crate::{
     artifact_store::{build_job_file_name, delete_file_if_exists, ensure_job_dir, job_output_path},
+    mcp_index::build_and_persist_from_request,
     memvid_writer::write_mv2,
     models::{ExportArtifact, ExportErrorPayload, JobState},
     transform::build_frame_documents,
@@ -153,6 +154,38 @@ async fn process_export_job(state: AppState, job_id: &str) -> Result<()> {
         output_path = %output_path.display(),
         "MV2 artifact write finished"
     );
+
+    let request_for_index = request.clone();
+    let docs_for_index = docs.clone();
+    let output_path_for_index = output_path.clone();
+    let job_id_for_index = job_id.to_string();
+    match tokio::task::spawn_blocking(move || {
+        build_and_persist_from_request(&request_for_index, &docs_for_index, &output_path_for_index)
+    })
+    .await
+    {
+        Ok(Ok(index)) => {
+            info!(
+                job_id = %job_id_for_index,
+                sidecar = %index.sidecar_path.display(),
+                nodes = index.nodes.len(),
+                edges = index.edges.len(),
+                "Sidecar MCP index built"
+            );
+        }
+        Ok(Err(err)) => {
+            warn!(
+                job_id = %job_id_for_index,
+                "Failed to build sidecar MCP index: {err:#}"
+            );
+        }
+        Err(err) => {
+            warn!(
+                job_id = %job_id_for_index,
+                "Sidecar MCP index task join error: {err:#}"
+            );
+        }
+    }
 
     if !set_job_progress(&state, job_id, 80.0, "Finalizing artifact metadata").await? {
         delete_file_if_exists(&output_path).await?;

@@ -8,7 +8,12 @@ Rust API for exporting GitNexus graph data into Memvid `.mv2` capsules.
 - `GET /v1/exports/{jobId}` poll status
 - `GET /v1/exports/{jobId}/download` download completed capsule
 - `DELETE /v1/exports/{jobId}` cancel queued/running jobs
+- `POST /mcp` Streamable HTTP JSON-RPC endpoint for agent-native reads
 - Static bearer auth for all `/v1/*` routes
+- Static bearer auth for `/mcp`
+- Deterministic sidecar index per capsule (`.index.v1.sqlite`)
+- Strict response envelope with confidence + cursor pagination
+- Per-key in-memory rate limiting with standard rate headers
 - 24h artifact retention cleanup (configurable)
 - `memvid-core` writer with automatic fallback to `memvid` CLI if core write fails at runtime
 
@@ -22,6 +27,53 @@ Rust API for exporting GitNexus graph data into Memvid `.mv2` capsules.
 - `MEMVID_EXPORT_ROOT` (default `/data/exports`)
 - `MEMVID_EXPORT_RETENTION_SECONDS` (default `86400`)
 - `MEMVID_EXPORT_QUEUE_CAPACITY` (default `128`)
+- `MEMVID_MCP_RESPONSE_BUDGET_BYTES` (default `65536`)
+- `MEMVID_MCP_RATE_LIMIT_PER_MINUTE` (default `120`)
+- `MEMVID_MCP_RATE_LIMIT_BURST` (default `60`)
+- `MEMVID_MCP_DEV_LOG_PAYLOADS` (default `false`)
+- `MEMVID_MCP_ALLOW_EXTERNAL_CAPSULES` (default `false`)
+- `MEMVID_MCP_CACHE_CAPACITY` (default `256`)
+
+## MCP v1 Contract
+
+- Transport: Streamable HTTP JSON-RPC over `POST /mcp`
+- Auth: `Authorization: Bearer <api-key>`
+- Tool count: 16
+- Response envelope fields:
+  - `schemaVersion`
+  - `traceId`
+  - `tool`
+  - `confidence { score, tier, factors[], warnings[] }`
+  - `result`
+  - `pagination { nextCursor?, truncated, returned }`
+  - `timingMs`
+- Rate-limit headers:
+  - `X-RateLimit-Limit`
+  - `X-RateLimit-Remaining`
+  - `X-RateLimit-Reset`
+- Tool names:
+  - `symbol_lookup`
+  - `node_get`
+  - `neighbors_get`
+  - `edge_get`
+  - `text_search`
+  - `call_trace`
+  - `callers_of`
+  - `callees_of`
+  - `process_list`
+  - `process_get`
+  - `impact_analysis`
+  - `file_outline`
+  - `file_snippet`
+  - `community_list`
+  - `manifest_get`
+  - `query_explain`
+
+AI Bible + JSON contracts:
+- `../docs/ai/AI_BIBLE_MV2_MCP.md`
+- `../docs/ai/AI_BIBLE_MV2_MCP.contract.v1.json`
+- `../docs/ai/schemas/mcp-envelope.v1.schema.json`
+- `../docs/ai/schemas/mcp-tool-results.v1.schema.json`
 
 ## Run locally
 

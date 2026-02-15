@@ -125,6 +125,10 @@ export MEMVID_EXPORT_ROOT="/data/exports"
 
 See `/memvid-export-api/README.md` for endpoints, Docker, and runtime config.
 
+Agent-first MV2 guidance and MCP contract docs:
+- `/docs/ai/AI_BIBLE_MV2_MCP.md`
+- `/docs/ai/AI_BIBLE_MV2_MCP.contract.v1.json`
+
 ---
 
 ## 🏗️ Indexing Architecture

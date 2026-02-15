@@ -5,6 +5,10 @@ use serde_json::json;
 
 use crate::models::{ExportRequest, FrameDocument, GraphNode};
 
+const MV2_SCHEMA_VERSION: &str = "gitnexus.mv2.schema.v1";
+const EXPORT_SCHEMA_VERSION: &str = "gitnexus.export.schema.v1";
+const AI_BIBLE_VERSION: &str = "gitnexus.ai-bible.v1";
+
 pub fn build_frame_documents(req: &ExportRequest) -> Vec<FrameDocument> {
     let mut documents = Vec::new();
     let node_limit = req.options.max_node_frames.min(req.nodes.len());
@@ -72,6 +76,7 @@ pub fn build_frame_documents(req: &ExportRequest) -> Vec<FrameDocument> {
     }
 
     documents.push(build_manifest_document(req, node_limit, relation_limit));
+    documents.extend(build_ai_bible_documents(req));
     documents
 }
 
@@ -155,10 +160,22 @@ fn build_manifest_document(
 
     let metadata = json!({
         "generatedAt": Utc::now(),
+        "mv2SchemaVersion": MV2_SCHEMA_VERSION,
+        "exportSchemaVersion": EXPORT_SCHEMA_VERSION,
+        "aiBibleVersion": AI_BIBLE_VERSION,
         "sessionId": req.session_id,
         "projectName": req.project_name,
         "source": req.source,
         "options": req.options,
+        "capsuleCapabilities": {
+            "strictJsonToolResponses": true,
+            "cursorPagination": true,
+            "semanticFallbackOnly": true,
+            "defaultResponseBudgetBytes": 65536,
+            "supportsLegacyCapsules": true,
+            "toolCount": 16,
+            "toolSetVersion": "gitnexus.tools.v1",
+        },
         "totals": {
             "nodes": req.nodes.len(),
             "relationships": req.relationships.len(),
@@ -189,6 +206,129 @@ fn build_manifest_document(
         ],
         metadata,
     }
+}
+
+fn build_ai_bible_documents(req: &ExportRequest) -> Vec<FrameDocument> {
+    let manifest_metadata = json!({
+        "version": AI_BIBLE_VERSION,
+        "schemaVersion": "gitnexus.mcp.v1",
+        "mcpTransport": "streamable_http_jsonrpc",
+        "primaryGoal": "deterministic_accuracy",
+        "responseBudgetBytes": 65536,
+        "semanticPolicy": "fallback_only",
+        "toolCount": 16,
+    });
+
+    let tool_matrix_metadata = json!({
+        "toolSetVersion": "gitnexus.tools.v1",
+        "tools": [
+            "symbol_lookup",
+            "node_get",
+            "neighbors_get",
+            "edge_get",
+            "text_search",
+            "call_trace",
+            "callers_of",
+            "callees_of",
+            "process_list",
+            "process_get",
+            "impact_analysis",
+            "file_outline",
+            "file_snippet",
+            "community_list",
+            "manifest_get",
+            "query_explain"
+        ]
+    });
+
+    let retrieval_metadata = json!({
+        "ladder": [
+            "graph_exact",
+            "lexical_search",
+            "graph_expansion_rerank",
+            "semantic_fallback_if_low_confidence"
+        ],
+        "rankingSignals": [
+            "graph_structural_confidence",
+            "lexical_relevance",
+            "hotspot_locality",
+            "semantic_fallback"
+        ]
+    });
+
+    let playbook_metadata = json!({
+        "playbooks": [
+            "root_cause_from_symptom",
+            "change_impact_before_edit",
+            "subsystem_architecture_extraction",
+            "process_comprehension_step_in_process"
+        ],
+        "sessionId": req.session_id,
+    });
+
+    vec![
+        FrameDocument {
+            title: "AI Bible Manifest".to_string(),
+            label: "ai_bible".to_string(),
+            text: format!(
+                "AI Bible manifest\nversion={AI_BIBLE_VERSION}\nproject={}\n\nmetadata={manifest_metadata}",
+                req.project_name
+            ),
+            uri: "mv2://meta/ai-bible/manifest".to_string(),
+            track: "meta".to_string(),
+            tags: vec![
+                "source=gitnexus".to_string(),
+                "kind=ai-bible".to_string(),
+                format!("sessionId={}", req.session_id),
+            ],
+            metadata: manifest_metadata,
+        },
+        FrameDocument {
+            title: "AI Bible Tool Matrix".to_string(),
+            label: "ai_bible".to_string(),
+            text: format!(
+                "AI Bible tool matrix\nmode=strict_json\ntransport=streamable_http_jsonrpc\n\nmetadata={tool_matrix_metadata}"
+            ),
+            uri: "mv2://meta/ai-bible/tool-matrix".to_string(),
+            track: "meta".to_string(),
+            tags: vec![
+                "source=gitnexus".to_string(),
+                "kind=ai-bible".to_string(),
+                format!("sessionId={}", req.session_id),
+            ],
+            metadata: tool_matrix_metadata,
+        },
+        FrameDocument {
+            title: "AI Bible Retrieval Ladder".to_string(),
+            label: "ai_bible".to_string(),
+            text: format!(
+                "AI Bible retrieval ladder\ndefault=deterministic\nsemantic=fallback_only\n\nmetadata={retrieval_metadata}"
+            ),
+            uri: "mv2://meta/ai-bible/retrieval-ladder".to_string(),
+            track: "meta".to_string(),
+            tags: vec![
+                "source=gitnexus".to_string(),
+                "kind=ai-bible".to_string(),
+                format!("sessionId={}", req.session_id),
+            ],
+            metadata: retrieval_metadata,
+        },
+        FrameDocument {
+            title: "AI Bible Playbooks".to_string(),
+            label: "ai_bible".to_string(),
+            text: format!(
+                "AI Bible playbooks\n1=root_cause_from_symptom\n2=change_impact_before_edit\n3=subsystem_architecture_extraction\n4=process_comprehension_step_in_process\n\nmetadata={playbook_metadata}"
+            ),
+            uri: "mv2://meta/ai-bible/playbooks/core".to_string(),
+            track: "meta".to_string(),
+            tags: vec![
+                "source=gitnexus".to_string(),
+                "kind=ai-bible".to_string(),
+                format!("sessionId={}", req.session_id),
+            ],
+            metadata: playbook_metadata,
+        },
+    ]
 }
 
 fn build_snippet(

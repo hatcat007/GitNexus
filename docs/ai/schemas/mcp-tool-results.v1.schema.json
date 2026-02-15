@@ -1,0 +1,367 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gitnexus://schemas/mcp-tool-results.v1.schema.json",
+  "title": "GitNexus MCP Tool Results v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "tool",
+    "result"
+  ],
+  "properties": {
+    "tool": {
+      "type": "string",
+      "enum": [
+        "symbol_lookup",
+        "node_get",
+        "neighbors_get",
+        "edge_get",
+        "text_search",
+        "call_trace",
+        "callers_of",
+        "callees_of",
+        "process_list",
+        "process_get",
+        "impact_analysis",
+        "file_outline",
+        "file_snippet",
+        "community_list",
+        "manifest_get",
+        "query_explain"
+      ]
+    },
+    "result": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "symbol_lookup": {
+      "type": "object",
+      "required": [
+        "query",
+        "items"
+      ],
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array"
+        }
+      }
+    },
+    "node_get": {
+      "type": "object",
+      "required": [
+        "node",
+        "degree"
+      ],
+      "properties": {
+        "node": {
+          "type": "object"
+        },
+        "degree": {
+          "type": "object"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      }
+    },
+    "neighbors_get": {
+      "type": "object",
+      "required": [
+        "nodeId",
+        "items"
+      ],
+      "properties": {
+        "nodeId": {
+          "type": "string"
+        },
+        "direction": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array"
+        }
+      }
+    },
+    "edge_get": {
+      "type": "object",
+      "required": [
+        "edge"
+      ],
+      "properties": {
+        "edge": {
+          "type": "object"
+        },
+        "source": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "target": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "metadata": {
+          "type": "object"
+        }
+      }
+    },
+    "text_search": {
+      "type": "object",
+      "required": [
+        "query",
+        "items",
+        "semanticUsed"
+      ],
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "scope": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "semanticUsed": {
+          "type": "boolean"
+        },
+        "items": {
+          "type": "array"
+        }
+      }
+    },
+    "call_trace": {
+      "type": "object",
+      "required": [
+        "fromNodeId",
+        "maxDepth",
+        "paths",
+        "pathCount"
+      ],
+      "properties": {
+        "fromNodeId": {
+          "type": "string"
+        },
+        "toNodeId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "maxDepth": {
+          "type": "integer"
+        },
+        "pathCount": {
+          "type": "integer"
+        },
+        "paths": {
+          "type": "array"
+        }
+      }
+    },
+    "callers_of": {
+      "type": "object",
+      "required": [
+        "nodeId",
+        "items"
+      ],
+      "properties": {
+        "nodeId": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array"
+        }
+      }
+    },
+    "callees_of": {
+      "type": "object",
+      "required": [
+        "nodeId",
+        "items"
+      ],
+      "properties": {
+        "nodeId": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array"
+        }
+      }
+    },
+    "process_list": {
+      "type": "object",
+      "required": [
+        "items"
+      ],
+      "properties": {
+        "items": {
+          "type": "array"
+        }
+      }
+    },
+    "process_get": {
+      "type": "object",
+      "required": [
+        "process",
+        "steps"
+      ],
+      "properties": {
+        "process": {
+          "type": "object"
+        },
+        "steps": {
+          "type": "array"
+        }
+      }
+    },
+    "impact_analysis": {
+      "type": "object",
+      "required": [
+        "rootNodeId",
+        "maxDepth",
+        "impactedNodeCount",
+        "impactedEdgeCount",
+        "impactedNodes"
+      ],
+      "properties": {
+        "rootNodeId": {
+          "type": "string"
+        },
+        "maxDepth": {
+          "type": "integer"
+        },
+        "impactedNodeCount": {
+          "type": "integer"
+        },
+        "impactedEdgeCount": {
+          "type": "integer"
+        },
+        "impactedNodes": {
+          "type": "array"
+        },
+        "hotspots": {
+          "type": "array"
+        }
+      }
+    },
+    "file_outline": {
+      "type": "object",
+      "required": [
+        "filePath",
+        "symbols",
+        "symbolCount"
+      ],
+      "properties": {
+        "filePath": {
+          "type": "string"
+        },
+        "symbolCount": {
+          "type": "integer"
+        },
+        "symbols": {
+          "type": "array"
+        }
+      }
+    },
+    "file_snippet": {
+      "type": "object",
+      "required": [
+        "node",
+        "snippet",
+        "maxChars"
+      ],
+      "properties": {
+        "node": {
+          "type": "object"
+        },
+        "snippet": {
+          "type": "string"
+        },
+        "maxChars": {
+          "type": "integer"
+        }
+      }
+    },
+    "community_list": {
+      "type": "object",
+      "required": [
+        "items"
+      ],
+      "properties": {
+        "items": {
+          "type": "array"
+        }
+      }
+    },
+    "manifest_get": {
+      "type": "object",
+      "required": [
+        "schemaVersion",
+        "manifest",
+        "capsuleCapabilities",
+        "counts"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "type": "string"
+        },
+        "indexSchemaVersion": {
+          "type": "string"
+        },
+        "manifest": {
+          "type": "object"
+        },
+        "capsuleCapabilities": {
+          "type": "object"
+        },
+        "counts": {
+          "type": "object"
+        }
+      }
+    },
+    "query_explain": {
+      "type": "object",
+      "required": [
+        "task",
+        "retrievalLadder",
+        "rankingSignals",
+        "recommendedToolSequence"
+      ],
+      "properties": {
+        "task": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        },
+        "retrievalLadder": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rankingSignals": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recommendedToolSequence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
+

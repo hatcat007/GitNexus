@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gitnexus://schemas/mcp-envelope.v1.schema.json",
+  "title": "GitNexus MCP Tool Envelope v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "traceId",
+    "tool",
+    "confidence",
+    "result",
+    "pagination",
+    "timingMs"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "gitnexus.mcp.v1"
+    },
+    "traceId": {
+      "type": "string",
+      "minLength": 8
+    },
+    "tool": {
+      "type": "string"
+    },
+    "confidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "score",
+        "tier",
+        "factors",
+        "warnings"
+      ],
+      "properties": {
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "tier": {
+          "type": "string",
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "factors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "result": {
+      "type": "object"
+    },
+    "pagination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "truncated",
+        "returned"
+      ],
+      "properties": {
+        "nextCursor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "returned": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "timingMs": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}
+
