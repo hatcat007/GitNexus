@@ -45,6 +45,98 @@ import type {
 let _autoRestoreStarted = false;
 let _restoreInProgress = false;
 
+const MEMVID_MAX_REQUEST_BYTES = 500 * 1024 * 1024;
+const MEMVID_MAX_FILE_CONTENT_BYTES = 500 * 1024 * 1024;
+
+const getApproxBytes = (value: unknown): number => {
+  const json = JSON.stringify(value);
+  return new TextEncoder().encode(json).length;
+};
+
+const truncateChars = (input: string, maxChars: number): string => {
+  if (input.length <= maxChars) return input;
+  return `${input.slice(0, maxChars)}\n...[truncated]`;
+};
+
+const extractSnippetFromRanges = (
+  content: string,
+  ranges: Array<{ start?: number; end?: number }>,
+  maxSnippetChars: number
+): string => {
+  const lines = content.split('\n');
+  const perFileLimit = Math.max(2_000, maxSnippetChars * 3);
+
+  if (ranges.length === 0) {
+    const head = lines.slice(0, 220).join('\n');
+    return truncateChars(head, perFileLimit);
+  }
+
+  const parts: string[] = [];
+  const maxRanges = 10;
+
+  for (const range of ranges.slice(0, maxRanges)) {
+    const start = Math.max(1, (range.start ?? 1) - 20);
+    const fallbackEnd = Math.min(lines.length, 120);
+    const endBase = range.end ?? range.start ?? fallbackEnd;
+    const end = Math.min(lines.length, Math.max(start, endBase + 20));
+
+    if (start > lines.length || end < start) continue;
+    const chunk = lines.slice(start - 1, end).join('\n').trim();
+    if (chunk) parts.push(chunk);
+  }
+
+  if (parts.length === 0) {
+    const head = lines.slice(0, 220).join('\n');
+    return truncateChars(head, perFileLimit);
+  }
+
+  return truncateChars(parts.join('\n\n...\n\n'), perFileLimit);
+};
+
+const buildCompactExportFileContents = (
+  nodes: GraphNode[],
+  fileContents: Map<string, string>,
+  maxSnippetChars: number
+): Record<string, string> => {
+  const rangesByPath = new Map<string, Array<{ start?: number; end?: number }>>();
+
+  for (const node of nodes) {
+    const filePath = node.properties.filePath?.trim();
+    if (!filePath) continue;
+
+    const list = rangesByPath.get(filePath) ?? [];
+    list.push({ start: node.properties.startLine, end: node.properties.endLine });
+    rangesByPath.set(filePath, list);
+  }
+
+  const out: Record<string, string> = {};
+  let usedBytes = 0;
+
+  for (const [filePath, ranges] of rangesByPath.entries()) {
+    const content = fileContents.get(filePath);
+    if (!content) continue;
+
+    const snippet = extractSnippetFromRanges(content, ranges, maxSnippetChars);
+    if (!snippet) continue;
+
+    const snippetBytes = getApproxBytes(snippet);
+    if (usedBytes + snippetBytes > MEMVID_MAX_FILE_CONTENT_BYTES) {
+      if (usedBytes >= MEMVID_MAX_FILE_CONTENT_BYTES) break;
+      const remainingChars = Math.max(0, MEMVID_MAX_FILE_CONTENT_BYTES - usedBytes);
+      if (remainingChars < 256) break;
+      const clipped = truncateChars(snippet, remainingChars);
+      out[filePath] = clipped;
+      usedBytes += getApproxBytes(clipped);
+      break;
+    }
+
+    out[filePath] = snippet;
+    usedBytes += snippetBytes;
+  }
+
+  return out;
+};
+
 export type ViewMode = 'onboarding' | 'loading' | 'exploring';
 export type RightPanelTab = 'code' | 'chat';
 export type EmbeddingStatus = 'idle' | 'loading' | 'embedding' | 'indexing' | 'ready' | 'error';
@@ -1439,15 +1531,75 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
       folderName: sessionSource?.type === 'folder' ? sessionSource.name : undefined,
     } as const;
 
+    let nodesForExport = graph.nodes.slice(0, mergedOptions.maxNodeFrames);
+    let nodeIds = new Set(nodesForExport.map((node) => node.id));
+    let relationshipsForExport = graph.relationships
+      .filter((rel) => nodeIds.has(rel.sourceId) && nodeIds.has(rel.targetId))
+      .slice(0, mergedOptions.maxRelationFrames);
+
+    let fileContentsForExport = buildCompactExportFileContents(
+      nodesForExport,
+      fileContents,
+      mergedOptions.maxSnippetChars
+    );
+
     const payload: ExportRequest = {
       sessionId: currentSessionId,
       projectName: projectName || 'project',
       source: sourceDescriptor,
-      nodes: graph.nodes,
-      relationships: graph.relationships,
-      fileContents: Object.fromEntries(fileContents),
+      nodes: nodesForExport,
+      relationships: relationshipsForExport,
+      fileContents: fileContentsForExport,
       options: mergedOptions,
     };
+
+    let payloadBytes = getApproxBytes(payload);
+    let droppedFileContents = false;
+    let reducedGraph = false;
+
+    if (payloadBytes > MEMVID_MAX_REQUEST_BYTES && Object.keys(fileContentsForExport).length > 0) {
+      fileContentsForExport = {};
+      payload.fileContents = {};
+      droppedFileContents = true;
+      payloadBytes = getApproxBytes(payload);
+    }
+
+    while (payloadBytes > MEMVID_MAX_REQUEST_BYTES && relationshipsForExport.length > 2_000) {
+      relationshipsForExport = relationshipsForExport.slice(0, Math.floor(relationshipsForExport.length * 0.7));
+      payload.relationships = relationshipsForExport;
+      reducedGraph = true;
+      payloadBytes = getApproxBytes(payload);
+    }
+
+    while (payloadBytes > MEMVID_MAX_REQUEST_BYTES && nodesForExport.length > 1_000) {
+      nodesForExport = nodesForExport.slice(0, Math.floor(nodesForExport.length * 0.8));
+      nodeIds = new Set(nodesForExport.map((node) => node.id));
+      relationshipsForExport = relationshipsForExport.filter(
+        (rel) => nodeIds.has(rel.sourceId) && nodeIds.has(rel.targetId)
+      );
+
+      payload.nodes = nodesForExport;
+      payload.relationships = relationshipsForExport;
+
+      reducedGraph = true;
+      payloadBytes = getApproxBytes(payload);
+    }
+
+    if (payloadBytes > MEMVID_MAX_REQUEST_BYTES) {
+      const message = 'Export payload is still too large. Lower max nodes/relations and retry.';
+      setExportError(message);
+      addToast({ type: 'error', title: 'Export too large', message, duration: 9000 });
+      return null;
+    }
+
+    if (droppedFileContents || reducedGraph) {
+      addToast({
+        type: 'warning',
+        title: 'Export payload optimized',
+        message: `Reduced payload to ${(payloadBytes / (1024 * 1024)).toFixed(2)} MB (${payload.nodes.length} nodes, ${payload.relationships.length} relationships).`,
+        duration: 9000,
+      });
+    }
 
     try {
       setExportError(null);

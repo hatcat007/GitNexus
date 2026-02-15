@@ -11,6 +11,7 @@ use std::{collections::HashMap, sync::Arc};
 
 use anyhow::Result;
 use axum::{
+    extract::DefaultBodyLimit,
     routing::{get, post},
     Router,
 };
@@ -22,6 +23,8 @@ use tower_http::{
     trace::TraceLayer,
 };
 use tracing::info;
+
+const MAX_EXPORT_BODY_BYTES: usize = 500 * 1024 * 1024;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -60,6 +63,7 @@ async fn main() -> Result<()> {
             get(api::get_export).delete(api::cancel_export),
         )
         .route("/v1/exports/{job_id}/download", get(api::download_export))
+        .layer(DefaultBodyLimit::max(MAX_EXPORT_BODY_BYTES))
         .layer(
             CorsLayer::new()
                 .allow_origin(Any)

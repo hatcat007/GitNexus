@@ -10,7 +10,13 @@ const getApiBaseUrl = (): string => {
   if (!value) {
     throw new Error('Missing VITE_MEMVID_EXPORT_API_URL environment variable.');
   }
-  return value.replace(/\/+$/, '');
+  const normalized = value.replace(/\/+$/, '');
+  if (!/^https?:\/\//i.test(normalized)) {
+    throw new Error(
+      'Invalid VITE_MEMVID_EXPORT_API_URL. Include protocol, for example: https://memcapsule-core.fotomagiai.dk'
+    );
+  }
+  return normalized;
 };
 
 const getApiHeaders = (contentType: boolean = true): HeadersInit => {
