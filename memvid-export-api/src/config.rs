@@ -13,10 +13,16 @@ pub struct Config {
 
 impl Config {
     pub fn from_env() -> Result<Self> {
-        let bind_addr = env::var("MEMVID_EXPORT_BIND_ADDR")
-            .unwrap_or_else(|_| "0.0.0.0:8080".to_string())
+        let bind_raw =
+            env::var("MEMVID_EXPORT_BIND_ADDR").unwrap_or_else(|_| "0.0.0.0:8080".to_string());
+        let bind_normalized = bind_raw
+            .trim()
+            .trim_matches('"')
+            .trim_matches('\'')
+            .to_string();
+        let bind_addr = bind_normalized
             .parse::<SocketAddr>()
-            .context("Invalid MEMVID_EXPORT_BIND_ADDR")?;
+            .unwrap_or_else(|_| SocketAddr::from(([0, 0, 0, 0], 8080)));
 
         let api_key = match env::var("MEMVID_EXPORT_API_KEY") {
             Ok(value) if !value.trim().is_empty() => value,
