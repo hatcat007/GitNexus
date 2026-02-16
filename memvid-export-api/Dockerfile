@@ -34,6 +34,8 @@ ENV MEMVID_EXPORT_ROOT=/data/exports
 ENV MEMVID_EXPORT_RETENTION_SECONDS=86400
 
 EXPOSE 8080
-HEALTHCHECK NONE
+# Coolify still inspects .State.Health during rolling updates; keep a minimal
+# always-successful healthcheck so deployments don't fail on missing Health map.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=5 CMD ["true"]
 
 CMD ["memvid-export-api"]
