@@ -16,6 +16,7 @@ import { ProviderConfig } from './core/llm/types';
 import { IntelligentClusteringModal } from './components/IntelligentClusteringModal';
 import { SessionRestoreOverlay } from './components/SessionRestoreOverlay';
 import { ToastContainer } from './components/ToastContainer';
+import { MemvidExportLogBar } from './components/MemvidExportLogBar';
 import { useChangeDetector } from './hooks/useChangeDetector';
 
 const AppContent = () => {
@@ -383,6 +384,7 @@ const AppContent = () => {
         {isRightPanelOpen && <RightPanel />}
       </main>
 
+      <MemvidExportLogBar />
       <StatusBar />
 
       {/* Settings Panel (modal) */}

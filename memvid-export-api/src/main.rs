@@ -21,9 +21,9 @@ use axum::{
 use config::Config;
 use mcp_api::{new_query_cache, QueryCache};
 use mcp_index::CapsuleIndex;
-use models::JobRecord;
+use models::{ExportLogEvent, JobRecord};
 use rate_limit::RateLimiter;
-use tokio::sync::{mpsc, RwLock};
+use tokio::sync::{broadcast, mpsc, RwLock};
 use tower_http::{
     cors::{Any, CorsLayer},
     trace::TraceLayer,
@@ -36,6 +36,7 @@ const MAX_EXPORT_BODY_BYTES: usize = 500 * 1024 * 1024;
 pub struct AppState {
     pub config: Config,
     pub jobs: Arc<RwLock<HashMap<String, JobRecord>>>,
+    pub event_buses: Arc<RwLock<HashMap<String, broadcast::Sender<ExportLogEvent>>>>,
     pub queue_tx: mpsc::Sender<String>,
     pub mcp_indexes: Arc<RwLock<HashMap<String, Arc<CapsuleIndex>>>>,
     pub mcp_cache: Arc<tokio::sync::Mutex<QueryCache>>,
@@ -81,6 +82,7 @@ async fn main() -> Result<()> {
     let state = AppState {
         config: config.clone(),
         jobs: Arc::new(RwLock::new(HashMap::new())),
+        event_buses: Arc::new(RwLock::new(HashMap::new())),
         queue_tx,
         mcp_indexes: Arc::new(RwLock::new(HashMap::new())),
         mcp_cache: Arc::new(tokio::sync::Mutex::new(new_query_cache(
@@ -102,6 +104,11 @@ async fn main() -> Result<()> {
         .route(
             "/v1/exports/{job_id}",
             get(api::get_export).delete(api::cancel_export),
+        )
+        .route("/v1/exports/{job_id}/events", get(api::get_export_events))
+        .route(
+            "/v1/exports/{job_id}/events/stream",
+            get(api::stream_export_events),
         )
         .route("/v1/exports/{job_id}/download", get(api::download_export))
         .layer(DefaultBodyLimit::max(MAX_EXPORT_BODY_BYTES))

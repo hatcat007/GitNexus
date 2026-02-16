@@ -48,10 +48,46 @@ export interface ExportErrorPayload {
   message: string;
 }
 
+export type ExportStage =
+  | 'queued'
+  | 'transform'
+  | 'frame_prep'
+  | 'write_capsule'
+  | 'build_sidecar'
+  | 'finalize'
+  | 'download_ready'
+  | 'failed'
+  | 'canceled'
+  | 'expired';
+
+export type ExportEventType =
+  | 'job_started'
+  | 'stage_progress'
+  | 'stage_heartbeat'
+  | 'job_completed'
+  | 'job_failed'
+  | 'job_canceled'
+  | 'job_expired';
+
+export interface ExportLogEvent {
+  seq: number;
+  ts: string;
+  jobId: string;
+  type: ExportEventType;
+  stage: ExportStage;
+  progress: number;
+  stageProgress?: number;
+  emoji: string;
+  message: string;
+  meta?: Record<string, unknown>;
+}
+
 export interface ExportJobAccepted {
   jobId: string;
   status: Extract<ExportJobState, 'queued' | 'running'>;
   progress?: number;
+  currentStage?: ExportStage;
+  stageProgress?: number;
   message?: string;
   createdAt?: string;
 }
@@ -60,9 +96,20 @@ export interface ExportJobStatus {
   jobId: string;
   status: ExportJobState;
   progress: number;
+  currentStage?: ExportStage;
+  stageProgress?: number;
+  elapsedMs?: number;
+  lastEventSeq?: number;
   message?: string;
   createdAt?: string;
   updatedAt?: string;
   artifact?: ExportArtifact;
   error?: ExportErrorPayload;
+}
+
+export interface ExportEventsResponse {
+  jobId: string;
+  events: ExportLogEvent[];
+  nextSeq: number;
+  statusSnapshot: ExportJobStatus;
 }

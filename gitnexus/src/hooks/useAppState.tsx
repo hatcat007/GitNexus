@@ -30,12 +30,15 @@ import {
   buildMemvidFileName,
   cancelMemvidExportJob,
   downloadMemvidArtifact,
+  getMemvidExportEvents,
   getMemvidExportJobStatus,
   sourceBaseName,
   startMemvidExportJob as submitMemvidExportJob,
+  streamMemvidExportEvents,
 } from '../services/memvid-export';
 import type {
   ExportJobAccepted,
+  ExportLogEvent,
   ExportJobStatus,
   ExportOptions,
   ExportRequest,
@@ -315,6 +318,15 @@ interface AppState {
   // Memvid export
   exportStatus: ExportJobStatus | null;
   exportError: string | null;
+  exportEventsByJob: Record<string, ExportLogEvent[]>;
+  activeExportLogSeqByJob: Record<string, number>;
+  isExportLogStreamConnected: boolean;
+  exportStallState: {
+    stalled: boolean;
+    elapsedMs: number;
+    lastEventAtMs: number | null;
+  };
+  activeOrLatestExportJobId: string | null;
   startMemvidExport: (options?: Partial<ExportOptions>) => Promise<ExportJobAccepted | null>;
   pollMemvidExport: (jobId?: string) => Promise<ExportJobStatus | null>;
   cancelMemvidExport: (jobId?: string) => Promise<boolean>;
@@ -467,7 +479,18 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
   // Memvid export state
   const [exportStatus, setExportStatus] = useState<ExportJobStatus | null>(null);
   const [exportError, setExportError] = useState<string | null>(null);
+  const [exportEventsByJob, setExportEventsByJob] = useState<Record<string, ExportLogEvent[]>>({});
+  const [activeExportLogSeqByJob, setActiveExportLogSeqByJob] = useState<Record<string, number>>({});
+  const [isExportLogStreamConnected, setIsExportLogStreamConnected] = useState(false);
+  const [exportStallState, setExportStallState] = useState<{
+    stalled: boolean;
+    elapsedMs: number;
+    lastEventAtMs: number | null;
+  }>({ stalled: false, elapsedMs: 0, lastEventAtMs: null });
+  const [activeOrLatestExportJobId, setActiveOrLatestExportJobId] = useState<string | null>(null);
   const downloadedExportJobRef = useRef<string | null>(null);
+  const exportStreamCancelRef = useRef<(() => void) | null>(null);
+  const exportEventsPollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // --- Session persistence methods ---
 
@@ -574,6 +597,11 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     setIsRestoringSession(true);
     setExportStatus(null);
     setExportError(null);
+    setExportEventsByJob({});
+    setActiveExportLogSeqByJob({});
+    setIsExportLogStreamConnected(false);
+    setExportStallState({ stalled: false, elapsedMs: 0, lastEventAtMs: null });
+    setActiveOrLatestExportJobId(null);
     downloadedExportJobRef.current = null;
     setRestoreProgress({ phase: 'opening-vault', percent: 5 });
 
@@ -770,6 +798,11 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     setQueryResult(null);
     setExportStatus(null);
     setExportError(null);
+    setExportEventsByJob({});
+    setActiveExportLogSeqByJob({});
+    setIsExportLogStreamConnected(false);
+    setExportStallState({ stalled: false, elapsedMs: 0, lastEventAtMs: null });
+    setActiveOrLatestExportJobId(null);
     downloadedExportJobRef.current = null;
     setDepthFilter(null);
     setVisibleLabels(DEFAULT_VISIBLE_LABELS);
@@ -1503,6 +1536,117 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     return result;
   }, [currentSessionId]);
 
+  const appendExportEvents = useCallback((jobId: string, incomingEvents: ExportLogEvent[]) => {
+    if (!incomingEvents.length) return;
+
+    const sortedIncoming = [...incomingEvents].sort((a, b) => a.seq - b.seq);
+    const latestIncoming = sortedIncoming[sortedIncoming.length - 1];
+
+    setExportEventsByJob(prev => {
+      const existing = prev[jobId] ?? [];
+      const mergedBySeq = new Map<number, ExportLogEvent>();
+      for (const event of existing) mergedBySeq.set(event.seq, event);
+      for (const event of sortedIncoming) mergedBySeq.set(event.seq, event);
+      const merged = Array.from(mergedBySeq.values())
+        .sort((a, b) => a.seq - b.seq)
+        .slice(-5000);
+      return { ...prev, [jobId]: merged };
+    });
+
+    setActiveExportLogSeqByJob(prev => {
+      const current = prev[jobId] ?? 0;
+      return { ...prev, [jobId]: Math.max(current, latestIncoming.seq) };
+    });
+
+    const lastEventAtMs = Number.isFinite(Date.parse(latestIncoming.ts))
+      ? Date.parse(latestIncoming.ts)
+      : Date.now();
+    setExportStallState({
+      stalled: false,
+      elapsedMs: 0,
+      lastEventAtMs,
+    });
+    setActiveOrLatestExportJobId(jobId);
+  }, []);
+
+  const stopExportEventsFallbackPolling = useCallback(() => {
+    if (exportEventsPollTimerRef.current) {
+      clearInterval(exportEventsPollTimerRef.current);
+      exportEventsPollTimerRef.current = null;
+    }
+  }, []);
+
+  const startExportEventsFallbackPolling = useCallback((jobId: string, sinceSeq = 0) => {
+    stopExportEventsFallbackPolling();
+    let nextSince = Math.max(0, sinceSeq);
+
+    const tick = async () => {
+      try {
+        const response = await getMemvidExportEvents(jobId, nextSince, 400);
+        appendExportEvents(jobId, response.events);
+        nextSince = Math.max(nextSince, (response.nextSeq ?? 1) - 1);
+        setExportStatus(response.statusSnapshot);
+        if (!['queued', 'running'].includes(response.statusSnapshot.status)) {
+          stopExportEventsFallbackPolling();
+        }
+      } catch {
+        // Keep polling for transient errors.
+      }
+    };
+
+    void tick();
+    exportEventsPollTimerRef.current = setInterval(() => {
+      void tick();
+    }, 1500);
+  }, [appendExportEvents, stopExportEventsFallbackPolling]);
+
+  const stopExportEventFeed = useCallback(() => {
+    if (exportStreamCancelRef.current) {
+      exportStreamCancelRef.current();
+      exportStreamCancelRef.current = null;
+    }
+    setIsExportLogStreamConnected(false);
+    stopExportEventsFallbackPolling();
+  }, [stopExportEventsFallbackPolling]);
+
+  const startExportEventFeed = useCallback((jobId: string) => {
+    stopExportEventFeed();
+
+    const sinceSeq = activeExportLogSeqByJob[jobId] ?? 0;
+    const stopStream = streamMemvidExportEvents(jobId, {
+      sinceSeq,
+      onOpen: () => {
+        setIsExportLogStreamConnected(true);
+        stopExportEventsFallbackPolling();
+      },
+      onEvent: (event) => {
+        appendExportEvents(jobId, [event]);
+      },
+      onError: () => {
+        setIsExportLogStreamConnected(false);
+        if (exportStreamCancelRef.current === stopStream) {
+          exportStreamCancelRef.current = null;
+        }
+        const fallbackSince = activeExportLogSeqByJob[jobId] ?? sinceSeq;
+        startExportEventsFallbackPolling(jobId, fallbackSince);
+      },
+      onClose: () => {
+        setIsExportLogStreamConnected(false);
+        if (exportStreamCancelRef.current === stopStream) {
+          exportStreamCancelRef.current = null;
+        }
+      },
+    });
+
+    exportStreamCancelRef.current = stopStream;
+  }, [
+    activeExportLogSeqByJob,
+    appendExportEvents,
+    startExportEventsFallbackPolling,
+    stopExportEventFeed,
+    stopExportEventsFallbackPolling,
+  ]);
+
   const startMemvidExport = useCallback(async (
     options: Partial<ExportOptions> = {}
   ): Promise<ExportJobAccepted | null> => {
@@ -1608,9 +1752,16 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         jobId: accepted.jobId,
         status: accepted.status,
         progress: accepted.progress ?? 0,
+        currentStage: accepted.currentStage ?? 'queued',
+        stageProgress: accepted.stageProgress ?? 0,
         message: accepted.message ?? 'Export queued',
         createdAt: accepted.createdAt,
       });
+      setExportEventsByJob(prev => ({ ...prev, [accepted.jobId]: [] }));
+      setActiveExportLogSeqByJob(prev => ({ ...prev, [accepted.jobId]: 0 }));
+      setActiveOrLatestExportJobId(accepted.jobId);
+      setExportStallState({ stalled: false, elapsedMs: 0, lastEventAtMs: Date.now() });
+      startExportEventFeed(accepted.jobId);
       downloadedExportJobRef.current = null;
       addToast({
         type: 'info',
@@ -1627,7 +1778,14 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
       addToast({ type: 'error', title: 'Export failed', message, duration: 8000 });
       return null;
     }
-  }, [currentSessionId, fileContents, graph, projectName, sessionSource]);
+  }, [
+    currentSessionId,
+    fileContents,
+    graph,
+    projectName,
+    sessionSource,
+    startExportEventFeed,
+  ]);
 
   const pollMemvidExport = useCallback(async (jobId?: string): Promise<ExportJobStatus | null> => {
     const activeJobId = jobId ?? exportStatus?.jobId;
@@ -1636,6 +1794,7 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     try {
       const status = await getMemvidExportJobStatus(activeJobId);
       setExportStatus(status);
+      setActiveOrLatestExportJobId(activeJobId);
 
       if (status.status === 'failed') {
         const message = status.error?.message || status.message || 'Export failed';
@@ -1662,6 +1821,7 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     try {
       const status = await cancelMemvidExportJob(activeJobId);
       setExportStatus(status);
+      setActiveOrLatestExportJobId(activeJobId);
       setExportError(null);
       addToast({ type: 'warning', title: 'Export canceled', message: 'Memvid export job canceled.' });
       return true;
@@ -1684,6 +1844,61 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
 
     return () => clearInterval(timer);
   }, [exportStatus?.jobId, exportStatus?.status, pollMemvidExport]);
+
+  // Keep the live event feed connected for active jobs, fallback to polling when needed.
+  useEffect(() => {
+    if (!exportStatus) {
+      stopExportEventFeed();
+      return;
+    }
+
+    const isActive = ['queued', 'running'].includes(exportStatus.status);
+    if (isActive) {
+      setActiveOrLatestExportJobId(exportStatus.jobId);
+      if (!exportStreamCancelRef.current && !exportEventsPollTimerRef.current) {
+        startExportEventFeed(exportStatus.jobId);
+      }
+      return;
+    }
+
+    setActiveOrLatestExportJobId(exportStatus.jobId);
+    stopExportEventFeed();
+  }, [exportStatus?.jobId, exportStatus?.status, startExportEventFeed, stopExportEventFeed]);
+
+  // Stall indicator for long-running phases with sparse updates.
+  useEffect(() => {
+    if (!exportStatus || !['queued', 'running'].includes(exportStatus.status)) {
+      setExportStallState(prev => ({ ...prev, stalled: false, elapsedMs: 0 }));
+      return;
+    }
+
+    const timer = setInterval(() => {
+      const events = exportEventsByJob[exportStatus.jobId] ?? [];
+      const lastEvent = events.length > 0 ? events[events.length - 1] : null;
+      const lastEventAtMs = lastEvent
+        ? Date.parse(lastEvent.ts)
+        : exportStatus.updatedAt
+          ? Date.parse(exportStatus.updatedAt)
+          : Date.now();
+
+      const safeLastEventAtMs = Number.isFinite(lastEventAtMs) ? lastEventAtMs : Date.now();
+      const elapsedMs = Math.max(0, Date.now() - safeLastEventAtMs);
+
+      setExportStallState({
+        stalled: elapsedMs >= 15_000,
+        elapsedMs,
+        lastEventAtMs: safeLastEventAtMs,
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [exportEventsByJob, exportStatus?.jobId, exportStatus?.status, exportStatus?.updatedAt]);
+
+  useEffect(() => {
+    return () => {
+      stopExportEventFeed();
+    };
+  }, [stopExportEventFeed]);
 
   // Download when export completes.
   useEffect(() => {
@@ -2225,6 +2440,11 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     // Memvid export
     exportStatus,
     exportError,
+    exportEventsByJob,
+    activeExportLogSeqByJob,
+    isExportLogStreamConnected,
+    exportStallState,
+    activeOrLatestExportJobId,
     startMemvidExport,
     pollMemvidExport,
     cancelMemvidExport,

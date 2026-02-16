@@ -1,8 +1,10 @@
 import type { SessionSource } from './session-store';
 import type {
   ExportArtifact,
+  ExportEventsResponse,
   ExportJobAccepted,
   ExportJobStatus,
+  ExportLogEvent,
 } from '../types/memvid-export';
 
 const getApiBaseUrl = (): string => {
@@ -123,6 +125,114 @@ export async function getMemvidExportJobStatus(jobId: string): Promise<ExportJob
   }
 
   return response.json() as Promise<ExportJobStatus>;
+}
+
+export async function getMemvidExportEvents(
+  jobId: string,
+  sinceSeq: number = 0,
+  limit: number = 200
+): Promise<ExportEventsResponse> {
+  const clampedLimit = Math.max(1, Math.min(2000, limit));
+  const url = new URL(`${getApiBaseUrl()}/v1/exports/${encodeURIComponent(jobId)}/events`);
+  url.searchParams.set('sinceSeq', String(Math.max(0, sinceSeq)));
+  url.searchParams.set('limit', String(clampedLimit));
+
+  const response = await fetch(url.toString(), {
+    method: 'GET',
+    headers: getApiHeaders(false),
+  });
+
+  if (!response.ok) {
+    await parseApiError(response);
+  }
+
+  return response.json() as Promise<ExportEventsResponse>;
+}
+
+interface StreamMemvidExportEventsOptions {
+  sinceSeq?: number;
+  onOpen?: () => void;
+  onEvent: (event: ExportLogEvent) => void;
+  onError?: (error: Error) => void;
+  onClose?: () => void;
+}
+
+export function streamMemvidExportEvents(
+  jobId: string,
+  options: StreamMemvidExportEventsOptions
+): () => void {
+  const controller = new AbortController();
+  const sinceSeq = Math.max(0, options.sinceSeq ?? 0);
+
+  (async () => {
+    try {
+      const url = new URL(
+        `${getApiBaseUrl()}/v1/exports/${encodeURIComponent(jobId)}/events/stream`
+      );
+      url.searchParams.set('sinceSeq', String(sinceSeq));
+
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        headers: getApiHeaders(false),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        await parseApiError(response);
+      }
+
+      if (!response.body) {
+        throw new Error('Memvid export API stream body is not available.');
+      }
+
+      options.onOpen?.();
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const frames = buffer.split('\n\n');
+        buffer = frames.pop() ?? '';
+
+        for (const frame of frames) {
+          const lines = frame.split('\n');
+          let data = '';
+          for (const line of lines) {
+            if (line.startsWith('data:')) {
+              data += `${line.slice(5).trimStart()}\n`;
+            }
+          }
+          const payload = data.trim();
+          if (!payload || payload === 'ping') continue;
+          try {
+            const parsed = JSON.parse(payload) as ExportLogEvent;
+            options.onEvent(parsed);
+          } catch {
+            // Ignore malformed event payloads from keepalive or proxies.
+          }
+        }
+      }
+
+      options.onClose?.();
+    } catch (error) {
+      if (controller.signal.aborted) {
+        options.onClose?.();
+        return;
+      }
+      const streamError =
+        error instanceof Error ? error : new Error('Unknown export stream error');
+      options.onError?.(streamError);
+    }
+  })();
+
+  return () => {
+    controller.abort();
+  };
 }
 
 export async function cancelMemvidExportJob(jobId: string): Promise<ExportJobStatus> {

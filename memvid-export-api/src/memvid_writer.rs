@@ -10,23 +10,36 @@ use tracing::warn;
 
 use crate::models::FrameDocument;
 
-pub fn write_mv2(path: &Path, docs: &[FrameDocument], semantic_enabled: bool) -> Result<()> {
-    if let Err(err) = write_with_memvid_core(path, docs, semantic_enabled) {
+pub fn write_mv2<F>(
+    path: &Path,
+    docs: &[FrameDocument],
+    semantic_enabled: bool,
+    mut on_progress: F,
+) -> Result<()>
+where
+    F: FnMut(usize, usize),
+{
+    if let Err(err) = write_with_memvid_core(path, docs, semantic_enabled, &mut on_progress) {
         warn!("memvid-core write failed, falling back to memvid CLI: {err:#}");
-        write_with_memvid_cli(path, docs)?;
+        write_with_memvid_cli(path, docs, &mut on_progress)?;
     }
     Ok(())
 }
 
-fn write_with_memvid_core(
+fn write_with_memvid_core<F>(
     path: &Path,
     docs: &[FrameDocument],
     semantic_enabled: bool,
-) -> Result<()> {
+    on_progress: &mut F,
+) -> Result<()>
+where
+    F: FnMut(usize, usize),
+{
     let mut mem =
         Memvid::create(path).with_context(|| format!("Failed to create {}", path.display()))?;
 
-    for doc in docs {
+    let total = docs.len().max(1);
+    for (idx, doc) in docs.iter().enumerate() {
         let mut builder = PutOptions::builder()
             .title(doc.title.clone())
             .uri(doc.uri.clone())
@@ -44,6 +57,7 @@ fn write_with_memvid_core(
         let options = builder.build();
         mem.put_bytes_with_options(doc.text.as_bytes(), options)
             .with_context(|| format!("Failed writing frame {}", doc.uri))?;
+        on_progress(idx + 1, total);
     }
 
     mem.commit()
@@ -51,7 +65,10 @@ fn write_with_memvid_core(
     Ok(())
 }
 
-fn write_with_memvid_cli(path: &Path, docs: &[FrameDocument]) -> Result<()> {
+fn write_with_memvid_cli<F>(path: &Path, docs: &[FrameDocument], on_progress: &mut F) -> Result<()>
+where
+    F: FnMut(usize, usize),
+{
     if path.exists() {
         std::fs::remove_file(path)
             .with_context(|| format!("Failed to clear existing {}", path.display()))?;
@@ -67,7 +84,8 @@ fn write_with_memvid_cli(path: &Path, docs: &[FrameDocument]) -> Result<()> {
         anyhow::bail!("`memvid create` failed with status {create_status}");
     }
 
-    for doc in docs {
+    let total = docs.len().max(1);
+    for (idx, doc) in docs.iter().enumerate() {
         let mut command = Command::new("memvid");
         command
             .arg("put")
@@ -105,6 +123,7 @@ fn write_with_memvid_cli(path: &Path, docs: &[FrameDocument]) -> Result<()> {
             let stderr = String::from_utf8_lossy(&output.stderr);
             anyhow::bail!("`memvid put` failed for {}: {}", doc.uri, stderr);
         }
+        on_progress(idx + 1, total);
     }
 
     Ok(())
