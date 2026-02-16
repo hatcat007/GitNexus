@@ -27,16 +27,19 @@ RUN apt-get update \
 
 WORKDIR /app
 COPY --from=builder /usr/local/bin/memvid-export-api /usr/local/bin/memvid-export-api
+COPY docker/start-memvid.sh /usr/local/bin/start-memvid.sh
+RUN chmod +x /usr/local/bin/start-memvid.sh
 RUN mkdir -p /data/exports
 
 ENV MEMVID_EXPORT_BIND_ADDR=0.0.0.0:8080
 ENV MEMVID_EXPORT_ROOT=/data/exports
 ENV MEMVID_EXPORT_RETENTION_SECONDS=86400
+ENV RUST_BACKTRACE=1
+ENV RUST_LOG=memvid_export_api=debug,tower_http=debug
 
 EXPOSE 8080
-# Coolify requires a Health object during rolling updates.
-# Keep this check deterministic to avoid false-negative rollbacks.
-HEALTHCHECK --interval=10s --timeout=3s --start-period=1s --retries=3 \
-  CMD ["/bin/sh", "-c", "exit 0"]
+# Keep healthcheck explicit for Coolify Dockerfile rolling updates.
+HEALTHCHECK --interval=15s --timeout=5s --start-period=45s --retries=5 \
+  CMD ["/usr/bin/curl", "-fsS", "http://127.0.0.1:8080/healthz"]
 
-CMD ["/usr/local/bin/memvid-export-api"]
+CMD ["/usr/local/bin/start-memvid.sh"]

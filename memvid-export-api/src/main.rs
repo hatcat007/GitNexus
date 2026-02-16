@@ -53,6 +53,21 @@ async fn main() -> Result<()> {
         .init();
 
     let mut config = Config::from_env()?;
+    info!(
+        pid = std::process::id(),
+        bind_addr = %config.bind_addr,
+        export_root = %config.export_root.display(),
+        queue_capacity = config.queue_capacity,
+        "Startup: configuration loaded"
+    );
+
+    match tokio::fs::metadata("/usr/local/bin/memvid-export-api").await {
+        Ok(meta) => info!(
+            size_bytes = meta.len(),
+            "Startup: binary metadata available"
+        ),
+        Err(err) => warn!(error = %err, "Startup: unable to stat /usr/local/bin/memvid-export-api"),
+    }
     if let Err(err) = artifact_store::ensure_export_root(&config.export_root).await {
         let original_root = config.export_root.clone();
         let fallback_roots = [
@@ -150,6 +165,7 @@ async fn main() -> Result<()> {
         .layer(TraceLayer::new_for_http())
         .with_state(state);
 
+    info!(bind_addr = %config.bind_addr, "Startup: binding TCP listener");
     let listener = tokio::net::TcpListener::bind(config.bind_addr).await?;
     info!("memvid-export-api listening on {}", config.bind_addr);
     axum::serve(listener, app).await?;
