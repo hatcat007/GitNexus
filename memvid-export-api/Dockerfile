@@ -22,8 +22,8 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry,id=memvid-cargo-registry
 
 FROM debian:bookworm-slim
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends ca-certificates \
-  && rm -rf /var/lib/apt/lists/*
+&& apt-get install -y --no-install-recommends ca-certificates curl wget \
+&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY --from=builder /usr/local/bin/memvid-export-api /usr/local/bin/memvid-export-api
@@ -34,8 +34,8 @@ ENV MEMVID_EXPORT_ROOT=/data/exports
 ENV MEMVID_EXPORT_RETENTION_SECONDS=86400
 
 EXPOSE 8080
-# Coolify still inspects .State.Health during rolling updates; keep a minimal
-# always-successful healthcheck so deployments don't fail on missing Health map.
-HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=5 CMD ["true"]
+# Coolify rolling updates rely on health status and often require curl/wget in-image.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=5 \
+  CMD curl -fsS http://127.0.0.1:8080/healthz || wget -q -O - http://127.0.0.1:8080/healthz >/dev/null || exit 1
 
 CMD ["memvid-export-api"]
