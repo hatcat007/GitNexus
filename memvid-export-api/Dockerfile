@@ -36,6 +36,6 @@ ENV MEMVID_EXPORT_RETENTION_SECONDS=86400
 EXPOSE 8080
 # Coolify rolling updates rely on health status and often require curl/wget in-image.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=5 \
-  CMD curl -fsS http://127.0.0.1:8080/healthz || wget -q -O - http://127.0.0.1:8080/healthz >/dev/null || exit 1
+  CMD ["/usr/bin/curl", "-fsS", "http://127.0.0.1:8080/healthz"]
 
-CMD ["memvid-export-api"]
+CMD ["/usr/local/bin/memvid-export-api"]
