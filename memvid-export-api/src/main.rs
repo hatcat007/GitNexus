@@ -54,15 +54,44 @@ async fn main() -> Result<()> {
 
     let mut config = Config::from_env()?;
     if let Err(err) = artifact_store::ensure_export_root(&config.export_root).await {
-        let fallback = std::path::PathBuf::from("/tmp/memvid-export-api/exports");
+        let original_root = config.export_root.clone();
+        let fallback_roots = [
+            std::path::PathBuf::from("/tmp/memvid-export-api/exports"),
+            std::path::PathBuf::from("/dev/shm/memvid-export-api/exports"),
+            std::path::PathBuf::from("./exports"),
+        ];
+
         warn!(
             error = %err,
-            original_root = %config.export_root.display(),
-            fallback_root = %fallback.display(),
-            "Failed to initialize export root, falling back to /tmp path"
+            original_root = %original_root.display(),
+            "Failed to initialize configured export root; trying fallbacks"
         );
-        artifact_store::ensure_export_root(&fallback).await?;
-        config.export_root = fallback;
+
+        let mut selected_root = None;
+        for fallback in fallback_roots {
+            match artifact_store::ensure_export_root(&fallback).await {
+                Ok(()) => {
+                    selected_root = Some(fallback);
+                    break;
+                }
+                Err(fallback_err) => {
+                    warn!(
+                        error = %fallback_err,
+                        fallback_root = %fallback.display(),
+                        "Fallback export root is not writable"
+                    );
+                }
+            }
+        }
+
+        if let Some(root) = selected_root {
+            config.export_root = root;
+        } else {
+            warn!(
+                original_root = %original_root.display(),
+                "No writable export root found at startup; keeping configured root and continuing. Export jobs may fail until storage is fixed."
+            );
+        }
     }
 
     if config.api_key_is_fallback {
