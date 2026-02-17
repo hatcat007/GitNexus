@@ -25,6 +25,7 @@ def handler(job: Dict[str, Any]) -> Dict[str, Any]:
     output_prefix = _required(job_input, "output_prefix")
     embedding_mode = str(job_input.get("embedding_mode", "external_api"))
     embedding_provider = str(job_input.get("embedding_provider", "nvidia"))
+    embedding_model = str(job_input.get("embedding_model", "nvidia/nv-embed-v1"))
 
     cmd = [
         RUST_EXECUTABLE,
@@ -39,6 +40,8 @@ def handler(job: Dict[str, Any]) -> Dict[str, Any]:
         embedding_mode,
         "--embedding-provider",
         embedding_provider,
+        "--embedding-model",
+        embedding_model,
     ]
 
     env = os.environ.copy()

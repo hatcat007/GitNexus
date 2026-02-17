@@ -5,21 +5,35 @@ use std::{
 };
 
 use anyhow::{Context, Result};
-use memvid_core::{Memvid, PutOptions};
+use memvid_core::{
+    Memvid, PutOptions, MEMVID_EMBEDDING_DIMENSION_KEY, MEMVID_EMBEDDING_MODEL_KEY,
+    MEMVID_EMBEDDING_PROVIDER_KEY,
+};
 use tracing::warn;
 
+use crate::embedding::EmbeddingRuntimeConfig;
 use crate::models::FrameDocument;
 
 pub fn write_mv2<F>(
     path: &Path,
     docs: &[FrameDocument],
     semantic_enabled: bool,
+    embedding_config: Option<EmbeddingRuntimeConfig>,
     mut on_progress: F,
 ) -> Result<()>
 where
     F: FnMut(usize, usize),
 {
-    if let Err(err) = write_with_memvid_core(path, docs, semantic_enabled, &mut on_progress) {
+    if let Err(err) = write_with_memvid_core(
+        path,
+        docs,
+        semantic_enabled,
+        embedding_config.clone(),
+        &mut on_progress,
+    ) {
+        if semantic_enabled {
+            return Err(err);
+        }
         warn!("memvid-core write failed, falling back to memvid CLI: {err:#}");
         write_with_memvid_cli(path, docs, &mut on_progress)?;
     }
@@ -30,18 +44,26 @@ pub fn write_mv2_core_only<F>(
     path: &Path,
     docs: &[FrameDocument],
     semantic_enabled: bool,
+    embedding_config: Option<EmbeddingRuntimeConfig>,
     mut on_progress: F,
 ) -> Result<()>
 where
     F: FnMut(usize, usize),
 {
-    write_with_memvid_core(path, docs, semantic_enabled, &mut on_progress)
+    write_with_memvid_core(
+        path,
+        docs,
+        semantic_enabled,
+        embedding_config,
+        &mut on_progress,
+    )
 }
 
 fn write_with_memvid_core<F>(
     path: &Path,
     docs: &[FrameDocument],
     semantic_enabled: bool,
+    embedding_config: Option<EmbeddingRuntimeConfig>,
     on_progress: &mut F,
 ) -> Result<()>
 where
@@ -49,6 +71,15 @@ where
 {
     let mut mem =
         Memvid::create(path).with_context(|| format!("Failed to create {}", path.display()))?;
+
+    let embedding_config = if semantic_enabled {
+        Some(
+            embedding_config
+                .context("Semantic export requires valid embedding runtime configuration")?,
+        )
+    } else {
+        None
+    };
 
     let total = docs.len().max(1);
     for (idx, doc) in docs.iter().enumerate() {
@@ -67,8 +98,48 @@ where
         }
 
         let options = builder.build();
-        mem.put_bytes_with_options(doc.text.as_bytes(), options)
-            .with_context(|| format!("Failed writing frame {}", doc.uri))?;
+        if let Some(runtime) = embedding_config.as_ref() {
+            let embedding = runtime
+                .embed_text(&doc.text)
+                .with_context(|| format!("Failed generating embedding for frame {}", doc.uri))?;
+            let embedding_dims = embedding.len();
+            let options_with_identity = PutOptions::builder()
+                .title(doc.title.clone())
+                .uri(doc.uri.clone())
+                .search_text(doc.text.clone())
+                .tag("track".to_string(), doc.track.clone())
+                .tag("label".to_string(), doc.label.clone())
+                .tag("semantic".to_string(), "true".to_string())
+                .tag(
+                    MEMVID_EMBEDDING_PROVIDER_KEY.to_string(),
+                    runtime.provider.as_str().to_string(),
+                )
+                .tag(
+                    MEMVID_EMBEDDING_MODEL_KEY.to_string(),
+                    runtime.model.clone(),
+                )
+                .tag(
+                    MEMVID_EMBEDDING_DIMENSION_KEY.to_string(),
+                    embedding_dims.to_string(),
+                );
+            let mut options_with_identity = options_with_identity;
+            for tag in &doc.tags {
+                if let Some((k, v)) = tag.split_once('=') {
+                    options_with_identity = options_with_identity.tag(k.to_string(), v.to_string());
+                }
+            }
+            let options_with_identity = options_with_identity.build();
+
+            mem.put_with_embedding_and_options(
+                doc.text.as_bytes(),
+                embedding,
+                options_with_identity,
+            )
+            .with_context(|| format!("Failed writing embedded frame {}", doc.uri))?;
+        } else {
+            mem.put_bytes_with_options(doc.text.as_bytes(), options)
+                .with_context(|| format!("Failed writing frame {}", doc.uri))?;
+        }
         on_progress(idx + 1, total);
     }
 

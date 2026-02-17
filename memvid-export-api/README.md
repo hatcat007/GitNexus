@@ -36,9 +36,20 @@ Rust API for exporting GitNexus graph data into Memvid `.mv2` capsules.
 - `RUNPOD_EXECUTION_TIMEOUT_MS` (default `600000`)
 - `RUNPOD_TTL_MS` (default `86400000`)
 - `MEMVID_EMBEDDING_MODE` (`external_api` or `runpod_gpu`, default `external_api`)
-- `MEMVID_EMBED_PROVIDER` (default `nvidia`)
-- `NVIDIA_API_KEY` (optional; used when provider is NVIDIA)
-- `OLLAMA_HOST` (optional; used when embedding mode is `runpod_gpu`)
+- `MEMVID_EMBED_PROVIDER` (`nvidia`, `openai`, `voyage`/`voyageai`, `ollama`/`local`; default `nvidia`)
+- `MEMVID_EMBED_MODEL` (provider-specific model id; defaults by provider)
+- `MEMVID_EMBED_REQUEST_TIMEOUT_SECONDS` (default `60`)
+- `NVIDIA_API_KEY` (required at runtime when provider is `nvidia`)
+- `NVIDIA_EMBED_BASE_URL` (default `https://integrate.api.nvidia.com/v1`)
+- `OPENAI_API_KEY` (required at runtime when provider is `openai`)
+- `OPENAI_EMBED_BASE_URL` (default `https://api.openai.com/v1`)
+- `VOYAGE_API_KEY` (required at runtime when provider is `voyage`/`voyageai`)
+- `VOYAGE_EMBED_BASE_URL` (default `https://api.voyageai.com/v1`)
+- `VOYAGE_INPUT_TYPE` (`document` or `query`, default `document`)
+- `VOYAGE_OUTPUT_DIMENSION` (optional for matryoshka-capable models; `voyage-code-3` supports `2048|1024|512|256`)
+- `VOYAGE_OUTPUT_DTYPE` (`float`, `int8`, `uint8`, `binary`, `ubinary`; default `float`)
+- `VOYAGE_TRUNCATION` (default `true`)
+- `OLLAMA_HOST` (required at runtime when mode is `runpod_gpu` and provider is `ollama`/`local`)
 - `MEMVID_MCP_RESPONSE_BUDGET_BYTES` (default `65536`)
 - `MEMVID_MCP_RATE_LIMIT_PER_MINUTE` (default `120`)
 - `MEMVID_MCP_RATE_LIMIT_BURST` (default `60`)
@@ -120,7 +131,8 @@ memvid-export-api runpod-execute \
   --payload-ref file:///shared/payloads/<job-id>.json \
   --output-prefix file:///shared/outputs/<job-id> \
   --embedding-mode external_api \
-  --embedding-provider nvidia
+  --embedding-provider voyage \
+  --embedding-model voyage-code-3
 ```
 
 This execution path uses a strict Rust `memvid-core` write path (no CLI fallback).

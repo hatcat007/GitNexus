@@ -18,6 +18,7 @@ pub struct RunpodJobInput {
     pub output_prefix: String,
     pub embedding_mode: String,
     pub embedding_provider: String,
+    pub embedding_model: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ollama_host: Option<String>,
 }

@@ -7,6 +7,8 @@ use tokio::process::Command;
 
 use crate::{
     artifact_store::{build_job_file_name, ensure_job_dir},
+    config::Config,
+    embedding::{default_model_for_provider, EmbeddingRuntimeConfig},
     mcp_index::build_and_persist_from_request,
     memvid_writer::write_mv2_core_only,
     models::ExportRequest,
@@ -20,6 +22,7 @@ struct RunnerArgs {
     output_prefix: String,
     embedding_mode: String,
     embedding_provider: String,
+    embedding_model: String,
 }
 
 pub async fn maybe_run_from_cli(args: &[String]) -> Result<bool> {
@@ -42,11 +45,34 @@ pub async fn maybe_run_from_cli(args: &[String]) -> Result<bool> {
     let file_name = build_job_file_name(&request.source.base_name, &date_stamp);
     let output_path = output_dir.join(&file_name);
     ensure_job_dir(&output_path).await?;
+    let env_config = Config::from_env().context("Failed to load embedding env config")?;
+    let embedding_config = if request.options.semantic_enabled {
+        Some(EmbeddingRuntimeConfig::new(
+            &parsed.embedding_mode,
+            &parsed.embedding_provider,
+            &parsed.embedding_model,
+            env_config.nvidia_api_key.clone(),
+            env_config.openai_api_key.clone(),
+            env_config.voyage_api_key.clone(),
+            env_config.ollama_host.clone(),
+            env_config.nvidia_embed_base_url.clone(),
+            env_config.openai_embed_base_url.clone(),
+            env_config.voyage_embed_base_url.clone(),
+            env_config.voyage_input_type.clone(),
+            env_config.voyage_output_dimension,
+            env_config.voyage_output_dtype.clone(),
+            env_config.voyage_truncation,
+            env_config.embed_request_timeout_seconds,
+        )?)
+    } else {
+        None
+    };
 
     write_mv2_core_only(
         &output_path,
         &docs,
         request.options.semantic_enabled,
+        embedding_config,
         |_written, _total| {},
     )?;
 
@@ -76,6 +102,7 @@ pub async fn maybe_run_from_cli(args: &[String]) -> Result<bool> {
         "sizeBytes": artifact_meta.len(),
         "embeddingMode": parsed.embedding_mode,
         "embeddingProvider": parsed.embedding_provider,
+        "embeddingModel": parsed.embedding_model,
         "sidecar": sidecar_status
     });
     println!("{}", serde_json::to_string(&result)?);
@@ -88,6 +115,7 @@ fn parse_args(args: &[String]) -> Result<RunnerArgs> {
     let mut output_prefix = None;
     let mut embedding_mode = None;
     let mut embedding_provider = None;
+    let mut embedding_model = None;
 
     let mut i = 2usize;
     while i < args.len() {
@@ -114,18 +142,32 @@ fn parse_args(args: &[String]) -> Result<RunnerArgs> {
                 embedding_provider = Some(v);
                 i += 2;
             }
+            ("--embedding-model", Some(v)) => {
+                embedding_model = Some(v);
+                i += 2;
+            }
             _ => {
                 anyhow::bail!("Unknown or incomplete argument near `{}`", key);
             }
         }
     }
 
+    let embedding_mode = embedding_mode.unwrap_or_else(|| "external_api".to_string());
+    let embedding_provider = embedding_provider.unwrap_or_else(|| "nvidia".to_string());
+    let embedding_model = embedding_model.unwrap_or_else(|| {
+        let provider = embedding_provider.to_ascii_lowercase();
+        default_model_for_provider(&provider)
+            .unwrap_or("nvidia/nv-embed-v1")
+            .to_string()
+    });
+
     Ok(RunnerArgs {
         job_id: job_id.context("--job-id is required")?,
         payload_ref: payload_ref.context("--payload-ref is required")?,
         output_prefix: output_prefix.context("--output-prefix is required")?,
-        embedding_mode: embedding_mode.unwrap_or_else(|| "external_api".to_string()),
-        embedding_provider: embedding_provider.unwrap_or_else(|| "nvidia".to_string()),
+        embedding_mode,
+        embedding_provider,
+        embedding_model,
     })
 }
 

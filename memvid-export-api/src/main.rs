@@ -2,6 +2,7 @@ mod api;
 mod artifact_store;
 mod auth;
 mod config;
+mod embedding;
 mod mcp_api;
 mod mcp_index;
 mod memvid_writer;
@@ -68,6 +69,7 @@ async fn main() -> Result<()> {
         backend_mode = config.backend_mode.as_str(),
         embedding_mode = config.embedding_mode.as_str(),
         embedding_provider = %config.embedding_provider,
+        embedding_model = %config.embedding_model,
         "Startup: configuration loaded"
     );
 

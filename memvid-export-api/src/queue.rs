@@ -344,6 +344,11 @@ async fn process_export_job_legacy(state: AppState, job_id: &str) -> Result<()> 
     let output_path_for_write = output_path.clone();
     let docs_for_write = docs.clone();
     let semantic_enabled = request.options.semantic_enabled;
+    let embedding_config = if semantic_enabled {
+        Some(state.config.embedding_runtime_config()?)
+    } else {
+        None
+    };
     let written_for_write = Arc::clone(&written_frames);
 
     let write_result = tokio::task::spawn_blocking(move || {
@@ -351,6 +356,7 @@ async fn process_export_job_legacy(state: AppState, job_id: &str) -> Result<()> 
             &output_path_for_write,
             &docs_for_write,
             semantic_enabled,
+            embedding_config,
             move |written, _total| {
                 written_for_write.store(written, Ordering::Relaxed);
             },
@@ -678,6 +684,7 @@ async fn process_export_job_runpod(state: AppState, job_id: &str) -> Result<()> 
             output_prefix,
             embedding_mode: state.config.embedding_mode.as_str().to_string(),
             embedding_provider: state.config.embedding_provider.clone(),
+            embedding_model: state.config.embedding_model.clone(),
             ollama_host: state.config.ollama_host.clone(),
         },
         policy: RunpodPolicy {
@@ -816,6 +823,7 @@ async fn process_export_job_runpod(state: AppState, job_id: &str) -> Result<()> 
                                 "runpodStatus": status.status,
                                 "embeddingMode": state.config.embedding_mode.as_str(),
                                 "embeddingProvider": state.config.embedding_provider.as_str(),
+                                "embeddingModel": state.config.embedding_model.as_str(),
                             }));
                         }
                         job.status = JobState::Completed;

@@ -1,7 +1,9 @@
 use std::{env, fs, net::SocketAddr, path::PathBuf};
 
-use anyhow::Result;
+use anyhow::{bail, Result};
 use uuid::Uuid;
+
+use crate::embedding::{default_model_for_provider, EmbeddingRuntimeConfig};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ExportBackendMode {
@@ -58,7 +60,18 @@ pub struct Config {
     pub staging_root: PathBuf,
     pub embedding_mode: EmbeddingMode,
     pub embedding_provider: String,
+    pub embedding_model: String,
     pub nvidia_api_key: Option<String>,
+    pub openai_api_key: Option<String>,
+    pub voyage_api_key: Option<String>,
+    pub nvidia_embed_base_url: String,
+    pub openai_embed_base_url: String,
+    pub voyage_embed_base_url: String,
+    pub voyage_input_type: String,
+    pub voyage_output_dimension: Option<u16>,
+    pub voyage_output_dtype: String,
+    pub voyage_truncation: bool,
+    pub embed_request_timeout_seconds: u64,
     pub ollama_host: Option<String>,
 }
 
@@ -189,11 +202,81 @@ impl Config {
         let embedding_provider = env::var("MEMVID_EMBED_PROVIDER")
             .unwrap_or_else(|_| "nvidia".to_string())
             .trim()
-            .to_string();
+            .to_ascii_lowercase();
+        match embedding_provider.as_str() {
+            "nvidia" | "openai" | "voyage" | "voyageai" | "ollama" | "local" => {}
+            _ => {
+                bail!(
+                    "Unsupported MEMVID_EMBED_PROVIDER `{}`. Supported: nvidia, openai, voyage/voyageai, ollama/local.",
+                    embedding_provider
+                );
+            }
+        }
+        let embedding_model = env::var("MEMVID_EMBED_MODEL")
+            .ok()
+            .map(|v| v.trim().to_string())
+            .filter(|v| !v.is_empty())
+            .unwrap_or_else(|| {
+                default_model_for_provider(&embedding_provider)
+                    .unwrap_or("nvidia/nv-embed-v1")
+                    .to_string()
+            });
         let nvidia_api_key = env::var("NVIDIA_API_KEY")
             .ok()
             .map(|v| v.trim().to_string())
             .filter(|v| !v.is_empty());
+        let openai_api_key = env::var("OPENAI_API_KEY")
+            .ok()
+            .map(|v| v.trim().to_string())
+            .filter(|v| !v.is_empty());
+        let voyage_api_key = env::var("VOYAGE_API_KEY")
+            .ok()
+            .map(|v| v.trim().to_string())
+            .filter(|v| !v.is_empty());
+        let nvidia_embed_base_url = env::var("NVIDIA_EMBED_BASE_URL")
+            .unwrap_or_else(|_| "https://integrate.api.nvidia.com/v1".to_string())
+            .trim_end_matches('/')
+            .to_string();
+        let openai_embed_base_url = env::var("OPENAI_EMBED_BASE_URL")
+            .unwrap_or_else(|_| "https://api.openai.com/v1".to_string())
+            .trim_end_matches('/')
+            .to_string();
+        let voyage_embed_base_url = env::var("VOYAGE_EMBED_BASE_URL")
+            .unwrap_or_else(|_| "https://api.voyageai.com/v1".to_string())
+            .trim_end_matches('/')
+            .to_string();
+        let voyage_input_type = env::var("VOYAGE_INPUT_TYPE")
+            .unwrap_or_else(|_| "document".to_string())
+            .trim()
+            .to_ascii_lowercase();
+        let voyage_output_dimension = env::var("VOYAGE_OUTPUT_DIMENSION")
+            .ok()
+            .map(|v| v.trim().to_string())
+            .filter(|v| !v.is_empty())
+            .map(|v| {
+                v.parse::<u16>().map_err(|_| {
+                    anyhow::anyhow!("VOYAGE_OUTPUT_DIMENSION must be a positive integer")
+                })
+            })
+            .transpose()?;
+        let voyage_output_dtype = env::var("VOYAGE_OUTPUT_DTYPE")
+            .unwrap_or_else(|_| "float".to_string())
+            .trim()
+            .to_ascii_lowercase();
+        let voyage_truncation = env::var("VOYAGE_TRUNCATION")
+            .ok()
+            .map(|v| {
+                matches!(
+                    v.trim().to_ascii_lowercase().as_str(),
+                    "1" | "true" | "yes" | "on"
+                )
+            })
+            .unwrap_or(true);
+        let embed_request_timeout_seconds = env::var("MEMVID_EMBED_REQUEST_TIMEOUT_SECONDS")
+            .ok()
+            .and_then(|v| v.parse::<u64>().ok())
+            .unwrap_or(60)
+            .max(1);
         let ollama_host = env::var("OLLAMA_HOST")
             .ok()
             .map(|v| v.trim().to_string())
@@ -223,7 +306,18 @@ impl Config {
             staging_root,
             embedding_mode,
             embedding_provider,
+            embedding_model,
             nvidia_api_key,
+            openai_api_key,
+            voyage_api_key,
+            nvidia_embed_base_url,
+            openai_embed_base_url,
+            voyage_embed_base_url,
+            voyage_input_type,
+            voyage_output_dimension,
+            voyage_output_dtype,
+            voyage_truncation,
+            embed_request_timeout_seconds,
             ollama_host,
         })
     }
@@ -232,6 +326,26 @@ impl Config {
         matches!(self.backend_mode, ExportBackendMode::RunpodQueue)
             && self.runpod_endpoint_id.is_some()
             && self.runpod_api_key.is_some()
+    }
+
+    pub fn embedding_runtime_config(&self) -> Result<EmbeddingRuntimeConfig> {
+        EmbeddingRuntimeConfig::new(
+            self.embedding_mode.as_str(),
+            &self.embedding_provider,
+            &self.embedding_model,
+            self.nvidia_api_key.clone(),
+            self.openai_api_key.clone(),
+            self.voyage_api_key.clone(),
+            self.ollama_host.clone(),
+            self.nvidia_embed_base_url.clone(),
+            self.openai_embed_base_url.clone(),
+            self.voyage_embed_base_url.clone(),
+            self.voyage_input_type.clone(),
+            self.voyage_output_dimension,
+            self.voyage_output_dtype.clone(),
+            self.voyage_truncation,
+            self.embed_request_timeout_seconds,
+        )
     }
 }
 
