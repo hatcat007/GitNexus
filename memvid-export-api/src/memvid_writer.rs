@@ -26,6 +26,18 @@ where
     Ok(())
 }
 
+pub fn write_mv2_core_only<F>(
+    path: &Path,
+    docs: &[FrameDocument],
+    semantic_enabled: bool,
+    mut on_progress: F,
+) -> Result<()>
+where
+    F: FnMut(usize, usize),
+{
+    write_with_memvid_core(path, docs, semantic_enabled, &mut on_progress)
+}
+
 fn write_with_memvid_core<F>(
     path: &Path,
     docs: &[FrameDocument],

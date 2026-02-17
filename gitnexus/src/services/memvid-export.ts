@@ -8,14 +8,22 @@ import type {
 } from '../types/memvid-export';
 
 const getApiBaseUrl = (): string => {
-  const value = import.meta.env.VITE_MEMVID_EXPORT_API_URL?.trim();
+  const backendMode =
+    import.meta.env.VITE_MEMVID_EXPORT_BACKEND_MODE?.trim().toLowerCase() || 'legacy_vps';
+  const value =
+    (backendMode === 'runpod_queue'
+      ? import.meta.env.VITE_MEMVID_EXPORT_API_URL_RUNPOD?.trim()
+      : import.meta.env.VITE_MEMVID_EXPORT_API_URL_LEGACY?.trim()) ||
+    import.meta.env.VITE_MEMVID_EXPORT_API_URL?.trim();
   if (!value) {
-    throw new Error('Missing VITE_MEMVID_EXPORT_API_URL environment variable.');
+    throw new Error(
+      'Missing Memvid API URL environment variable. Set VITE_MEMVID_EXPORT_API_URL or mode-specific URL variables.'
+    );
   }
   const normalized = value.replace(/\/+$/, '');
   if (!/^https?:\/\//i.test(normalized)) {
     throw new Error(
-      'Invalid VITE_MEMVID_EXPORT_API_URL. Include protocol, for example: https://memcapsule-core.fotomagiai.dk'
+      'Invalid Memvid API URL. Include protocol, for example: https://memcapsule-core.fotomagiai.dk'
     );
   }
   return normalized;

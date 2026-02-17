@@ -1,0 +1,21 @@
+{
+  "name": "memvid-export-api-queue-eu",
+  "allowedCudaVersions": ["12.8", "12.6", "12.4", "11.8"],
+  "dataCenterIds": ["EU-RO-1", "EUR-IS-1", "EU-CZ-1"],
+  "executionTimeoutMs": 1200000,
+  "flashboot": true,
+  "gpuCount": 1,
+  "gpuTypeIds": [
+    "NVIDIA H100 80GB HBM3",
+    "NVIDIA H100 PCIe",
+    "NVIDIA H200",
+    "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+    "NVIDIA A100-SXM4-80GB",
+    "NVIDIA A100 80GB PCIe"
+  ],
+  "idleTimeout": 10,
+  "scalerType": "QUEUE_DELAY",
+  "scalerValue": 4,
+  "workersMin": 1,
+  "workersMax": 6
+}

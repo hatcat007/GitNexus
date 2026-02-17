@@ -2,7 +2,10 @@
 
 interface ImportMetaEnv {
   readonly VITE_MEMVID_EXPORT_API_URL?: string;
+  readonly VITE_MEMVID_EXPORT_API_URL_LEGACY?: string;
+  readonly VITE_MEMVID_EXPORT_API_URL_RUNPOD?: string;
   readonly VITE_MEMVID_EXPORT_API_KEY?: string;
+  readonly VITE_MEMVID_EXPORT_BACKEND_MODE?: string;
 }
 
 interface ImportMeta {

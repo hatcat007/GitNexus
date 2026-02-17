@@ -25,8 +25,20 @@ Rust API for exporting GitNexus graph data into Memvid `.mv2` capsules.
 - `MEMVID_EXPORT_API_KEY_FILE` (optional): path to file containing the bearer token
 - `MEMVID_EXPORT_BIND_ADDR` (default `0.0.0.0:8080`)
 - `MEMVID_EXPORT_ROOT` (default `/data/exports`)
+- `MEMVID_EXPORT_STAGING_ROOT` (default `/data/exports/staging`)
 - `MEMVID_EXPORT_RETENTION_SECONDS` (default `86400`)
 - `MEMVID_EXPORT_QUEUE_CAPACITY` (default `128`)
+- `MEMVID_EXPORT_BACKEND_MODE` (default `legacy_vps`, supports `runpod_queue`)
+- `RUNPOD_API_BASE` (default `https://api.runpod.ai/v2`)
+- `RUNPOD_ENDPOINT_ID` (required when `runpod_queue`)
+- `RUNPOD_API_KEY` (required when `runpod_queue`)
+- `RUNPOD_POLL_INTERVAL_SECONDS` (default `5`)
+- `RUNPOD_EXECUTION_TIMEOUT_MS` (default `600000`)
+- `RUNPOD_TTL_MS` (default `86400000`)
+- `MEMVID_EMBEDDING_MODE` (`external_api` or `runpod_gpu`, default `external_api`)
+- `MEMVID_EMBED_PROVIDER` (default `nvidia`)
+- `NVIDIA_API_KEY` (optional; used when provider is NVIDIA)
+- `OLLAMA_HOST` (optional; used when embedding mode is `runpod_gpu`)
 - `MEMVID_MCP_RESPONSE_BUDGET_BYTES` (default `65536`)
 - `MEMVID_MCP_RATE_LIMIT_PER_MINUTE` (default `120`)
 - `MEMVID_MCP_RATE_LIMIT_BURST` (default `60`)
@@ -86,6 +98,39 @@ cargo run
 ```
 
 Rust toolchain requirement: `>= 1.89`.
+
+## Runpod Queue Mode
+
+When `MEMVID_EXPORT_BACKEND_MODE=runpod_queue`, this API acts as a control plane:
+
+- stages the full export payload to `MEMVID_EXPORT_STAGING_ROOT`
+- submits a compact pointer payload to Runpod `/run`
+- polls Runpod `/status/{id}` and maps status back to `/v1/exports*`
+- serves artifacts via existing `/v1/exports/{jobId}/download`
+
+The staged payload keeps Runpod `/run` requests below the 10 MB body limit.
+
+### Rust runner used by Runpod worker
+
+The Runpod worker adapter invokes this binary in runner mode:
+
+```bash
+memvid-export-api runpod-execute \
+  --job-id <job-id> \
+  --payload-ref file:///shared/payloads/<job-id>.json \
+  --output-prefix file:///shared/outputs/<job-id> \
+  --embedding-mode external_api \
+  --embedding-provider nvidia
+```
+
+This execution path uses a strict Rust `memvid-core` write path (no CLI fallback).
+
+### Build Runpod worker adapter image
+
+```bash
+cd memvid-export-api
+docker build -f runpod-worker/Dockerfile -t memvid-export-runpod-worker .
+```
 
 ## Build Docker image
 

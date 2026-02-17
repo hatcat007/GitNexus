@@ -1,4 +1,5 @@
 use std::{
+    path::PathBuf,
     sync::{
         atomic::{AtomicBool, AtomicUsize, Ordering},
         Arc,
@@ -14,11 +15,14 @@ use tracing::{error, info, warn};
 
 use crate::{
     artifact_store::{build_job_file_name, delete_file_if_exists, ensure_job_dir, job_output_path},
+    config::ExportBackendMode,
     mcp_index::build_and_persist_from_request,
     memvid_writer::write_mv2,
     models::{
-        ExportArtifact, ExportErrorPayload, ExportEventType, ExportLogEvent, ExportStage, JobState,
+        ExportArtifact, ExportErrorPayload, ExportEventType, ExportLogEvent, ExportRequest,
+        ExportStage, JobState,
     },
+    runpod::{RunpodClient, RunpodJobInput, RunpodPolicy, RunpodRunRequest},
     transform::build_frame_documents,
     AppState,
 };
@@ -142,7 +146,16 @@ pub fn spawn_export_worker(state: AppState, mut queue_rx: mpsc::Receiver<String>
     tokio::spawn(async move {
         while let Some(job_id) = queue_rx.recv().await {
             info!(job_id = %job_id, "Worker picked export job");
-            if let Err(err) = process_export_job(state.clone(), &job_id).await {
+            let process_result = match state.config.backend_mode {
+                ExportBackendMode::LegacyVps => {
+                    process_export_job_legacy(state.clone(), &job_id).await
+                }
+                ExportBackendMode::RunpodQueue => {
+                    process_export_job_runpod(state.clone(), &job_id).await
+                }
+            };
+
+            if let Err(err) = process_result {
                 error!("Export job {job_id} failed: {err:#}");
                 let error_message = err.to_string();
                 {
@@ -196,7 +209,7 @@ async fn is_canceled(state: &AppState, job_id: &str) -> bool {
         .unwrap_or(true)
 }
 
-async fn process_export_job(state: AppState, job_id: &str) -> Result<()> {
+async fn process_export_job_legacy(state: AppState, job_id: &str) -> Result<()> {
     let request = {
         let mut jobs = state.jobs.write().await;
         let Some(job) = jobs.get_mut(job_id) else {
@@ -546,6 +559,319 @@ async fn process_export_job(state: AppState, job_id: &str) -> Result<()> {
     );
 
     Ok(())
+}
+
+fn runpod_client_from_state(state: &AppState) -> Result<RunpodClient> {
+    let endpoint_id = state
+        .config
+        .runpod_endpoint_id
+        .clone()
+        .context("RUNPOD_ENDPOINT_ID must be set when backend mode is runpod_queue")?;
+    let api_key = state
+        .config
+        .runpod_api_key
+        .clone()
+        .context("RUNPOD_API_KEY must be set when backend mode is runpod_queue")?;
+    Ok(RunpodClient::new(
+        state.config.runpod_api_base.clone(),
+        endpoint_id,
+        api_key,
+    ))
+}
+
+async fn stage_request_payload(
+    state: &AppState,
+    job_id: &str,
+    request: &ExportRequest,
+) -> Result<(String, String, PathBuf)> {
+    let payload_dir = state.config.staging_root.join("payloads");
+    let output_dir = state.config.staging_root.join("outputs").join(job_id);
+    fs::create_dir_all(&payload_dir).await.with_context(|| {
+        format!(
+            "Failed to create payload staging dir {}",
+            payload_dir.display()
+        )
+    })?;
+    fs::create_dir_all(&output_dir).await.with_context(|| {
+        format!(
+            "Failed to create output staging dir {}",
+            output_dir.display()
+        )
+    })?;
+
+    let payload_path = payload_dir.join(format!("{job_id}.json"));
+    let payload_bytes =
+        serde_json::to_vec(request).context("Failed to serialize export payload")?;
+    fs::write(&payload_path, payload_bytes)
+        .await
+        .with_context(|| format!("Failed to write staged payload {}", payload_path.display()))?;
+
+    let payload_ref = format!("file://{}", payload_path.display());
+    let output_prefix = format!("file://{}", output_dir.display());
+    Ok((payload_ref, output_prefix, output_dir))
+}
+
+fn resolve_runpod_artifact_path(output: &Value) -> Option<PathBuf> {
+    output
+        .get("artifactPath")
+        .and_then(|v| v.as_str())
+        .map(|value| {
+            if let Some(stripped) = value.strip_prefix("file://") {
+                PathBuf::from(stripped)
+            } else {
+                PathBuf::from(value)
+            }
+        })
+}
+
+async fn process_export_job_runpod(state: AppState, job_id: &str) -> Result<()> {
+    let request = {
+        let mut jobs = state.jobs.write().await;
+        let Some(job) = jobs.get_mut(job_id) else {
+            anyhow::bail!("Unknown job id: {job_id}");
+        };
+        if matches!(job.status, JobState::Canceled) {
+            info!("Skipping canceled job {job_id}");
+            return Ok(());
+        }
+        job.status = JobState::Running;
+        job.progress = 2.0;
+        job.current_stage = ExportStage::Transform;
+        job.stage_progress = 0.0;
+        job.message = Some("Preparing staged payload for Runpod".to_string());
+        job.updated_at = Utc::now();
+        job.error = None;
+        job.request.clone().context("Missing request payload")?
+    };
+
+    let _ = append_job_event(
+        &state,
+        job_id,
+        ExportEventType::JobStarted,
+        ExportStage::Transform,
+        2.0,
+        Some(0.0),
+        "Preparing staged payload for Runpod",
+        None,
+    )
+    .await?;
+
+    let (payload_ref, output_prefix, _output_dir) =
+        stage_request_payload(&state, job_id, &request).await?;
+
+    {
+        let mut jobs = state.jobs.write().await;
+        if let Some(job) = jobs.get_mut(job_id) {
+            if let Some(meta) = job.metadata.as_mut() {
+                meta.payload_ref = Some(payload_ref.clone());
+            }
+            job.request = None;
+            job.updated_at = Utc::now();
+        }
+    }
+
+    let client = runpod_client_from_state(&state)?;
+    let run_request = RunpodRunRequest {
+        input: RunpodJobInput {
+            job_id: job_id.to_string(),
+            payload_ref: payload_ref.clone(),
+            output_prefix,
+            embedding_mode: state.config.embedding_mode.as_str().to_string(),
+            embedding_provider: state.config.embedding_provider.clone(),
+            ollama_host: state.config.ollama_host.clone(),
+        },
+        policy: RunpodPolicy {
+            execution_timeout: state.config.runpod_execution_timeout_ms,
+            ttl: state.config.runpod_ttl_ms,
+        },
+    };
+
+    let _ = append_job_event(
+        &state,
+        job_id,
+        ExportEventType::StageProgress,
+        ExportStage::WriteCapsule,
+        8.0,
+        Some(0.0),
+        "Submitting Runpod queue job",
+        None,
+    )
+    .await?;
+
+    let submitted = client.submit_job(&run_request).await?;
+    {
+        let mut jobs = state.jobs.write().await;
+        if let Some(job) = jobs.get_mut(job_id) {
+            if let Some(meta) = job.metadata.as_mut() {
+                meta.runpod_job_id = Some(submitted.id.clone());
+            }
+            job.message = Some("Runpod job submitted".to_string());
+            job.updated_at = Utc::now();
+        }
+    }
+
+    let _ = append_job_event(
+        &state,
+        job_id,
+        ExportEventType::StageProgress,
+        ExportStage::WriteCapsule,
+        12.0,
+        Some(5.0),
+        format!("Runpod job submitted ({})", submitted.id),
+        Some(json!({ "runpodJobId": submitted.id })),
+    )
+    .await?;
+
+    let mut last_status = String::new();
+    loop {
+        if is_canceled(&state, job_id).await {
+            if let Some(runpod_job_id) = {
+                let jobs = state.jobs.read().await;
+                jobs.get(job_id)
+                    .and_then(|job| job.metadata.as_ref())
+                    .and_then(|meta| meta.runpod_job_id.clone())
+            } {
+                let _ = client.cancel_job(&runpod_job_id).await;
+            }
+            return Ok(());
+        }
+
+        let runpod_job_id = {
+            let jobs = state.jobs.read().await;
+            jobs.get(job_id)
+                .and_then(|job| job.metadata.as_ref())
+                .and_then(|meta| meta.runpod_job_id.clone())
+                .context("Missing runpod job id while polling")?
+        };
+
+        let status = client.get_status(&runpod_job_id).await?;
+        if status.status != last_status {
+            let (progress, stage_progress, msg) = match status.status.as_str() {
+                "IN_QUEUE" => (15.0, 10.0, "Runpod job in queue"),
+                "IN_PROGRESS" => (45.0, 55.0, "Runpod worker processing export"),
+                "COMPLETED" => (95.0, 100.0, "Runpod worker completed export"),
+                "CANCELLED" => (100.0, 100.0, "Runpod worker canceled export"),
+                "FAILED" => (100.0, 100.0, "Runpod worker failed export"),
+                "TIMED_OUT" => (100.0, 100.0, "Runpod worker timed out"),
+                _ => (40.0, 40.0, "Runpod status update"),
+            };
+            let _ = append_job_event(
+                &state,
+                job_id,
+                ExportEventType::StageHeartbeat,
+                ExportStage::WriteCapsule,
+                progress,
+                Some(stage_progress),
+                msg,
+                Some(json!({
+                    "runpodStatus": status.status,
+                    "runpodJobId": runpod_job_id,
+                })),
+            )
+            .await;
+            last_status = status.status.clone();
+        }
+
+        match status.status.as_str() {
+            "IN_QUEUE" | "IN_PROGRESS" => {
+                time::sleep(Duration::from_secs(
+                    state.config.runpod_poll_interval_seconds,
+                ))
+                .await;
+            }
+            "COMPLETED" => {
+                let output = status
+                    .output
+                    .clone()
+                    .context("Runpod completed without output payload")?;
+                let artifact_path = resolve_runpod_artifact_path(&output)
+                    .context("Runpod output missing artifactPath")?;
+                let metadata = fs::metadata(&artifact_path)
+                    .await
+                    .with_context(|| format!("Failed to stat {}", artifact_path.display()))?;
+                let file_name = output
+                    .get("fileName")
+                    .and_then(|v| v.as_str())
+                    .map(|v| v.to_string())
+                    .or_else(|| {
+                        artifact_path
+                            .file_name()
+                            .map(|f| f.to_string_lossy().to_string())
+                    })
+                    .unwrap_or_else(|| format!("{job_id}.mv2"));
+                let now = Utc::now();
+                let expires_at =
+                    now + ChronoDuration::seconds(state.config.retention_seconds as i64);
+
+                {
+                    let mut jobs = state.jobs.write().await;
+                    if let Some(job) = jobs.get_mut(job_id) {
+                        if let Some(meta) = job.metadata.as_mut() {
+                            meta.artifact_ref = output
+                                .get("artifactRef")
+                                .and_then(|v| v.as_str())
+                                .map(|v| v.to_string());
+                            meta.worker_metrics = Some(json!({
+                                "backend": "runpod_queue",
+                                "runpodStatus": status.status,
+                                "embeddingMode": state.config.embedding_mode.as_str(),
+                                "embeddingProvider": state.config.embedding_provider.as_str(),
+                            }));
+                        }
+                        job.status = JobState::Completed;
+                        job.progress = 100.0;
+                        job.current_stage = ExportStage::DownloadReady;
+                        job.stage_progress = 100.0;
+                        job.message = Some("Export completed".to_string());
+                        job.updated_at = now;
+                        job.artifact = Some(ExportArtifact {
+                            file_name: file_name.clone(),
+                            download_url: format!("/v1/exports/{job_id}/download"),
+                            expires_at,
+                            size_bytes: metadata.len(),
+                        });
+                        job.artifact_path = Some(artifact_path.clone());
+                        job.error = None;
+                    }
+                }
+
+                let _ = append_job_event(
+                    &state,
+                    job_id,
+                    ExportEventType::JobCompleted,
+                    ExportStage::DownloadReady,
+                    100.0,
+                    Some(100.0),
+                    "Export completed",
+                    Some(json!({
+                        "artifact": file_name,
+                        "sizeBytes": metadata.len(),
+                        "runpodJobId": runpod_job_id,
+                    })),
+                )
+                .await?;
+                return Ok(());
+            }
+            "CANCELLED" => {
+                anyhow::bail!("Runpod job was cancelled");
+            }
+            "FAILED" => {
+                anyhow::bail!(
+                    "Runpod job failed: {}",
+                    status
+                        .error
+                        .map(|v| v.to_string())
+                        .unwrap_or_else(|| "unknown error".to_string())
+                );
+            }
+            "TIMED_OUT" => {
+                anyhow::bail!("Runpod job timed out");
+            }
+            other => {
+                anyhow::bail!("Unknown Runpod status: {other}");
+            }
+        }
+    }
 }
 
 async fn cleanup_expired_artifacts(state: &AppState) -> Result<()> {

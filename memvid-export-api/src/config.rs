@@ -3,6 +3,36 @@ use std::{env, fs, net::SocketAddr, path::PathBuf};
 use anyhow::Result;
 use uuid::Uuid;
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ExportBackendMode {
+    LegacyVps,
+    RunpodQueue,
+}
+
+impl ExportBackendMode {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::LegacyVps => "legacy_vps",
+            Self::RunpodQueue => "runpod_queue",
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum EmbeddingMode {
+    ExternalApi,
+    RunpodGpu,
+}
+
+impl EmbeddingMode {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::ExternalApi => "external_api",
+            Self::RunpodGpu => "runpod_gpu",
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Config {
     pub bind_addr: SocketAddr,
@@ -17,6 +47,19 @@ pub struct Config {
     pub mcp_dev_log_payloads: bool,
     pub mcp_allow_external_capsules: bool,
     pub mcp_cache_capacity: usize,
+    pub backend_mode: ExportBackendMode,
+    pub runpod_api_base: String,
+    pub runpod_endpoint_id: Option<String>,
+    pub runpod_api_key: Option<String>,
+    pub runpod_region_scope: String,
+    pub runpod_poll_interval_seconds: u64,
+    pub runpod_execution_timeout_ms: u64,
+    pub runpod_ttl_ms: u64,
+    pub staging_root: PathBuf,
+    pub embedding_mode: EmbeddingMode,
+    pub embedding_provider: String,
+    pub nvidia_api_key: Option<String>,
+    pub ollama_host: Option<String>,
 }
 
 impl Config {
@@ -88,6 +131,74 @@ impl Config {
             .and_then(|v| v.parse::<usize>().ok())
             .unwrap_or(256);
 
+        let backend_mode = match env::var("MEMVID_EXPORT_BACKEND_MODE")
+            .unwrap_or_else(|_| "legacy_vps".to_string())
+            .trim()
+            .to_ascii_lowercase()
+            .as_str()
+        {
+            "runpod_queue" => ExportBackendMode::RunpodQueue,
+            _ => ExportBackendMode::LegacyVps,
+        };
+
+        let runpod_api_base = env::var("RUNPOD_API_BASE")
+            .unwrap_or_else(|_| "https://api.runpod.ai/v2".to_string())
+            .trim_end_matches('/')
+            .to_string();
+        let runpod_endpoint_id = env::var("RUNPOD_ENDPOINT_ID")
+            .ok()
+            .map(|v| v.trim().to_string())
+            .filter(|v| !v.is_empty());
+        let runpod_api_key = env::var("RUNPOD_API_KEY")
+            .ok()
+            .map(|v| v.trim().to_string())
+            .filter(|v| !v.is_empty());
+        let runpod_region_scope = env::var("RUNPOD_REGION_SCOPE")
+            .unwrap_or_else(|_| "EU-primary".to_string())
+            .trim()
+            .to_string();
+        let runpod_poll_interval_seconds = env::var("RUNPOD_POLL_INTERVAL_SECONDS")
+            .ok()
+            .and_then(|v| v.parse::<u64>().ok())
+            .unwrap_or(5)
+            .max(1);
+        let runpod_execution_timeout_ms = env::var("RUNPOD_EXECUTION_TIMEOUT_MS")
+            .ok()
+            .and_then(|v| v.parse::<u64>().ok())
+            .unwrap_or(600_000)
+            .max(5_000);
+        let runpod_ttl_ms = env::var("RUNPOD_TTL_MS")
+            .ok()
+            .and_then(|v| v.parse::<u64>().ok())
+            .unwrap_or(86_400_000)
+            .max(10_000);
+        let staging_root = PathBuf::from(
+            env::var("MEMVID_EXPORT_STAGING_ROOT")
+                .unwrap_or_else(|_| "/data/exports/staging".to_string()),
+        );
+
+        let embedding_mode = match env::var("MEMVID_EMBEDDING_MODE")
+            .unwrap_or_else(|_| "external_api".to_string())
+            .trim()
+            .to_ascii_lowercase()
+            .as_str()
+        {
+            "runpod_gpu" => EmbeddingMode::RunpodGpu,
+            _ => EmbeddingMode::ExternalApi,
+        };
+        let embedding_provider = env::var("MEMVID_EMBED_PROVIDER")
+            .unwrap_or_else(|_| "nvidia".to_string())
+            .trim()
+            .to_string();
+        let nvidia_api_key = env::var("NVIDIA_API_KEY")
+            .ok()
+            .map(|v| v.trim().to_string())
+            .filter(|v| !v.is_empty());
+        let ollama_host = env::var("OLLAMA_HOST")
+            .ok()
+            .map(|v| v.trim().to_string())
+            .filter(|v| !v.is_empty());
+
         Ok(Self {
             bind_addr,
             api_key,
@@ -101,7 +212,26 @@ impl Config {
             mcp_dev_log_payloads,
             mcp_allow_external_capsules,
             mcp_cache_capacity,
+            backend_mode,
+            runpod_api_base,
+            runpod_endpoint_id,
+            runpod_api_key,
+            runpod_region_scope,
+            runpod_poll_interval_seconds,
+            runpod_execution_timeout_ms,
+            runpod_ttl_ms,
+            staging_root,
+            embedding_mode,
+            embedding_provider,
+            nvidia_api_key,
+            ollama_host,
         })
+    }
+
+    pub fn runpod_enabled(&self) -> bool {
+        matches!(self.backend_mode, ExportBackendMode::RunpodQueue)
+            && self.runpod_endpoint_id.is_some()
+            && self.runpod_api_key.is_some()
     }
 }
 

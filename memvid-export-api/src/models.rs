@@ -179,6 +179,8 @@ pub struct ExportJobResponse {
     pub updated_at: DateTime<Utc>,
     pub artifact: Option<ExportArtifact>,
     pub error: Option<ExportErrorPayload>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<JobBackendMetadata>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -230,6 +232,7 @@ pub struct JobRecord {
     pub current_stage: ExportStage,
     pub stage_progress: f64,
     pub last_event_at: DateTime<Utc>,
+    pub metadata: Option<JobBackendMetadata>,
 }
 
 impl JobRecord {
@@ -248,6 +251,21 @@ impl JobRecord {
             updated_at: self.updated_at,
             artifact: self.artifact.clone(),
             error: self.error.clone(),
+            metadata: self.metadata.clone(),
         }
     }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct JobBackendMetadata {
+    pub backend: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub runpod_job_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub payload_ref: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub artifact_ref: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub worker_metrics: Option<Value>,
 }

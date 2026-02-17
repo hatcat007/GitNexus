@@ -16,9 +16,10 @@ use uuid::Uuid;
 use crate::{
     artifact_store::delete_file_if_exists,
     auth::verify_bearer,
+    config::ExportBackendMode,
     models::{
         ExportAcceptedResponse, ExportEventType, ExportEventsResponse, ExportLogEvent,
-        ExportRequest, ExportStage, JobRecord, JobState,
+        ExportRequest, ExportStage, JobBackendMetadata, JobRecord, JobState,
     },
     queue::append_job_event,
     AppState,
@@ -86,6 +87,16 @@ pub async fn create_export(
         current_stage: ExportStage::Queued,
         stage_progress: 0.0,
         last_event_at: now,
+        metadata: Some(JobBackendMetadata {
+            backend: match state.config.backend_mode {
+                ExportBackendMode::LegacyVps => "legacy_vps".to_string(),
+                ExportBackendMode::RunpodQueue => "runpod_queue".to_string(),
+            },
+            runpod_job_id: None,
+            payload_ref: None,
+            artifact_ref: None,
+            worker_metrics: None,
+        }),
     };
 
     {

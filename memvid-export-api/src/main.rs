@@ -8,6 +8,8 @@ mod memvid_writer;
 mod models;
 mod queue;
 mod rate_limit;
+mod runpod;
+mod runpod_execute;
 mod transform;
 
 use std::{collections::HashMap, sync::Arc};
@@ -53,11 +55,19 @@ async fn main() -> Result<()> {
         .init();
 
     let mut config = Config::from_env()?;
+    let args: Vec<String> = std::env::args().collect();
+    if runpod_execute::maybe_run_from_cli(&args).await? {
+        return Ok(());
+    }
+
     info!(
         pid = std::process::id(),
         bind_addr = %config.bind_addr,
         export_root = %config.export_root.display(),
         queue_capacity = config.queue_capacity,
+        backend_mode = config.backend_mode.as_str(),
+        embedding_mode = config.embedding_mode.as_str(),
+        embedding_provider = %config.embedding_provider,
         "Startup: configuration loaded"
     );
 
@@ -109,6 +119,14 @@ async fn main() -> Result<()> {
         }
     }
 
+    if let Err(err) = artifact_store::ensure_export_root(&config.staging_root).await {
+        warn!(
+            error = %err,
+            staging_root = %config.staging_root.display(),
+            "Failed to initialize staging root; Runpod queue mode may fail."
+        );
+    }
+
     if config.api_key_is_fallback {
         warn!(
             "Using generated fallback API key because MEMVID_EXPORT_API_KEY/MEMVID_EXPORT_API_KEY_FILE was not usable"
@@ -118,6 +136,9 @@ async fn main() -> Result<()> {
     info!(
         bind_addr = %config.bind_addr,
         export_root = %config.export_root.display(),
+        staging_root = %config.staging_root.display(),
+        backend_mode = config.backend_mode.as_str(),
+        runpod_enabled = config.runpod_enabled(),
         fallback_key = config.api_key_is_fallback,
         "Runtime configuration initialized"
     );
